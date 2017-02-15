@@ -4,6 +4,15 @@
 #include "ModulesApp.h"
 #include "MooseSyntax.h"
 
+#include "PorousDiffusion.h"
+#include "PorousConvection.h"
+#include "ExampleTimeDerivative.h"
+#include "AuxDensity.h"
+#include "AuxVelocity.h"
+#include "PorousMaterial.h"
+#include "DarcyPressure.h"
+#include "MassBalance.h"
+
 template<>
 InputParameters validParams<BeagleApp>()
 {
@@ -27,6 +36,7 @@ BeagleApp::~BeagleApp()
 {
 }
 
+
 // External entry point for dynamic application loading
 extern "C" void BeagleApp__registerApps() { BeagleApp::registerApps(); }
 void
@@ -40,6 +50,14 @@ extern "C" void BeagleApp__registerObjects(Factory & factory) { BeagleApp::regis
 void
 BeagleApp::registerObjects(Factory & factory)
 {
+    registerKernel(PorousConvection);
+    registerKernel(PorousDiffusion);
+    registerKernel(ExampleTimeDerivative);
+    registerKernel(DarcyPressure);
+    registerKernel(MassBalance);
+    registerAux(AuxDensity);
+    registerAux(AuxVelocity);
+    registerMaterial(PorousMaterial);
 }
 
 // External entry point for dynamic syntax association
