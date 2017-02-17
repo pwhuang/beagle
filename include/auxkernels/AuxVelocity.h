@@ -42,7 +42,7 @@ protected:
 
   const MaterialProperty<Real> & _permeability;
   const MaterialProperty<Real> & _viscosity;
-  const MaterialProperty<Real> & _density;
+  const VariableValue & _density;
   const VariableGradient & _grad_pressure;
   RealVectorValue _gravity;
   unsigned _component;

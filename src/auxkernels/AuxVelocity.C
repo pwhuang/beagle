@@ -22,6 +22,7 @@ InputParameters validParams<AuxVelocity>()
   params.addRequiredCoupledVar("pressure", "pressure");
   params.addRequiredParam<unsigned>("component", "0,1,2 depending on if we are solving the x,y,z component of the momentum equation");
   params.addRequiredParam<RealVectorValue>("gravity", "0 0 -9.81");
+  params.addRequiredCoupledVar("density", "density");
 
   return params;
 }
@@ -32,7 +33,7 @@ AuxVelocity::AuxVelocity(const InputParameters & parameters) :
     // We can couple in a value from one of our kernels with a call to coupledValueAux
     _permeability(getMaterialProperty<Real>("permeability")),
     _viscosity(getMaterialProperty<Real>("viscosity")),
-    _density(getMaterialProperty<Real>("density")),
+    _density(coupledValue("density")),
     _grad_pressure(coupledGradient("pressure")),
     _gravity(getParam<RealVectorValue>("gravity")),
     _component(getParam<unsigned>("component"))

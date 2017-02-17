@@ -2,22 +2,23 @@
   type = GeneratedMesh
   dim = 2
 
-  nx = 200
-  ny = 100
+  nx = 20
+  ny = 10
 
   xmin = 0.0
-  xmax = 2.0
+  xmax = 0.02
 
   ymin = 0.0
-  ymax = 1.0
-
+  ymax = 0.01
+  elem_type = QUAD9
+  second_order = true
 []
 
 [Variables]
   [./temp]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 30
+    initial_condition = 20
   [../]
   [./pressure]
     order = FIRST
@@ -32,12 +33,12 @@
   [../]
 
   [./velocity_x]
-    order = CONSTANT
+    order = FIRST
     family = MONOMIAL
   [../]
 
   [./velocity_y]
-    order = CONSTANT
+    order = FIRST
     family = MONOMIAL
   [../]
 []
@@ -79,6 +80,7 @@
   [./velocity_x_aux]
     type = AuxVelocity
     variable = velocity_x
+    density = nodal_density
     pressure = pressure
     component = 0
     gravity = '0 -9.81 0'
@@ -87,6 +89,7 @@
   [./velocity_y_aux]
     type = AuxVelocity
     variable = velocity_y
+    density = nodal_density
     pressure = pressure
     component = 1
     gravity = '0 -9.81 0'
@@ -114,18 +117,11 @@
     boundary = 'top'
     value = 0
   [../]
-
-  [./pres_bottom]
-    type = PresetBC
-    variable = pressure
-    boundary = 'bottom'
-    value = 9800
-  [../]
 []
 [Materials]
   [./example]
     type = PorousMaterial
-    permeability = 1e-16
+    permeability = 1e-10
     porosity = 0.25
     temp = temp
   [../]
@@ -138,10 +134,14 @@
   num_steps = 10
   #dt = 0.001
   start_time = 0
-  end_time = 4000
+  end_time = 100
   scheme = 'crank-nicolson'
   l_max_its = 50
   nl_max_its = 20
+
+  petsc_options = '-snes_mf_operator' #-ksp_monitor'
+  petsc_options_iname = '-pc_type -pc_hypre_type'
+  petsc_options_value = 'hypre boomeramg'
 []
 
 [Adaptivity]

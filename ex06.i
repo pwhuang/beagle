@@ -6,13 +6,14 @@
 
   boundary_id = '14 15 16 17'
   boundary_name = 'bottom right top left'
+  second_order = true
 []
 
 [Variables]
   [./temp]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 30
+    initial_condition = 20
   [../]
   [./pressure]
     order = FIRST
@@ -27,12 +28,12 @@
   [../]
 
   [./velocity_x]
-    order = CONSTANT
+    order = FIRST
     family = MONOMIAL
   [../]
 
   [./velocity_y]
-    order = CONSTANT
+    order = FIRST
     family = MONOMIAL
   [../]
 []
@@ -51,11 +52,11 @@
     advection_speed_y = velocity_y
   [../]
 
-  #[./euler]
-  #  type = ExampleTimeDerivative
-  #  variable = temp
-  #  time_coefficient = 1.0
-  #[../]
+  [./euler]
+    type = ExampleTimeDerivative
+    variable = temp
+    time_coefficient = 1.0
+  [../]
 
   [./mass_cons]
     type = DarcyPressure
@@ -80,6 +81,7 @@
   [./velocity_x_aux]
     type = AuxVelocity
     variable = velocity_x
+    density = nodal_density
     pressure = pressure
     component = 0
     gravity = '0 -9.81 0'
@@ -88,6 +90,7 @@
   [./velocity_y_aux]
     type = AuxVelocity
     variable = velocity_y
+    density = nodal_density
     pressure = pressure
     component = 1
     gravity = '0 -9.81 0'
@@ -115,19 +118,12 @@
     boundary = 'top'
     value = 0
   [../]
-
-  [./pres_bottom]
-    type = PresetBC
-    variable = pressure
-    boundary = 'bottom'
-    value = 9800
-  [../]
 []
 [Materials]
   [./example]
     type = PorousMaterial
     block = 'layer1'
-    permeability = 1e-24
+    permeability = 1e-10
     porosity = 0.25
     temp = temp
   [../]
@@ -135,7 +131,7 @@
   [./example1]
     type = PorousMaterial
     block = 'layer2'
-    permeability = 1e-24
+    permeability = 1e-10
     porosity = 0.25
     temp = temp
   [../]
@@ -163,15 +159,20 @@
 []
 
 [Executioner]
-  type = Steady   # Here we use the Transient Executioner
+  type = Transient   # Here we use the Transient Executioner
   solve_type = 'PJFNK'
   num_steps = 5
   #dt = 0.001
   start_time = 0
-  end_time = 0.2
-  scheme = 'crank-nicolson'
+  end_time = 1000
+  scheme = 'rk-2'#'crank-nicolson'
   l_max_its = 40
   nl_max_its = 20
+  l_tol = 1e-8
+
+  petsc_options = '-snes_mf_operator' #-ksp_monitor'
+  petsc_options_iname = '-pc_type -pc_hypre_type'
+  petsc_options_value = 'hypre boomeramg'
 []
 
 [Outputs]

@@ -1,7 +1,7 @@
 #include "BeagleApp.h"
 #include "Moose.h"
 #include "AppFactory.h"
-#include "ModulesApp.h"
+//#include "ModulesApp.h"
 #include "MooseSyntax.h"
 
 #include "PorousDiffusion.h"
@@ -24,11 +24,11 @@ BeagleApp::BeagleApp(InputParameters parameters) :
     MooseApp(parameters)
 {
   Moose::registerObjects(_factory);
-  ModulesApp::registerObjects(_factory);
+//ModulesApp::registerObjects(_factory);
   BeagleApp::registerObjects(_factory);
 
   Moose::associateSyntax(_syntax, _action_factory);
-  ModulesApp::associateSyntax(_syntax, _action_factory);
+  //ModulesApp::associateSyntax(_syntax, _action_factory);
   BeagleApp::associateSyntax(_syntax, _action_factory);
 }
 
