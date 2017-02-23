@@ -42,7 +42,7 @@ Real
 DarcyPressure::computeQpResidual()
 {
   // K/mu * grad_u * grad_phi[i]
-  return  //_permeability[_qp]/_viscosity[_qp] *
+  return //_permeability[_qp]/_viscosity[_qp] *
           (-Diffusion::computeQpResidual() - _grad_density[_qp](1)*(-9.81)*_test[_i][_qp]);
 }
 
@@ -50,7 +50,8 @@ Real
 DarcyPressure::computeQpJacobian()
 {
   // K/mu * grad_phi[j] * grad_phi[i]
-  return /*-_permeability[_qp]/_viscosity[_qp] **/ -Diffusion::computeQpJacobian();
+  return //-_permeability[_qp]/_viscosity[_qp]*
+          Diffusion::computeQpJacobian();
   //return _grad_phi[_j][_qp] * _grad_test[_i][_qp];
 
 }

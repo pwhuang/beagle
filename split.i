@@ -1,16 +1,12 @@
 [Mesh]
-  type = GeneratedMesh
-  dim = 2
+  file = split.msh
 
-  nx = 20
-  ny = 10
+  block_id = '17 18'
+  block_name = 'layer1 layer2'
 
-  xmin = 0.0
-  xmax = 1
+  boundary_id = '12 13 14 15 19 20 16'
+  boundary_name = 'bottom right top left bottom_point top_point middle'
 
-  ymin = 0.0
-  ymax = 1
-  elem_type = QUAD9
   second_order = true
 []
 
@@ -33,12 +29,12 @@
   [../]
 
   [./velocity_x]
-    order = SECOND
+    order = FIRST
     family = MONOMIAL
   [../]
 
   [./velocity_y]
-    order = SECOND
+    order = FIRST
     family = MONOMIAL
   [../]
 []
@@ -48,6 +44,12 @@
     type = PorousDiffusion
     variable = temp
     diffusivity = 1.0
+  [../]
+
+  [./pres]
+    type = DarcyPressure
+    variable = pressure
+    density = nodal_density
   [../]
 
   [./conv]
@@ -62,12 +64,6 @@
     variable = temp
     time_coefficient = 1.0
   [../]
-
-  [./mass_cons]
-    type = DarcyPressure
-    variable = pressure
-    density = nodal_density
-  [../]
 []
 
 [AuxKernels]
@@ -77,7 +73,7 @@
     coupled = temp
   [../]
 
-  [./velocity_x_aux]
+  [./nodal_vx]
     type = AuxVelocity
     variable = velocity_x
     density = nodal_density
@@ -86,7 +82,7 @@
     gravity = '0 -9.81 0'
   [../]
 
-  [./velocity_y_aux]
+  [./nodal_vy]
     type = AuxVelocity
     variable = velocity_y
     density = nodal_density
@@ -111,28 +107,52 @@
     value = 20
   [../]
 
-  [./pres_top]
-    type = PresetBC
-    variable = pressure
-    boundary = 'bottom'
-    value = 10000
-  [../]
+  #[./pres]
+  #  type = DirichletBC
+  #  variable = pressure
+  #  boundary = 'bottom'
+  #  value = 9800
+  #[../]
 
-  [./pres_bottom]
-    type = PresetBC
+  [./pres1]
+    type = DirichletBC
     variable = pressure
-    boundary = 'top left right'
+    boundary = 'top_point'
     value = 0
   [../]
+
+  #[./pres2]
+  #  type = DirichletBC
+  #  variable = pressure
+  #  boundary = 'bottom_point left right'
+  #  value = 9800
+  #[../]
 []
+
 [Materials]
   [./example]
     type = PorousMaterial
+    block = 'layer1'
     permeability = 1e-9
     porosity = 0.25
     temp = temp
   [../]
 
+  [./example1]
+    type = PorousMaterial
+    block = 'layer2'
+    permeability = 1e-9
+    porosity = 0.25
+    temp = temp
+  [../]
+
+  [./boundary]
+    type = PorousMaterial
+    boundary = 'top bottom left right middle'
+    permeability = 1e-9
+    porosity = 0
+    temp = temp
+  [../]
 []
 
 [Preconditioning]
@@ -143,41 +163,21 @@
   [../]
 []
 
+
 [Executioner]
   type = Transient   # Here we use the Transient Executioner
   solve_type = 'PJFNK'
   num_steps = 100
   #dt = 0.001
   start_time = 0
-  end_time = 300
+  end_time = 50
   scheme = 'crank-nicolson'
-  l_max_its = 50
+  l_max_its = 40
   nl_max_its = 20
 
   petsc_options = '-snes_mf_operator' #-ksp_monitor'
   petsc_options_iname = '-pc_type -pc_hypre_type'
   petsc_options_value = 'hypre boomeramg'
-[]
-
-[Adaptivity]
-  marker = errorfrac
-  steps = 2
-  [./Indicators]
-    [./error]
-      type = GradientJumpIndicator
-      variable = temp
-      outputs = none
-    [../]
-  [../]
-  [./Markers]
-    [./errorfrac]
-      type = ErrorFractionMarker
-      refine = 0.3
-      coarsen = 0
-      indicator = error
-      outputs = none
-    [../]
-  [../]
 []
 
 [Outputs]
