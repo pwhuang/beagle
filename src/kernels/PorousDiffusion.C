@@ -27,17 +27,17 @@ PorousDiffusion::PorousDiffusion(const InputParameters & parameters) :
     Diffusion(parameters),
     // Initialize our member variable based on a default or input file
     _diffusivity(getParam<Real>("diffusivity")),
-    _thermal_diffusivity(getMaterialProperty<Real>("thermal_diffusivity"))
+    _thermal_conductivity(getMaterialProperty<Real>("thermal_conductivity"))
 {}
 
 Real
 PorousDiffusion::computeQpResidual()
 {
-  return _diffusivity*_thermal_diffusivity[_qp]*Diffusion::computeQpResidual();
+  return _diffusivity*_thermal_conductivity[_qp]*Diffusion::computeQpResidual();
 }
 
 Real
 PorousDiffusion::computeQpJacobian()
 {
-  return _diffusivity*_thermal_diffusivity[_qp]*Diffusion::computeQpJacobian();
+  return _diffusivity*_thermal_conductivity[_qp]*Diffusion::computeQpJacobian();
 }
