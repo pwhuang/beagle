@@ -1,40 +1,26 @@
 [Mesh]
-  file = layered_coarse.msh
+  file = single_layer.msh
 
-  block_id = '12 13'
-  block_name = 'layer1 layer2'
+  block_id = '11'
+  block_name = 'layer1'
 
-  boundary_id = '14 15 16 17'
+  boundary_id = '5 6 7 8'
   boundary_name = 'bottom right top left'
-  #second_order = true
+  second_order = true
 []
 
 [Variables]
   [./temp]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 35
+    initial_condition = 20
   [../]
-  #[./pressure]
-  #  order = FIRST
-  #  family = LAGRANGE
-  #[../]
 []
 
 [AuxVariables]
   [./nodal_density]
     order = FIRST
     family = LAGRANGE
-  [../]
-
-  [./velocity_x]
-    order = FIRST
-    family = MONOMIAL
-  [../]
-
-  [./velocity_y]
-    order = FIRST
-    family = MONOMIAL
   [../]
 []
 
@@ -45,11 +31,12 @@
     diffusivity = 1.0
   [../]
 
-  #[./euler]
-  #  type = ExampleTimeDerivative
-  #  variable = temp
-  #  time_coefficient = 1.0
-  #[../]
+  [./conv]
+    type = PorousConvection
+    variable = temp
+    advection_speed_x = 0
+    advection_speed_y = 1e-5  #safe when smaller than this value
+  [../]
 []
 
 [AuxKernels]
@@ -62,14 +49,14 @@
 
 [BCs]
   [./bottom_diffused]
-    type = DirichletBC
+    type = PresetBC
     variable = temp
     boundary = 'bottom'
     value = 50
   [../]
 
   [./top_diffused]
-    type = DirichletBC
+    type = PresetBC
     variable = temp
     boundary = 'top'
     value = 20
@@ -80,15 +67,7 @@
   [./example]
     type = PorousMaterial
     block = 'layer1'
-    permeability = 1e-9
-    porosity = 0.25
-    temp = temp
-  [../]
-
-  [./example1]
-    type = PorousMaterial
-    block = 'layer2'
-    permeability = 1e-9
+    permeability = 1e-8
     porosity = 0.25
     temp = temp
   [../]
@@ -102,15 +81,9 @@
   [../]
 []
 
-
 [Executioner]
-  type = Steady#Transient   # Here we use the Transient Executioner
+  type = Steady   # Here we use the Transient Executioner
   solve_type = 'PJFNK'
-  num_steps = 200
-  #dt = 0.001
-  start_time = 0
-  end_time = 100
-  scheme = 'crank-nicolson'
   l_max_its = 40
   nl_max_its = 20
 

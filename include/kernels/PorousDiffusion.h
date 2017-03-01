@@ -38,6 +38,6 @@ protected:
   virtual Real computeQpJacobian() override;
 
   Real _diffusivity;
-  const MaterialProperty<Real> & _thermal_diffusivity;
+  const MaterialProperty<Real> & _thermal_conductivity;
 };
 #endif //PorousDiffusion_H

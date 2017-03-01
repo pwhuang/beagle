@@ -38,7 +38,7 @@ MassBalance::MassBalance(const InputParameters & parameters) :
 Real
 MassBalance::computeQpResidual()
 {
-  return -(_grad_velocity_x[_qp](0) + _grad_velocity_y[_qp](1)) * _test[_i][_qp];
+  return -(_grad_u[_qp](0) + _grad_velocity_y[_qp](1)) * _test[_i][_qp];
 }
 
 
@@ -46,18 +46,20 @@ MassBalance::computeQpResidual()
 Real
 MassBalance::computeQpJacobian()
 {
-  //return _grad_test[_i][_qp]*(_grad_phi[_j][_qp]+_u[_qp]*_grad_density[_qp]);
-  return 0;
+  //return -_grad_phi[_j][_qp](0)*_test[_i][_qp];
+  //return 0;
+  return -_grad_phi[_j][_qp](0)*_grad_test[_i][_qp](0);
 }
 Real
 MassBalance::computeQpOffDiagJacobian(unsigned jvar)
 {
-  if (jvar == _u_vel_var_number)
+/*
+  if (jvar == 0)
     return -_grad_phi[_j][_qp](0) * _test[_i][_qp];
 
-  else if (jvar == _v_vel_var_number)
+  else if (jvar == 1)
     return -_grad_phi[_j][_qp](1) * _test[_i][_qp];
 
-  else
+  else*/
     return 0;
 }

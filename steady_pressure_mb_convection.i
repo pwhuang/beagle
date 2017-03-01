@@ -1,16 +1,11 @@
 [Mesh]
-  type = GeneratedMesh
-  dim = 2
+  file = single_layer.msh
 
-  nx = 40
-  ny = 20
+  block_id = '11'
+  block_name = 'layer1'
 
-  xmin = 0.0
-  xmax = 2
-
-  ymin = 0.0
-  ymax = 1
-  elem_type = QUAD9
+  boundary_id = '5 6 7 8'
+  boundary_name = 'bottom right top left'
   second_order = true
 []
 
@@ -18,9 +13,13 @@
   [./temp]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 20
+    initial_condition = 35
   [../]
   [./pressure]
+    order = FIRST
+    family = LAGRANGE
+  [../]
+  [./velocity_x]
     order = FIRST
     family = LAGRANGE
   [../]
@@ -29,16 +28,11 @@
 [AuxVariables]
   [./nodal_density]
     order = FIRST
-    family = LAGRANGE
-  [../]
-
-  [./velocity_x]
-    order = CONSTANT
     family = MONOMIAL
   [../]
 
   [./velocity_y]
-    order = CONSTANT
+    order = FIRST
     family = MONOMIAL
   [../]
 []
@@ -50,6 +44,13 @@
     diffusivity = 1.0
   [../]
 
+  [./pressure]
+    type = DarcyPressure
+    variable = pressure
+    density = nodal_density
+    temperature = temp
+  [../]
+
   [./conv]
     type = PorousConvection
     variable = temp
@@ -57,16 +58,10 @@
     advection_speed_y = velocity_y
   [../]
 
-  [./euler]
-    type = ExampleTimeDerivative
-    variable = temp
-    time_coefficient = 1.0
-  [../]
-
-  [./mass_cons]
-    type = DarcyPressure
-    variable = pressure
-    density = nodal_density
+  [./mass_conservation]
+    type = MassBalance
+    variable = velocity_x
+    velocity_y = velocity_y
   [../]
 []
 
@@ -77,16 +72,7 @@
     coupled = temp
   [../]
 
-  [./velocity_x_aux]
-    type = AuxVelocity
-    variable = velocity_x
-    density = nodal_density
-    pressure = pressure
-    component = 0
-    gravity = '0 -9.81 0'
-  [../]
-
-  [./velocity_y_aux]
+  [./nodal_vy]
     type = AuxVelocity
     variable = velocity_y
     density = nodal_density
@@ -98,41 +84,57 @@
 
 [BCs]
   [./bottom_diffused]
-    type = PresetBC
+    type = DirichletBC
     variable = temp
     boundary = 'bottom'
     value = 50
   [../]
 
   [./top_diffused]
-    type = PresetBC
+    type = DirichletBC
     variable = temp
     boundary = 'top'
     value = 20
   [../]
 
-  [./pres_top]
-    type = PresetBC
-    variable = pressure
-    boundary = 'bottom'
-    value = 9810
-  [../]
-
-  [./pres_bottom]
-    type = PresetBC
+  [./pressure_top]
+    type = DirichletBC
     variable = pressure
     boundary = 'top'
     value = 0
   [../]
+
+  [./pressure_bottom]
+    type = DirichletBC
+    variable = pressure
+    boundary = 'bottom'
+    value = 9780
+  [../]
+
+  [./no_slip]
+    type = DirichletBC
+    variable = velocity_x
+    boundary = 'top bottom left right'
+    value = 0
+  [../]
 []
+
 [Materials]
   [./example]
     type = PorousMaterial
-    permeability = 1e-8
+    block = 'layer1'
+    permeability = 1e-11
     porosity = 0.25
     temp = temp
   [../]
 
+  [./boundary]
+    type = PorousMaterial
+    boundary = 'top bottom left right'
+    permeability = 0
+    porosity = 0
+    temp = temp
+  [../]
 []
 
 [Preconditioning]
@@ -143,41 +145,16 @@
   [../]
 []
 
+
 [Executioner]
-  type = Transient   # Here we use the Transient Executioner
+  type = Steady   # Here we use the Transient Executioner
   solve_type = 'PJFNK'
-  num_steps = 100
-  #dt = 0.001
-  start_time = 0
-  end_time = 2000
-  scheme = 'crank-nicolson'
-  l_max_its = 50
-  nl_max_its = 20
+  l_max_its = 100
+  nl_max_its = 50
 
   petsc_options = '-snes_mf_operator' #-ksp_monitor'
   petsc_options_iname = '-pc_type -pc_hypre_type'
   petsc_options_value = 'hypre boomeramg'
-[]
-
-[Adaptivity]
-  marker = errorfrac
-  steps = 2
-  [./Indicators]
-    [./error]
-      type = GradientJumpIndicator
-      variable = temp
-      outputs = none
-    [../]
-  [../]
-  [./Markers]
-    [./errorfrac]
-      type = ErrorFractionMarker
-      refine = 0
-      coarsen = 0
-      indicator = error
-      outputs = none
-    [../]
-  [../]
 []
 
 [Outputs]

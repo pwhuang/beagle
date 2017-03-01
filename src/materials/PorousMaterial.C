@@ -75,9 +75,9 @@ PorousMaterial::computeQpProperties()
   //input temperature degC, valid from 0 to 100 degC
   //output dynamic viscosity kg/(m*s)
   if(_temp[_qp]<=20)
-    _viscosity[_qp] = 0.001*pow(10,1301/(998.333+8.1855*T+0.00585*T*T)-1.30223);
+    _viscosity[_qp] = 0.001;//0.001*pow(10,1301/(998.333+8.1855*T+0.00585*T*T)-1.30223);
   else
-    _viscosity[_qp] = 0.001002*pow(10,(-1.3272*T-0.001053*T*T)/(_temp[_qp]+105));
+    _viscosity[_qp] = 0.001;//0.001002*pow(10,(-1.3272*T-0.001053*T*T)/(_temp[_qp]+105));
 
   _density[_qp] =  0.14395/pow(0.0112, 1+pow(1.0-(_temp[_qp]+273.0)/649.727, 0.05107));
 
@@ -93,6 +93,6 @@ PorousMaterial::computeQpProperties()
   _thermal_conductivity[_qp] = _porosity[_qp]*water_k + (1.0-_porosity[_qp])*rock_k;
   _density[_qp] = _porosity[_qp]*_density[_qp] + (1.0-_porosity[_qp])*rock_rho;
   _heat_capacity[_qp] = _porosity[_qp]*water_cp*_density[_qp] + (1.0-_porosity[_qp])*rock_cp*rock_rho;
-  _thermal_diffusivity[_qp] = _thermal_conductivity[_qp]/_density[_qp]/_heat_capacity[_qp];
+  //_thermal_diffusivity[_qp] = _thermal_conductivity[_qp]/_density[_qp]/_heat_capacity[_qp];
   //_density_ratio[_qp] = _density[_qp]/_density_old[_qp];
 }

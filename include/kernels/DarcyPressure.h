@@ -46,11 +46,13 @@ protected:
    * This is optional (but recommended!)
    */
   virtual Real computeQpJacobian() override;
+  //virtual Real computeQpOffDiagJacobian(unsigned jvar);
 
   const MaterialProperty<Real> & _permeability;
   //const VariableValue & _viscosity;
   const MaterialProperty<Real> & _viscosity;
   const VariableGradient & _grad_density;
+  const VariableGradient & _grad_temperature;
 };
 
 
