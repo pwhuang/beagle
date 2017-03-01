@@ -6,29 +6,25 @@
 
   boundary_id = '14 15 16 17'
   boundary_name = 'bottom right top left'
-  #second_order = true
+  second_order = true
 []
+
 
 [Variables]
-  [./temp]
-    order = FIRST
-    family = LAGRANGE
-    initial_condition = 35
-  [../]
-  #[./pressure]
-  #  order = FIRST
-  #  family = LAGRANGE
-  #[../]
-[]
-
-[AuxVariables]
-  [./nodal_density]
+  [./pressure]
     order = FIRST
     family = LAGRANGE
   [../]
 
   [./velocity_x]
     order = FIRST
+    family = LAGRANGE
+  [../]
+[]
+
+[AuxVariables]
+  [./nodal_density]
+    order = CONSTANT
     family = MONOMIAL
   [../]
 
@@ -39,40 +35,57 @@
 []
 
 [Kernels]
-  [./diff]
-    type = PorousDiffusion
-    variable = temp
-    diffusivity = 1.0
+  [./pres]
+    type = DarcyPressure
+    variable = pressure
+    density = nodal_density
   [../]
 
-  #[./euler]
-  #  type = ExampleTimeDerivative
-  #  variable = temp
-  #  time_coefficient = 1.0
-  #[../]
+  [./vel_x]
+    type = MassBalance
+    variable = velocity_x
+    velocity_y = velocity_y
+  [../]
 []
 
 [AuxKernels]
   [./nodal_example]
     type = AuxDensity
     variable = nodal_density
-    coupled = temp
+    coupled = 20
+  [../]
+
+  [./nodal_vy]
+    type = AuxVelocity#MaterialRealVectorValueAux#AuxVelocity
+    variable = velocity_y
+    density = nodal_density
+    pressure = pressure
+    component = 1
+    gravity = '0 -9.81 0'
+    #property = fluid_velocity
   [../]
 []
 
 [BCs]
-  [./bottom_diffused]
+  [./pres]
     type = DirichletBC
-    variable = temp
-    boundary = 'bottom'
-    value = 50
+    variable = pressure
+    boundary = 'top'
+    value = 0
   [../]
 
-  [./top_diffused]
+  [./pres1]
     type = DirichletBC
-    variable = temp
-    boundary = 'top'
-    value = 20
+    variable = pressure
+    boundary = 'bottom'
+    value = 100
+  [../]
+
+  [./vel_x_noslip_bc]
+    type = DirichletBC
+    variable = velocity_x
+    boundary = 'top bottom left right'
+    value = 0
   [../]
 []
 
@@ -80,17 +93,17 @@
   [./example]
     type = PorousMaterial
     block = 'layer1'
-    permeability = 1e-9
+    permeability = 1e-8
     porosity = 0.25
-    temp = temp
+    temp = 20
   [../]
 
   [./example1]
     type = PorousMaterial
     block = 'layer2'
-    permeability = 1e-9
+    permeability = 1e-8
     porosity = 0.25
-    temp = temp
+    temp = 20
   [../]
 
   [./boundary]
@@ -98,15 +111,22 @@
     boundary = 'top bottom left right'
     permeability = 0
     porosity = 0
-    temp = temp
+    temp = 20
   [../]
 []
 
+[Preconditioning]
+  [./SMP]
+    type = SMP
+    full = true
+    solve_type = 'NEWTON'
+  [../]
+[]
 
 [Executioner]
-  type = Steady#Transient   # Here we use the Transient Executioner
+  type = Steady #Transient   # Here we use the Transient Executioner
   solve_type = 'PJFNK'
-  num_steps = 200
+  num_steps = 1000
   #dt = 0.001
   start_time = 0
   end_time = 100
