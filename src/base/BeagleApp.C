@@ -12,6 +12,7 @@
 #include "PorousMaterial.h"
 #include "DarcyPressure.h"
 #include "MassBalance.h"
+#include "MomentumBalance.h"
 
 template<>
 InputParameters validParams<BeagleApp>()
@@ -55,6 +56,7 @@ BeagleApp::registerObjects(Factory & factory)
     registerKernel(ExampleTimeDerivative);
     registerKernel(DarcyPressure);
     registerKernel(MassBalance);
+    registerKernel(MomentumBalance);
     registerAux(AuxDensity);
     registerAux(AuxVelocity);
     registerMaterial(PorousMaterial);

@@ -21,11 +21,15 @@
     initial_condition = 20
   [../]
   [./pressure]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
   [../]
   [./velocity_x]
-    order = SECOND
+    order = FIRST
+    family = LAGRANGE
+  [../]
+  [./velocity_y]
+    order = FIRST
     family = LAGRANGE
   [../]
 []
@@ -35,11 +39,6 @@
     order = FIRST
     family = MONOMIAL
   [../]
-
-  [./velocity_y]
-    order = SECOND
-    family = MONOMIAL
-  [../]
 []
 
 [Kernels]
@@ -47,13 +46,6 @@
     type = PorousDiffusion
     variable = temp
     diffusivity = 1.0
-  [../]
-
-  [./pressure]
-    type = DarcyPressure
-    variable = pressure
-    density = nodal_density
-    temperature = temp
   [../]
 
   [./conv]
@@ -69,10 +61,34 @@
     time_coefficient = 1.0
   [../]
 
-  [./mass_conservation]
+  [./mass]
     type = MassBalance
-    variable = velocity_x
+    variable = pressure
+    velocity_x = velocity_x
     velocity_y = velocity_y
+  [../]
+
+  [./momentum_x]
+    type = MomentumBalance
+    variable = velocity_x
+    pressure = pressure
+    component = 0
+    gravity = '0 -9.81 0'
+  [../]
+
+  [./momentum_y]
+    type = MomentumBalance
+    variable = velocity_y
+    pressure = pressure
+    component = 1
+    gravity = '0 -9.81 0'
+  [../]
+
+  [./pressure]
+    type = DarcyPressure
+    variable = pressure
+    density = nodal_density
+    temperature = temp
   [../]
 []
 
@@ -81,15 +97,6 @@
     type = AuxDensity
     variable = nodal_density
     coupled = temp
-  [../]
-
-  [./nodal_vy]
-    type = AuxVelocity
-    variable = velocity_y
-    density = nodal_density
-    pressure = pressure
-    component = 1
-    gravity = '0 -9.81 0'
   [../]
 []
 
@@ -122,9 +129,16 @@
   #  value = 9810
   #[../]
 
-  [./no_slip]
+  [./no_slip_x]
     type = DirichletBC
     variable = velocity_x
+    boundary = 'top bottom left right'
+    value = 0
+  [../]
+
+  [./no_slip_y]
+    type = DirichletBC
+    variable = velocity_y
     boundary = 'top bottom left right'
     value = 0
   [../]
@@ -160,7 +174,7 @@
 [Executioner]
   type = Transient   # Here we use the Transient Executioner
   solve_type = 'PJFNK'
-  num_steps = 1
+  num_steps = 100
   #dt = 0.001
   start_time = 0
   end_time = 100

@@ -12,51 +12,45 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "MassBalance.h"
+#include "MomentumBalance.h"
 
 template<>
-InputParameters validParams<MassBalance>()
+InputParameters validParams<MomentumBalance>()
 {
   InputParameters params = validParams<Kernel>();
-  params.addCoupledVar("velocity_x","velocity_x");
-  params.addCoupledVar("velocity_y","velocity_y");
+  params.addCoupledVar("pressure", "pressure");
+  params.addRequiredParam<RealVectorValue>("gravity", "0 0 -9.81");
+  params.addRequiredParam<unsigned>("component", "0,1,2 depending on if we are solving the x,y,z component of the momentum equation");
   return params;
 }
 
-MassBalance::MassBalance(const InputParameters & parameters) :
+MomentumBalance::MomentumBalance(const InputParameters & parameters) :
     Kernel(parameters),
     // Initialize our member variable based on a default or input file
-    _grad_velocity_x(coupledGradient("velocity_x")),
-    _grad_velocity_y(coupledGradient("velocity_y")),
-    _u_vel_var_number(coupled("velocity_x")),
-    _v_vel_var_number(coupled("velocity_y")),
+    _grad_pressure(coupledGradient("pressure")),
+    _pressure(coupledValue("pressure")),
     _permeability(getMaterialProperty<Real>("permeability")),
     _viscosity(getMaterialProperty<Real>("viscosity")),
-    _density(getMaterialProperty<Real>("density"))
+    _density(getMaterialProperty<Real>("density")),
+    _gravity(getParam<RealVectorValue>("gravity")),
+    _component(getParam<unsigned>("component"))
 {}
 
 Real
-MassBalance::computeQpResidual()
+MomentumBalance::computeQpResidual()
 {
-  return (_grad_velocity_x[_qp](0) + _grad_velocity_y[_qp](1)) * _test[_i][_qp];
+  return _test[_i][_qp]*_u[_qp] + _permeability[_qp]/_viscosity[_qp]*(_grad_pressure[_qp](_component)-_density[_qp]*_gravity(_component));
 }
 
 
 
 Real
-MassBalance::computeQpJacobian()
+MomentumBalance::computeQpJacobian()
+{
+  return _test[_i][_qp]*_grad_u[_qp](_component);
+}
+Real
+MomentumBalance::computeQpOffDiagJacobian()
 {
   return 0;
-}
-Real
-MassBalance::computeQpOffDiagJacobian(unsigned jvar)
-{
-  if (jvar == 0)//_u_vel_var_number)
-    return -_grad_phi[_j][_qp](0) * _test[_i][_qp];
-
-  else if (jvar == 1)//_v_vel_var_number)
-    return -_grad_phi[_j][_qp](1) * _test[_i][_qp];
-
-  else
-    return 0;
 }
