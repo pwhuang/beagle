@@ -9,19 +9,19 @@
 
   boundary_id = '5 6 7 8'
   boundary_name = 'bottom right top left'
-  second_order = true
+  #second_order = true
 []
 
 [Variables]
   [./temp]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 20
+    initial_condition = 35
   [../]
-  [./pressure]
-    order = FIRST
-    family = LAGRANGE
-  [../]
+  #[./pressure]
+  #  order = FIRST
+  #  family = LAGRANGE
+  #[../]
 []
 
 [AuxVariables]
@@ -62,24 +62,6 @@
     variable = nodal_density
     coupled = temp
   [../]
-
-  [./nodal_vx]
-    type = AuxVelocity
-    variable = velocity_x
-    density = nodal_density
-    pressure = pressure
-    component = 0
-    gravity = '0 -9.81 0'
-  [../]
-
-  [./nodal_vy]
-    type = AuxVelocity
-    variable = velocity_y
-    density = nodal_density
-    pressure = pressure
-    component = 1
-    gravity = '0 -9.81 0'
-  [../]
 []
 
 [BCs]
@@ -95,20 +77,6 @@
     variable = temp
     boundary = 'top'
     value = 20
-  [../]
-
-  [./pressure_top]
-    type = DirichletBC
-    variable = pressure
-    boundary = 'top'
-    value = 0
-  [../]
-
-  [./pressure_bottom]
-    type = DirichletBC
-    variable = pressure
-    boundary = 'bottom'
-    value = 9735
   [../]
 []
 
@@ -139,8 +107,13 @@
 
 
 [Executioner]
-  type = Steady   # Here we use the Transient Executioner
+  type = Steady#Transient   # Here we use the Transient Executioner
   solve_type = 'PJFNK'
+  num_steps = 200
+  #dt = 0.001
+  start_time = 0
+  end_time = 100
+  scheme = 'crank-nicolson'
   l_max_its = 40
   nl_max_its = 20
 
