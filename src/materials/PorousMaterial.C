@@ -21,6 +21,7 @@ InputParameters validParams<PorousMaterial>()
   InputParameters params = validParams<Material>();
   params.addParam<Real>("permeability", "permeability");
   params.addParam<Real>("porosity", "porosity");
+  //params.addParam<Real>("initial_temp", "initial temperature");
   params.addCoupledVar("temp", "temperature will be used to calculate viscosity");
 
   return params;
@@ -35,9 +36,10 @@ PorousMaterial::PorousMaterial(const InputParameters & parameters) :
     _heat_capacity(declareProperty<Real>("heat_capacity")),
     _viscosity(declareProperty<Real>("viscosity")),
     _density(declareProperty<Real>("density")),
-    //_density_old(getMaterialPropertyOld<Real>("density")), //This is very expensive!
-    //_density_ratio(declareProperty<Real>("density_ratio")), // rho/rho_0
+    //_density_old(declarePropertyOld<Real>("density_old")), //This is very expensive!
+    //_density_diff(declareProperty<Real>("density_ratio")), // rho-rho_0
     _temp(coupledValue("temp")),
+    //_initial_temp(getParam<Real>("initial_temp")),
     _porosity(declareProperty<Real>("porosity")),
     _porosity_param(getParam<Real>("porosity")),
     _thermal_conductivity(declareProperty<Real>("thermal_conductivity")),
@@ -52,11 +54,11 @@ PorousMaterial::initQpStatefulProperties()
 {
   // init the diffusivity property (this will become
   // _diffusivity_old in the first call of computeProperties)
-  _density[_qp] = 0.14395/pow(0.0112, 1+pow(1.0-(_temp[_qp]+273.0)/649.727, 0.05107));
-
+  _porosity[_qp] = _porosity_param;
   Real rock_rho = 2800;  // (kg/m^3)
 
-  // Now actually set the value at the quadrature point
+  _density[_qp] = 0.14395/pow(0.0112, 1+pow(1.0-(_initial_temp+273.0)/649.727, 0.05107));
+
   _density[_qp] = _porosity[_qp]*_density[_qp] + (1.0-_porosity[_qp])*rock_rho;
 }
 */
@@ -94,5 +96,5 @@ PorousMaterial::computeQpProperties()
   _density[_qp] = _porosity[_qp]*_density[_qp] + (1.0-_porosity[_qp])*rock_rho;
   _heat_capacity[_qp] = _porosity[_qp]*water_cp*_density[_qp] + (1.0-_porosity[_qp])*rock_cp*rock_rho;
   //_thermal_diffusivity[_qp] = _thermal_conductivity[_qp]/_density[_qp]/_heat_capacity[_qp];
-  //_density_ratio[_qp] = _density[_qp]/_density_old[_qp];
+  //_density_diff[_qp] = _density[_qp] - _density_old[_qp];
 }

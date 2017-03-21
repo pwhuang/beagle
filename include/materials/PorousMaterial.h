@@ -42,9 +42,10 @@ protected:
   MaterialProperty<Real> & _heat_capacity;
   MaterialProperty<Real> & _viscosity;
   MaterialProperty<Real> & _density;
-  //const MaterialProperty<Real> & _density_old;
-  //MaterialProperty<Real> & _density_ratio;
+  //MaterialProperty<Real> & _density_old;
+  //MaterialProperty<Real> & _density_diff;
   const VariableValue & _temp;
+  //Real _initial_temp;
   MaterialProperty<Real> & _porosity;
   Real _porosity_param;
   MaterialProperty<Real> & _thermal_conductivity;

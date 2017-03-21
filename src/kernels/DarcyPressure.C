@@ -31,6 +31,7 @@ DarcyPressure::DarcyPressure(const InputParameters & parameters) :
     _permeability(getMaterialProperty<Real>("permeability")),
     _viscosity(getMaterialProperty<Real>("viscosity")),
     _grad_density(coupledGradient("density")),
+    _density(coupledValue("density")),
     _grad_temperature(coupledGradient("temperature"))
 
 {
@@ -45,7 +46,9 @@ DarcyPressure::computeQpResidual()
 {
   // K/mu * grad_u * grad_phi[i]
   return _permeability[_qp]/_viscosity[_qp] *
-          (-Diffusion::computeQpResidual() - _grad_density[_qp](1)*(-9.81)*_test[_i][_qp]);
+          //(-Diffusion::computeQpResidual() - _grad_density[_qp](1)*(-9.81)*_test[_i][_qp]);
+          (-Diffusion::computeQpResidual() - _grad_temperature[_qp](1)*_test[_i][_qp]);
+          //(_grad_u[_qp](1) + _density[_qp]*9.81)*_test[_i][_qp];
 }
 
 Real
@@ -54,6 +57,6 @@ DarcyPressure::computeQpJacobian()
   // K/mu * grad_phi[j] * grad_phi[i]
   return _permeability[_qp]/_viscosity[_qp]*
           -Diffusion::computeQpJacobian();
-  //return _grad_phi[_j][_qp] * _grad_test[_i][_qp];
+          //_grad_phi[_j][_qp](1) * _test[_i][_qp];
 
 }

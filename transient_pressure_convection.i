@@ -4,8 +4,8 @@
   block_id = '11'
   block_name = 'layer1'
 
-  boundary_id = '5 6 7 8'
-  boundary_name = 'bottom right top left'
+  boundary_id = '5 6 7 8 12 13'
+  boundary_name = 'bottom right top left upper_left upper_right'
   second_order = true
 []
 
@@ -16,7 +16,7 @@
     initial_condition = 20
   [../]
   [./pressure]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
   [../]
 []
@@ -71,7 +71,8 @@
   [./nodal_example]
     type = AuxDensity
     variable = nodal_density
-    coupled = temp
+    nodal_temperature = temp
+    reference_temperature = 35
   [../]
 
   [./nodal_vx]
@@ -80,7 +81,9 @@
     density = nodal_density
     pressure = pressure
     component = 0
-    gravity = '0 0 0'
+    gravity = '0 -9.81 0'
+    #gravity = '0 -1 0'
+    temperature = temp
   [../]
 
   [./nodal_vy]
@@ -90,6 +93,8 @@
     pressure = pressure
     component = 1
     gravity = '0 -9.81 0'
+    #gravity = '0 -1 0'
+    temperature = temp
   [../]
 []
 
@@ -126,19 +131,19 @@
 [Materials]
   [./example]
     type = PorousMaterial
-    #block = 'layer1'
-    permeability = 1e-8
-    porosity = 0.1
+    block = 'layer1'
+    permeability = 1e-9
+    porosity = 1.0
     temp = temp
   [../]
 
-  [./boundary]
-    type = PorousMaterial
-    boundary = 'top bottom left right'
-    permeability = 0
-    porosity = 0
-    temp = temp
-  [../]
+  #[./material_bc]
+  #  type = PorousMaterial
+  #  boundary = 'top bottom left right'
+  #  permeability = 1e-9
+  #  porosity = 0
+  #  temp = temp
+  #[../]
 []
 
 [Preconditioning]
@@ -151,11 +156,11 @@
 
 
 [Executioner]
-  type = Transient   # Here we use the Transient Executioner
+  type = Transient
   solve_type = 'PJFNK'
-  dt = 1
+  dt = 300
   start_time = 0
-  end_time = 300
+  end_time = 300000
   scheme = 'crank-nicolson'
   l_max_its = 30
   nl_max_its = 30

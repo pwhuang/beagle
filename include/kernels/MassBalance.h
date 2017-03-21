@@ -37,9 +37,9 @@ protected:
   virtual Real computeQpJacobian() override;
   virtual Real computeQpOffDiagJacobian(unsigned jvar);
 
-  const VariableGradient & _grad_velocity_x;
+  //const VariableGradient & _grad_velocity_x;
   const VariableGradient & _grad_velocity_y;
-  unsigned _u_vel_var_number;
+  //unsigned _u_vel_var_number;
   unsigned _v_vel_var_number;
   const MaterialProperty<Real> & _permeability;
   const MaterialProperty<Real> & _viscosity;

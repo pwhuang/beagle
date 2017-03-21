@@ -23,6 +23,7 @@ InputParameters validParams<AuxVelocity>()
   params.addRequiredParam<unsigned>("component", "0,1,2 depending on if we are solving the x,y,z component of the momentum equation");
   params.addRequiredParam<RealVectorValue>("gravity", "0 0 -9.81");
   params.addRequiredCoupledVar("density", "density");
+  params.addRequiredCoupledVar("temperature", "temperature");
 
   return params;
 }
@@ -34,6 +35,7 @@ AuxVelocity::AuxVelocity(const InputParameters & parameters) :
     _permeability(getMaterialProperty<Real>("permeability")),
     _viscosity(getMaterialProperty<Real>("viscosity")),
     _density(coupledValue("density")),
+    _temperature(coupledValue("temperature")),
     _grad_pressure(coupledGradient("pressure")),
     _gravity(getParam<RealVectorValue>("gravity")),
     _component(getParam<unsigned>("component"))
@@ -50,4 +52,5 @@ AuxVelocity::computeValue()
 {
   return -_permeability[_qp]/_viscosity[_qp]*(_grad_pressure[_qp](_component)
           -_density[_qp]*_gravity(_component));
+  //return -_permeability[_qp]/_viscosity[_qp]*(_grad_pressure[_qp](_component)-(_temperature[_qp]-35)*_gravity(_component));
 }

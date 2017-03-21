@@ -40,8 +40,8 @@ public:
 protected:
   virtual Real computeValue() override;
 
-  const VariableValue & _coupled_val;
-
+  const VariableValue & _nodal_temp;
+  Real _ref_temp;
   //Real _value;
 };
 

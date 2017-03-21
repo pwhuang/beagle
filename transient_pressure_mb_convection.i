@@ -1,16 +1,11 @@
 [Mesh]
-  type = GeneratedMesh
-  dim = 2
+  file = single_layer.msh
 
-  nx = 40
-  ny = 20
+  block_id = '11'
+  block_name = 'layer1'
 
-  xmin = 0.0
-  xmax = 0.02
-
-  ymin = 0.0
-  ymax = 0.01
-  elem_type = QUAD9
+  boundary_id = '5 6 7 8'
+  boundary_name = 'bottom right top left'
   second_order = true
 []
 
@@ -28,14 +23,20 @@
     order = FIRST
     family = LAGRANGE
   [../]
-  [./velocity_y]
-    order = FIRST
-    family = LAGRANGE
-  [../]
 []
 
 [AuxVariables]
   [./nodal_density]
+    order = FIRST
+    family = MONOMIAL
+  [../]
+
+  #[./velocity_x]
+  #  order = FIRST
+  #  family = MONOMIAL
+  #[../]
+
+  [./velocity_y]
     order = FIRST
     family = MONOMIAL
   [../]
@@ -51,7 +52,7 @@
   [./conv]
     type = PorousConvection
     variable = temp
-    advection_speed_x = velocity_x
+    advection_speed_x = 0#velocity_x
     advection_speed_y = velocity_y
   [../]
 
@@ -63,25 +64,9 @@
 
   [./mass]
     type = MassBalance
-    variable = pressure
+    variable = velocity_x
     velocity_x = velocity_x
     velocity_y = velocity_y
-  [../]
-
-  [./momentum_x]
-    type = MomentumBalance
-    variable = velocity_x
-    pressure = pressure
-    component = 0
-    gravity = '0 -9.81 0'
-  [../]
-
-  [./momentum_y]
-    type = MomentumBalance
-    variable = velocity_y
-    pressure = pressure
-    component = 1
-    gravity = '0 -9.81 0'
   [../]
 
   [./pressure]
@@ -97,7 +82,18 @@
     type = AuxDensity
     variable = nodal_density
     coupled = temp
+    reference = 20
   [../]
+
+  [./nodal_vy]
+    type = AuxVelocity
+    variable = velocity_y
+    density = nodal_density
+    pressure = pressure
+    component = 1
+    gravity = '0 -9.81 0'
+  [../]
+
 []
 
 [BCs]
@@ -136,55 +132,35 @@
     value = 0
   [../]
 
-  [./no_slip_y]
-    type = DirichletBC
-    variable = velocity_y
-    boundary = 'top bottom left right'
-    value = 0
-  [../]
 []
 
 [Materials]
   [./example]
     type = PorousMaterial
     #block = 'layer1'
-    permeability = 1e-8
-    porosity = 0.1
+    permeability = 1e-9
+    porosity = 1.0
     temp = temp
-  [../]
-
-  [./boundary]
-    type = PorousMaterial
-    boundary = 'top bottom left right'
-    permeability = 0
-    porosity = 0
-    temp = temp
+    initial_temp = 20
   [../]
 []
 
-[Preconditioning]
-  [./SMP]
-    type = SMP
-    full = true
-    solve_type = 'NEWTON'
-  [../]
-[]
 
 
 [Executioner]
   type = Transient   # Here we use the Transient Executioner
   solve_type = 'PJFNK'
-  num_steps = 100
-  #dt = 0.001
+  #num_steps = 100
+  dt = 100
   start_time = 0
-  end_time = 100
+  end_time = 30000
   scheme = 'crank-nicolson'
-  l_max_its = 50
-  nl_max_its = 50
+  l_max_its = 30
+  nl_max_its = 30
 
-  #petsc_options = '-snes_mf_operator' #-ksp_monitor'
-  #petsc_options_iname = '-pc_type -pc_hypre_type'
-  #petsc_options_value = 'hypre boomeramg'
+  petsc_options = '-snes_mf_operator' #-ksp_monitor'
+  petsc_options_iname = '-pc_type -pc_hypre_type'
+  petsc_options_value = 'hypre boomeramg'
 []
 
 [Outputs]

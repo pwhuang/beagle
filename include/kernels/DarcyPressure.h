@@ -52,6 +52,7 @@ protected:
   //const VariableValue & _viscosity;
   const MaterialProperty<Real> & _viscosity;
   const VariableGradient & _grad_density;
+  const VariableValue & _density;
   const VariableGradient & _grad_temperature;
 };
 
