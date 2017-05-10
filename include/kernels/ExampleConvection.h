@@ -12,33 +12,36 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "ExampleTimeDerivative.h"
+#ifndef EXAMPLECONVECTION_H
+#define EXAMPLECONVECTION_H
 
-#include "Material.h"
+#include "Kernel.h"
+
+class ExampleConvection;
 
 template<>
-InputParameters validParams<ExampleTimeDerivative>()
-{
-  InputParameters params = validParams<TimeDerivative>();
-  params.addParam<Real>("time_coefficient", 1.0, "Time Coefficient");
-  return params;
-}
+InputParameters validParams<ExampleConvection>();
 
-ExampleTimeDerivative::ExampleTimeDerivative(const InputParameters & parameters) :
-    TimeDerivative(parameters),
-    // This kernel expects an input parameter named "time_coefficient"
-    _time_coefficient(getParam<Real>("time_coefficient"))
-    //_heat_capacity(getMaterialProperty<Real>("heat_capacity"))
-{}
-
-Real
-ExampleTimeDerivative::computeQpResidual()
+class ExampleConvection : public Kernel
 {
-  return _time_coefficient*TimeDerivative::computeQpResidual();
-}
+public:
 
-Real
-ExampleTimeDerivative::computeQpJacobian()
-{
-  return _time_coefficient*TimeDerivative::computeQpJacobian();
-}
+  ExampleConvection(const InputParameters & parameters);
+
+protected:
+
+  virtual Real computeQpResidual() override;
+
+  virtual Real computeQpJacobian() override;
+
+private:
+
+  //const MaterialProperty<Real> & _heat_capacity;
+  //const MaterialProperty<Real> & _porosity;
+  const VariableValue & _advection_speed_x;
+  const VariableValue & _advection_speed_y;
+  const VariableValue & _advection_speed_z;
+  Real _Ra;
+};
+
+#endif //EXAMPLECONVECTION_H

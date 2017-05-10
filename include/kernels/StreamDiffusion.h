@@ -12,33 +12,33 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "ExampleTimeDerivative.h"
+#ifndef StreamDiffusion_H
+#define StreamDiffusion_H
 
-#include "Material.h"
+#include "Diffusion.h"
 
+//Forward Declarations
+class StreamDiffusion;
+
+/* This class extends the Diffusion kernel to multiply by a coefficient
+ * read from the input file
+ */
 template<>
-InputParameters validParams<ExampleTimeDerivative>()
-{
-  InputParameters params = validParams<TimeDerivative>();
-  params.addParam<Real>("time_coefficient", 1.0, "Time Coefficient");
-  return params;
-}
+InputParameters validParams<StreamDiffusion>();
 
-ExampleTimeDerivative::ExampleTimeDerivative(const InputParameters & parameters) :
-    TimeDerivative(parameters),
-    // This kernel expects an input parameter named "time_coefficient"
-    _time_coefficient(getParam<Real>("time_coefficient"))
-    //_heat_capacity(getMaterialProperty<Real>("heat_capacity"))
-{}
-
-Real
-ExampleTimeDerivative::computeQpResidual()
+class StreamDiffusion : public Diffusion
 {
-  return _time_coefficient*TimeDerivative::computeQpResidual();
-}
+public:
 
-Real
-ExampleTimeDerivative::computeQpJacobian()
-{
-  return _time_coefficient*TimeDerivative::computeQpJacobian();
-}
+  StreamDiffusion(const InputParameters & parameters);
+
+protected:
+  virtual Real computeQpResidual() override;
+
+  virtual Real computeQpJacobian() override;
+
+  const VariableGradient & _grad_temp;
+  unsigned _component;
+  Real _sign;
+};
+#endif //StreamDiffusion_H

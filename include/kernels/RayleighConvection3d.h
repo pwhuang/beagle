@@ -12,33 +12,35 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "ExampleTimeDerivative.h"
+#ifndef RayleighConvection3d_H
+#define RayleighConvection3d_H
 
-#include "Material.h"
+#include "Kernel.h"
+
+class RayleighConvection3d;
 
 template<>
-InputParameters validParams<ExampleTimeDerivative>()
-{
-  InputParameters params = validParams<TimeDerivative>();
-  params.addParam<Real>("time_coefficient", 1.0, "Time Coefficient");
-  return params;
-}
+InputParameters validParams<RayleighConvection3d>();
 
-ExampleTimeDerivative::ExampleTimeDerivative(const InputParameters & parameters) :
-    TimeDerivative(parameters),
-    // This kernel expects an input parameter named "time_coefficient"
-    _time_coefficient(getParam<Real>("time_coefficient"))
-    //_heat_capacity(getMaterialProperty<Real>("heat_capacity"))
-{}
-
-Real
-ExampleTimeDerivative::computeQpResidual()
+class RayleighConvection3d : public Kernel
 {
-  return _time_coefficient*TimeDerivative::computeQpResidual();
-}
+public:
 
-Real
-ExampleTimeDerivative::computeQpJacobian()
-{
-  return _time_coefficient*TimeDerivative::computeQpJacobian();
-}
+  RayleighConvection3d(const InputParameters & parameters);
+
+protected:
+
+  virtual Real computeQpResidual() override;
+
+  virtual Real computeQpJacobian() override;
+
+private:
+
+  //const MaterialProperty<Real> & _heat_capacity;
+  //const MaterialProperty<Real> & _porosity;
+  Real _Ra;
+  const VariableGradient & _grad_stream1;
+  const VariableGradient & _grad_stream2;
+};
+
+#endif //RayleighConvection3d_H

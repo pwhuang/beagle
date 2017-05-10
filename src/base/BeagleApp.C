@@ -14,6 +14,19 @@
 #include "MassBalance.h"
 #include "MomentumBalance.h"
 
+//ics
+#include "FunctionRandomIC.h"
+
+//kernel
+#include "ExampleDiffusion.h"
+#include "ExampleConvection.h"
+#include "FunctionSource.h"
+#include "RayleighConvection.h"
+#include "RayleighConvection3d.h"
+#include "StreamDiffusion.h"
+#include "Supg.h"
+
+
 template<>
 InputParameters validParams<BeagleApp>()
 {
@@ -57,6 +70,14 @@ BeagleApp::registerObjects(Factory & factory)
     registerKernel(DarcyPressure);
     registerKernel(MassBalance);
     registerKernel(MomentumBalance);
+    registerKernel(ExampleDiffusion);
+    registerKernel(ExampleConvection);
+    registerKernel(FunctionSource);
+    registerKernel(RayleighConvection);
+    registerKernel(RayleighConvection3d);
+    registerKernel(StreamDiffusion);
+    registerKernel(Supg);
+    registerInitialCondition(FunctionRandomIC);
     registerAux(AuxDensity);
     registerAux(AuxVelocity);
     registerMaterial(PorousMaterial);

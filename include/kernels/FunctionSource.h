@@ -12,33 +12,29 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "ExampleTimeDerivative.h"
+#ifndef FUNCTIONSOURCE_H
+#define FUNCTIONSOURCE_H
 
-#include "Material.h"
+#include "Kernel.h"
+
+//Forward Declarations
+class FunctionSource;
 
 template<>
-InputParameters validParams<ExampleTimeDerivative>()
-{
-  InputParameters params = validParams<TimeDerivative>();
-  params.addParam<Real>("time_coefficient", 1.0, "Time Coefficient");
-  return params;
-}
+InputParameters validParams<FunctionSource>();
 
-ExampleTimeDerivative::ExampleTimeDerivative(const InputParameters & parameters) :
-    TimeDerivative(parameters),
-    // This kernel expects an input parameter named "time_coefficient"
-    _time_coefficient(getParam<Real>("time_coefficient"))
-    //_heat_capacity(getMaterialProperty<Real>("heat_capacity"))
-{}
-
-Real
-ExampleTimeDerivative::computeQpResidual()
+class FunctionSource : public Kernel
 {
-  return _time_coefficient*TimeDerivative::computeQpResidual();
-}
+public:
 
-Real
-ExampleTimeDerivative::computeQpJacobian()
-{
-  return _time_coefficient*TimeDerivative::computeQpJacobian();
-}
+  FunctionSource(const InputParameters & parameters);
+
+protected:
+  virtual Real computeQpResidual() override;
+
+  virtual Real computeQpJacobian() override;
+
+  Function & _source;
+  Real _elem_num;
+};
+#endif //FUNCTIONSOURCE_H

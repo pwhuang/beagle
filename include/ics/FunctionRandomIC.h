@@ -12,30 +12,50 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef EXAMPLETIMEDERIVATIVE
-#define EXAMPLETIMEDERIVATIVE
+#ifndef FunctionRandomIC_H
+#define FunctionRandomIC_H
 
-#include "TimeDerivative.h"
+#include "InitialCondition.h"
+#include "InputParameters.h"
+
+#include <string>
 
 // Forward Declarations
-class ExampleTimeDerivative;
+class FunctionRandomIC;
+class Function;
 
-template<>
-InputParameters validParams<ExampleTimeDerivative>();
+template <>
+InputParameters validParams<FunctionRandomIC>();
 
-class ExampleTimeDerivative : public TimeDerivative
+/**
+ * Defines a boundary condition that forces the value to be a user specified
+ * function at the boundary.
+ */
+class FunctionRandomIC : public InitialCondition
 {
 public:
-
-  ExampleTimeDerivative(const InputParameters & parameters);
+  FunctionRandomIC(const InputParameters & parameters);
 
 protected:
-  virtual Real computeQpResidual() override;
+  /**
+   * Evaluate the function at the current quadrature point and timestep.
+   */
+  Real f();
 
-  virtual Real computeQpJacobian() override;
+  /**
+   * The value of the variable at a point.
+   */
+  virtual Real value(const Point & p) override;
 
-  Real _time_coefficient;
-  //const MaterialProperty<Real> & _heat_capacity;
+  /**
+   * The value of the gradient at a point.
+   */
+  //virtual RealGradient gradient(const Point & p) override;
+
+  Function & _func;
+  Real _min;
+  Real _max;
+  Real _range;
 };
 
-#endif //EXAMPLETIMEDERIVATIVE
+#endif // FunctionRandomIC_H

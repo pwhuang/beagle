@@ -12,33 +12,35 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "ExampleTimeDerivative.h"
-
-#include "Material.h"
+#include "StreamDiffusion.h"
 
 template<>
-InputParameters validParams<ExampleTimeDerivative>()
+InputParameters validParams<StreamDiffusion>()
 {
-  InputParameters params = validParams<TimeDerivative>();
-  params.addParam<Real>("time_coefficient", 1.0, "Time Coefficient");
+  InputParameters params = validParams<Diffusion>();
+  // Here we will look for a parameter from the input file
+  params.addCoupledVar("temperature","temperature is required for StreamDiffusion.");
+  params.addParam<unsigned>("component", "x y z component");
+  params.addParam<Real>("sign", "The positive or negative sign of stream");
   return params;
 }
 
-ExampleTimeDerivative::ExampleTimeDerivative(const InputParameters & parameters) :
-    TimeDerivative(parameters),
-    // This kernel expects an input parameter named "time_coefficient"
-    _time_coefficient(getParam<Real>("time_coefficient"))
-    //_heat_capacity(getMaterialProperty<Real>("heat_capacity"))
+StreamDiffusion::StreamDiffusion(const InputParameters & parameters) :
+    Diffusion(parameters),
+    // Initialize our member variable based on a default or input file
+    _grad_temp(coupledGradient("temperature")),
+    _component(getParam<unsigned>("component")),
+    _sign(getParam<Real>("sign"))
 {}
 
 Real
-ExampleTimeDerivative::computeQpResidual()
+StreamDiffusion::computeQpResidual()
 {
-  return _time_coefficient*TimeDerivative::computeQpResidual();
+  return Diffusion::computeQpResidual() + _sign*_grad_temp[_qp](_component);
 }
 
 Real
-ExampleTimeDerivative::computeQpJacobian()
+StreamDiffusion::computeQpJacobian()
 {
-  return _time_coefficient*TimeDerivative::computeQpJacobian();
+  return Diffusion::computeQpJacobian();
 }

@@ -12,33 +12,36 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "ExampleTimeDerivative.h"
+#ifndef SUPG_H
+#define SUPG_H
 
-#include "Material.h"
+#include "Kernel.h"
 
+//Forward Declarations
+class Supg;
+
+/* This class extends the Diffusion kernel to multiply by a coefficient
+ * read from the input file
+ */
 template<>
-InputParameters validParams<ExampleTimeDerivative>()
-{
-  InputParameters params = validParams<TimeDerivative>();
-  params.addParam<Real>("time_coefficient", 1.0, "Time Coefficient");
-  return params;
-}
+InputParameters validParams<Supg>();
 
-ExampleTimeDerivative::ExampleTimeDerivative(const InputParameters & parameters) :
-    TimeDerivative(parameters),
-    // This kernel expects an input parameter named "time_coefficient"
-    _time_coefficient(getParam<Real>("time_coefficient"))
-    //_heat_capacity(getMaterialProperty<Real>("heat_capacity"))
-{}
-
-Real
-ExampleTimeDerivative::computeQpResidual()
+class Supg : public Kernel
 {
-  return _time_coefficient*TimeDerivative::computeQpResidual();
-}
+public:
 
-Real
-ExampleTimeDerivative::computeQpJacobian()
-{
-  return _time_coefficient*TimeDerivative::computeQpJacobian();
-}
+  Supg(const InputParameters & parameters);
+
+protected:
+  virtual Real computeQpResidual() override;
+
+  virtual Real computeQpJacobian() override;
+
+  const VariableValue & _a;
+  //Real _advection_speed_y;
+  Real _h;
+  Real _beta;
+  unsigned _component;
+  Function & _source;
+};
+#endif //SUPG_H

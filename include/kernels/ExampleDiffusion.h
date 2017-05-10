@@ -12,33 +12,32 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "ExampleTimeDerivative.h"
+#ifndef EXAMPLEDIFFUSION_H
+#define EXAMPLEDIFFUSION_H
 
-#include "Material.h"
+#include "Diffusion.h"
 
+//Forward Declarations
+class ExampleDiffusion;
+
+/* This class extends the Diffusion kernel to multiply by a coefficient
+ * read from the input file
+ */
 template<>
-InputParameters validParams<ExampleTimeDerivative>()
-{
-  InputParameters params = validParams<TimeDerivative>();
-  params.addParam<Real>("time_coefficient", 1.0, "Time Coefficient");
-  return params;
-}
+InputParameters validParams<ExampleDiffusion>();
 
-ExampleTimeDerivative::ExampleTimeDerivative(const InputParameters & parameters) :
-    TimeDerivative(parameters),
-    // This kernel expects an input parameter named "time_coefficient"
-    _time_coefficient(getParam<Real>("time_coefficient"))
-    //_heat_capacity(getMaterialProperty<Real>("heat_capacity"))
-{}
-
-Real
-ExampleTimeDerivative::computeQpResidual()
+class ExampleDiffusion : public Diffusion
 {
-  return _time_coefficient*TimeDerivative::computeQpResidual();
-}
+public:
 
-Real
-ExampleTimeDerivative::computeQpJacobian()
-{
-  return _time_coefficient*TimeDerivative::computeQpJacobian();
-}
+  ExampleDiffusion(const InputParameters & parameters);
+
+protected:
+  virtual Real computeQpResidual() override;
+
+  virtual Real computeQpJacobian() override;
+
+  Real _diffusivity;
+  //const MaterialProperty<Real> & _thermal_conductivity;
+};
+#endif //EXAMPLEDIFFUSION_H
