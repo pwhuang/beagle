@@ -13,10 +13,14 @@
   [./temp]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 20
+
+    [./InitialCondition]
+      type = FunctionIC
+      function = '20.0 + 30.0*y'
+    [../]
   [../]
   [./pressure]
-    order = SECOND
+    order = FIRST
     family = LAGRANGE
   [../]
 []
@@ -158,7 +162,7 @@
 [Executioner]
   type = Transient
   solve_type = 'PJFNK'
-  dt = 300
+  dt = 2000
   start_time = 0
   end_time = 300000
   scheme = 'crank-nicolson'
