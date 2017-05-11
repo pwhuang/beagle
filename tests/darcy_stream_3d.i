@@ -3,19 +3,19 @@ type = GeneratedMesh
 dim = 3
 
 nx = 20
-ny = 20
+ny = 40
 nz = 20
 
 xmin = 0.0
 xmax = 1.0
 
 ymin = 0.0
-ymax = 1.0
+ymax = 2.0
 
 zmin = 0.0
 zmax = 1.0
 
-elem_type = TET4
+elem_type = HEX8
 []
 
 [MeshModifiers]
@@ -25,13 +25,6 @@ elem_type = TET4
     new_boundary = 'pinned_node'
     #nodes = '0'
     coord = '0 0 0'
-  [../]
-
-  [./corner_node1]
-    type = AddExtraNodeset
-    new_boundary = 'pinned_node2'
-    #nodes = '0'
-    coord = '2.0 0.2'
   [../]
 []
 
@@ -47,7 +40,24 @@ elem_type = TET4
   [./temp]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0
+    #initial_condition = 0
+  [../]
+[]
+
+[AuxVariables]
+  [./velocity_x]
+    order = FIRST
+    family = MONOMIAL
+  [../]
+
+  [./velocity_y]
+    order = FIRST
+    family = MONOMIAL
+  [../]
+
+  [./velocity_z]
+    order = FIRST
+    family = MONOMIAL
   [../]
 []
 
@@ -62,7 +72,7 @@ elem_type = TET4
 []
 
 [ICs]
-  active = ''
+  active = 'mat_2'
   [./mat_1]
     type = FunctionIC
     variable = temp
@@ -115,13 +125,47 @@ elem_type = TET4
     variable = temp
     stream_function1 = psi_1
     stream_function2 = psi_2
-    Rayleigh_number = 50.0
+    Rayleigh_number = 100.0
   [../]
 
   [./euler]
     type = ExampleTimeDerivative
     variable = temp
     time_coefficient = 1.0
+  [../]
+[]
+
+[AuxKernels]
+  [./velocity_x_aux]
+    type = VariableGradientSign
+    variable = velocity_x
+    gradient_variable = psi_2
+    component = 'z'
+    sign = -1.0
+  [../]
+
+  [./velocity_y_aux]
+    type = VariableGradientSign
+    variable = velocity_y
+    gradient_variable = psi_1
+    component = 'z'
+    sign = 1.0
+  [../]
+
+  [./velocity_z_aux]
+    type = VariableGradientSign
+    variable = velocity_z
+    gradient_variable = psi_2
+    component = 'x'
+    sign = 1.0
+  [../]
+
+  [./velocity_z_aux]
+    type = VariableGradientSign
+    variable = velocity_z
+    gradient_variable = psi_1
+    component = 'y'
+    sign = -1.0
   [../]
 []
 
@@ -243,6 +287,9 @@ elem_type = TET4
 []
 
 [Outputs]
-  execute_on = 'timestep_end'
-  exodus = true
+  [./out1]
+    execute_on = 'initial timestep_end'
+    type = Exodus
+    #exodus = true
+  [../]
 []

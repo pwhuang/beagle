@@ -7,8 +7,6 @@
 #include "PorousDiffusion.h"
 #include "PorousConvection.h"
 #include "ExampleTimeDerivative.h"
-#include "AuxDensity.h"
-#include "AuxVelocity.h"
 #include "PorousMaterial.h"
 #include "DarcyPressure.h"
 #include "MassBalance.h"
@@ -25,6 +23,12 @@
 #include "RayleighConvection3d.h"
 #include "StreamDiffusion.h"
 #include "Supg.h"
+
+//AuxKernel
+#include "AuxDensity.h"
+#include "AuxVelocity.h"
+#include "VariableGradientSign.h"
+
 
 
 template<>
@@ -80,6 +84,7 @@ BeagleApp::registerObjects(Factory & factory)
     registerInitialCondition(FunctionRandomIC);
     registerAux(AuxDensity);
     registerAux(AuxVelocity);
+    registerAux(VariableGradientSign);
     registerMaterial(PorousMaterial);
 }
 
