@@ -2,9 +2,9 @@
 type = GeneratedMesh
 dim = 3
 
-nx = 20
-ny = 40
-nz = 20
+nx = 30
+ny = 60
+nz = 30
 
 xmin = 0.0
 xmax = 1.0
@@ -152,7 +152,7 @@ elem_type = HEX8
     sign = 1.0
   [../]
 
-  [./velocity_z_aux]
+  [./velocity_z_aux2]
     type = VariableGradientSign
     variable = velocity_z
     gradient_variable = psi_2
@@ -160,7 +160,7 @@ elem_type = HEX8
     sign = 1.0
   [../]
 
-  [./velocity_z_aux]
+  [./velocity_z_aux1]
     type = VariableGradientSign
     variable = velocity_z
     gradient_variable = psi_1
