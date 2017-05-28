@@ -39,7 +39,7 @@ StreamDiffusion::StreamDiffusion(const InputParameters & parameters) :
 Real
 StreamDiffusion::computeQpResidual()
 {
-  return Diffusion::computeQpResidual() + _sign*_grad_temp[_qp](_component);
+  return Diffusion::computeQpResidual() + _test[_i][_qp]*_sign*_grad_temp[_qp](_component);
           //+ _temp[_qp]/_Ra[_qp]*_grad_Ra[_qp](_component);
 }
 

@@ -39,19 +39,11 @@ elem_type = TRI3
   [./temp]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0.5
+    #initial_condition = 0
   [../]
 []
 
 [AuxVariables]
-  [./ra]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
-  [./grad_ra]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
   [./velocity_x]
     order = CONSTANT
     family = MONOMIAL
@@ -74,7 +66,7 @@ elem_type = TRI3
 
   [./ra_func]
     type = ParsedFunction
-    value = '(1.0-y)*50'
+    value = '(1.0-y)*100'
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -148,17 +140,6 @@ elem_type = TRI3
 []
 
 [AuxKernels]
-  [./ra_aux]
-    type = MaterialRealAux
-    variable = ra
-    property = 'rayleigh_material'
-  [../]
-  [./grad_ra_aux]
-    type = VariableGradientComponent
-    variable = grad_ra
-    gradient_variable = ra
-    component = 'x'
-  [../]
   [./velocity_x_aux]
     type = VariableGradientComponent
     variable = velocity_x
@@ -212,7 +193,7 @@ elem_type = TRI3
     block = 0
     function = 'ra_func'
     min = 0
-    max = 0.01
+    max = 0
     seed = 363192
     outputs = exodus
   [../]
