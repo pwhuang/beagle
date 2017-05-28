@@ -37,8 +37,8 @@ protected:
 private:
 
   //const MaterialProperty<Real> & _heat_capacity;
-  //const MaterialProperty<Real> & _porosity;
-  Real _Ra;
+  const MaterialProperty<Real> & _Ra;
+  //Real _Ra;
   const VariableGradient & _grad_stream;
 };
 

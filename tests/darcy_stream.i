@@ -2,8 +2,8 @@
 type = GeneratedMesh
 dim = 2
 
-nx = 30
-ny = 90
+nx = 40
+ny = 120
 
 xmin = 0.0
 xmax = 2.0
@@ -11,7 +11,7 @@ xmax = 2.0
 ymin = 0.0
 ymax = 1.0
 
-elem_type = QUAD4
+elem_type = TRI3
 []
 
 [MeshModifiers]
@@ -44,6 +44,14 @@ elem_type = QUAD4
 []
 
 [AuxVariables]
+  [./ra]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./grad_ra]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
   [./velocity_x]
     order = CONSTANT
     family = MONOMIAL
@@ -56,10 +64,17 @@ elem_type = QUAD4
 []
 
 [Functions]
-  active = 'ic_func'
+  active = 'ic_func ra_func'
   [./ic_func]
     type = ParsedFunction
     value = '(1.0-y)*1'
+    #vars = 'alpha'
+    #vals = '16'
+  [../]
+
+  [./ra_func]
+    type = ParsedFunction
+    value = '(1.0-y)*50'
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -83,6 +98,7 @@ elem_type = QUAD4
   [../]
 []
 
+
 [Kernels]
   active = 'mass diff conv euler'
   [./mass]
@@ -103,7 +119,7 @@ elem_type = QUAD4
     type = RayleighConvection
     variable = temp
     stream_function = stream
-    Rayleigh_number = 61.36
+    #Rayleigh_number = 61.36
   [../]
 
   [./euler]
@@ -132,6 +148,17 @@ elem_type = QUAD4
 []
 
 [AuxKernels]
+  [./ra_aux]
+    type = MaterialRealAux
+    variable = ra
+    property = 'rayleigh_material'
+  [../]
+  [./grad_ra_aux]
+    type = VariableGradientComponent
+    variable = grad_ra
+    gradient_variable = ra
+    component = 'x'
+  [../]
   [./velocity_x_aux]
     type = VariableGradientComponent
     variable = velocity_x
@@ -178,6 +205,19 @@ elem_type = QUAD4
   [../]
 []
 
+[Materials]
+  active = 'ra_output'
+  [./ra_output]
+    type = RayleighMaterial
+    block = 0
+    function = 'ra_func'
+    min = 0
+    max = 0.01
+    seed = 363192
+    outputs = exodus
+  [../]
+[]
+
 [Preconditioning]
   [./SMP]
     type = SMP
@@ -209,9 +249,14 @@ elem_type = QUAD4
     boundary = 'top'
     diffusivity = 0.5
   [../]
+
+  [./alive_time]
+    type = RunTime
+    time_type = alive
+  [../]
 []
 
 [Outputs]
-  execute_on = 'timestep_end'
+  execute_on = 'initial timestep_end'
   exodus = true
 []

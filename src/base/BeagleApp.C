@@ -7,7 +7,6 @@
 #include "PorousDiffusion.h"
 #include "PorousConvection.h"
 #include "ExampleTimeDerivative.h"
-#include "PorousMaterial.h"
 #include "DarcyPressure.h"
 #include "MassBalance.h"
 #include "MomentumBalance.h"
@@ -29,7 +28,9 @@
 #include "AuxVelocity.h"
 #include "VariableGradientSign.h"
 
-
+//Materials
+#include "PorousMaterial.h"
+#include "RayleighMaterial.h"
 
 template<>
 InputParameters validParams<BeagleApp>()
@@ -86,6 +87,7 @@ BeagleApp::registerObjects(Factory & factory)
     registerAux(AuxVelocity);
     registerAux(VariableGradientSign);
     registerMaterial(PorousMaterial);
+    registerMaterial(RayleighMaterial);
 }
 
 // External entry point for dynamic syntax association

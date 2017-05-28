@@ -15,7 +15,7 @@ ymax = 2.0
 zmin = 0.0
 zmax = 1.0
 
-elem_type = HEX8
+elem_type = TET4
 []
 
 [MeshModifiers]
@@ -45,6 +45,7 @@ elem_type = HEX8
 []
 
 [AuxVariables]
+  active = ''
   [./velocity_x]
     order = FIRST
     family = MONOMIAL
@@ -136,6 +137,7 @@ elem_type = HEX8
 []
 
 [AuxKernels]
+  active = ''
   [./velocity_x_aux]
     type = VariableGradientSign
     variable = velocity_x
@@ -284,12 +286,16 @@ elem_type = HEX8
     boundary = 'front'
     diffusivity = 1.0
   [../]
+
+  [./alive_time]
+    type = RunTime
+    time_type = alive
+  [../]
 []
 
 [Outputs]
   [./out1]
     execute_on = 'initial timestep_end'
     type = Exodus
-    #exodus = true
   [../]
 []

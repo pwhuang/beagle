@@ -28,7 +28,10 @@ InputParameters validParams<StreamDiffusion>()
 StreamDiffusion::StreamDiffusion(const InputParameters & parameters) :
     Diffusion(parameters),
     // Initialize our member variable based on a default or input file
+    _temp(coupledValue("temperature")),
     _grad_temp(coupledGradient("temperature")),
+    _Ra(getMaterialProperty<Real>("rayleigh_material")),
+    //_grad_Ra(getMaterialProperty<RealGradient>("rayleigh")),
     _component(getParam<unsigned>("component")),
     _sign(getParam<Real>("sign"))
 {}
@@ -37,6 +40,7 @@ Real
 StreamDiffusion::computeQpResidual()
 {
   return Diffusion::computeQpResidual() + _sign*_grad_temp[_qp](_component);
+          //+ _temp[_qp]/_Ra[_qp]*_grad_Ra[_qp](_component);
 }
 
 Real

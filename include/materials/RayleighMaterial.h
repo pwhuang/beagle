@@ -12,36 +12,38 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef StreamDiffusion_H
-#define StreamDiffusion_H
+#ifndef RAYLEIGHMATERIAL_H
+#define RAYLEIGHMATERIAL_H
 
-#include "Diffusion.h"
+#include "Material.h"
+#include "Function.h"
+#include "MooseRandom.h"
 
 //Forward Declarations
-class StreamDiffusion;
+class RayleighMaterial;
+class Function;
 
-/* This class extends the Diffusion kernel to multiply by a coefficient
- * read from the input file
- */
 template<>
-InputParameters validParams<StreamDiffusion>();
+InputParameters validParams<RayleighMaterial>();
 
-class StreamDiffusion : public Diffusion
+/**
+ * Example material class that defines a few properties.
+ */
+class RayleighMaterial : public Material
 {
 public:
-
-  StreamDiffusion(const InputParameters & parameters);
+  RayleighMaterial(const InputParameters & parameters);
 
 protected:
-  virtual Real computeQpResidual() override;
+  virtual void computeQpProperties() override;
+  //virtual void initQpStatefulProperties() override;
 
-  virtual Real computeQpJacobian() override;
-
-  const VariableValue & _temp;
-  const VariableGradient & _grad_temp;
-  const MaterialProperty<Real> & _Ra;
-  //const MaterialProperty<RealGradient> & _grad_Ra;
-  unsigned _component;
-  Real _sign;
+//private:
+  MaterialProperty<Real> & _Ra;
+  Function & _func;
+  Real _min;
+  Real _max;
+  Real _range;
 };
-#endif //StreamDiffusion_H
+
+#endif //RAYLEIGHMATERIAL_H

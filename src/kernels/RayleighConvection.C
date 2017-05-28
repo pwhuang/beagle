@@ -18,16 +18,15 @@ template<>
 InputParameters validParams<RayleighConvection>()
 {
   InputParameters params = validParams<Kernel>();
-  params.addParam<Real>("Rayleigh_number", "Rayleigh_number is required for Rayleigh Convection.");
+  //params.addParam<Real>("Rayleigh_number", "Rayleigh_number is required for Rayleigh Convection.");
   params.addCoupledVar("stream_function", "stream_function is required for Rayleigh Convection.");
   return params;
 }
 
 RayleighConvection::RayleighConvection(const InputParameters & parameters) :
     Kernel(parameters),
-    //_heat_capacity(getMaterialProperty<Real>("heat_capacity")),
-    //_porosity(getMaterialProperty<Real>("porosity")),
-    _Ra(getParam<Real>("Rayleigh_number")),
+    _Ra(getMaterialProperty<Real>("rayleigh_material")),
+    //_Ra(getParam<Real>("Rayleigh_number")),
     _grad_stream(coupledGradient("stream_function"))
 {}
 
@@ -36,7 +35,7 @@ Real RayleighConvection::computeQpResidual()
   RealVectorValue _advection_speed = RealVectorValue(_grad_stream[_qp](1), -1.0*_grad_stream[_qp](0));
   //return _test[_i][_qp]*(_heat_capacity[_qp]*_porosity[_qp]
   //        *_advection_speed*_grad_u[_qp]);
-  return _test[_i][_qp]*_Ra*(_advection_speed*_grad_u[_qp]);
+  return _test[_i][_qp]*_Ra[_qp]*(_advection_speed*_grad_u[_qp]);
 
 }
 
@@ -45,5 +44,5 @@ Real RayleighConvection::computeQpJacobian()
   RealVectorValue _advection_speed = RealVectorValue(_grad_stream[_qp](1), -1.0*_grad_stream[_qp](0));
   //return _test[_i][_qp]*(_heat_capacity[_qp]*_porosity[_qp]
   //        *_advection_speed*_grad_phi[_j][_qp]);
-  return _test[_i][_qp]*_Ra*(_advection_speed*_grad_phi[_j][_qp]);
+  return _test[_i][_qp]*_Ra[_qp]*(_advection_speed*_grad_phi[_j][_qp]);
 }
