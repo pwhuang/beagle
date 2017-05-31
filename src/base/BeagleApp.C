@@ -20,7 +20,9 @@
 #include "FunctionSource.h"
 #include "RayleighConvection.h"
 #include "RayleighConvection3d.h"
+#include "PressureConvection.h"
 #include "StreamDiffusion.h"
+#include "PressureDiffusion.h"
 #include "Supg.h"
 
 //AuxKernel
@@ -80,7 +82,9 @@ BeagleApp::registerObjects(Factory & factory)
     registerKernel(FunctionSource);
     registerKernel(RayleighConvection);
     registerKernel(RayleighConvection3d);
+    registerKernel(PressureConvection);
     registerKernel(StreamDiffusion);
+    registerKernel(PressureDiffusion);
     registerKernel(Supg);
     registerInitialCondition(FunctionRandomIC);
     registerAux(AuxDensity);
