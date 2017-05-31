@@ -2,8 +2,8 @@
 type = GeneratedMesh
 dim = 2
 
-nx = 40
-ny = 120
+nx = 100
+ny = 50
 
 xmin = 0.0
 xmax = 2.0
@@ -39,7 +39,7 @@ elem_type = TRI3
   [./temp]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0
+    initial_condition = 0
   [../]
 []
 
@@ -66,14 +66,14 @@ elem_type = TRI3
 
   [./ra_func]
     type = ParsedFunction
-    value = '(1.0-y)*100'
+    value = 'x*50'#'(1.0-y)*100'
     #vars = 'alpha'
     #vals = '16'
   [../]
 []
 
 [ICs]
-  active = 'mat_2'
+  active = ''
   [./mat_1]
     type = FunctionIC
     variable = temp
@@ -228,7 +228,7 @@ elem_type = TRI3
     type = SideFluxAverage
     variable = temp
     boundary = 'top'
-    diffusivity = 0.5
+    diffusivity = 1.0
   [../]
 
   [./alive_time]

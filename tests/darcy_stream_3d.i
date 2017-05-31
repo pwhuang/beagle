@@ -3,14 +3,14 @@ type = GeneratedMesh
 dim = 3
 
 nx = 30
-ny = 60
+ny = 30
 nz = 30
 
 xmin = 0.0
 xmax = 1.0
 
 ymin = 0.0
-ymax = 2.0
+ymax = 1.0
 
 zmin = 0.0
 zmax = 1.0
@@ -63,10 +63,17 @@ elem_type = TET4
 []
 
 [Functions]
-  active = 'ic_func'
+  active = 'ic_func ra_func'
   [./ic_func]
     type = ParsedFunction
     value = '1.0-z'
+    #vars = 'alpha'
+    #vals = '16'
+  [../]
+
+  [./ra_func]
+    type = ParsedFunction
+    value = '50'#'(1.0-y)*100'
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -126,7 +133,7 @@ elem_type = TET4
     variable = temp
     stream_function1 = psi_1
     stream_function2 = psi_2
-    Rayleigh_number = 100.0
+    #Rayleigh_number = 100.0
   [../]
 
   [./euler]
@@ -255,6 +262,19 @@ elem_type = TET4
   [../]
 []
 
+[Materials]
+  active = 'ra_output'
+  [./ra_output]
+    type = RayleighMaterial
+    block = 0
+    function = 'ra_func'
+    min = 0
+    max = 0
+    seed = 363192
+    outputs = exodus
+  [../]
+[]
+
 [Preconditioning]
   [./SMP]
     type = SMP
@@ -294,8 +314,6 @@ elem_type = TET4
 []
 
 [Outputs]
-  [./out1]
-    execute_on = 'initial timestep_end'
-    type = Exodus
-  [../]
+  execute_on = 'initial timestep_end'
+  exodus = true
 []
