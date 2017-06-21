@@ -37,7 +37,7 @@ protected:
 
   virtual Real computeQpJacobian() override;
 
-  //const VariableValue & _temp;
+  const VariableValue & _temp;
   //const VariableGradient & _grad_temp;
   const MaterialProperty<Real> & _Ra;
   //const MaterialProperty<RealGradient> & _grad_Ra;

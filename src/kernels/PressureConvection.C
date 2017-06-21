@@ -38,7 +38,7 @@ Real PressureConvection::computeQpResidual()
   RealVectorValue _advection_speed = RealVectorValue(-_grad_p[_qp](0), -_grad_p[_qp](1));//, -_grad_p[_qp](2));
   //return _test[_i][_qp]*(_heat_capacity[_qp]*_porosity[_qp]
   //        *_advection_speed*_grad_u[_qp]);
-  //_advection_speed(_component) += _Ra[_qp]*_u[_qp];
+  _advection_speed(_component) += _Ra[_qp]*_u[_qp];
   return _test[_i][_qp]*(_advection_speed*_grad_u[_qp]);
 
 }
@@ -48,6 +48,6 @@ Real PressureConvection::computeQpJacobian()
   RealVectorValue _advection_speed = RealVectorValue(-_grad_p[_qp](0), -_grad_p[_qp](1));//, -_grad_p[_qp](2));
   //return _test[_i][_qp]*(_heat_capacity[_qp]*_porosity[_qp]
   //        *_advection_speed*_grad_phi[_j][_qp]);
-  //_advection_speed(_component) += _Ra[_qp]*_u[_qp];
+  _advection_speed(_component) += _Ra[_qp]*_u[_qp];
   return _test[_i][_qp]*(_advection_speed*_grad_phi[_j][_qp]);
 }

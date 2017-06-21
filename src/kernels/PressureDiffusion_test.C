@@ -19,7 +19,7 @@ InputParameters validParams<PressureDiffusion_test>()
 {
   InputParameters params = validParams<Diffusion>();
   // Here we will look for a parameter from the input file
-  //params.addCoupledVar("temperature","temperature is required for PressureDiffusion_test.");
+  params.addCoupledVar("temperature","temperature is required for PressureDiffusion_test.");
   params.addParam<unsigned>("component", "x y z component");
   params.addParam<Real>("sign", "The positive or negative sign of stream");
   return params;
@@ -28,7 +28,7 @@ InputParameters validParams<PressureDiffusion_test>()
 PressureDiffusion_test::PressureDiffusion_test(const InputParameters & parameters) :
     Diffusion(parameters),
     // Initialize our member variable based on a default or input file
-    //_temp(coupledValue("temperature")),
+    _temp(coupledValue("temperature")),
     //_grad_temp(coupledGradient("temperature")),
     _Ra(getMaterialProperty<Real>("rayleigh_material")),
     //_grad_Ra(getMaterialProperty<RealGradient>("rayleigh")),
@@ -39,8 +39,8 @@ PressureDiffusion_test::PressureDiffusion_test(const InputParameters & parameter
 Real
 PressureDiffusion_test::computeQpResidual()
 {
-  RealVectorValue _gravity = RealVectorValue(0, -1.0, 0);
-  return Diffusion::computeQpResidual() + _sign*_grad_test[_i][_qp]*_Ra[_qp]*_gravity;
+  //RealVectorValue _gravity = RealVectorValue(0, -1.0, 0);
+  return Diffusion::computeQpResidual() + _sign*_grad_test[_i][_qp](1)*_Ra[_qp]*_temp[_qp];//*_gravity;
 }
 
 Real

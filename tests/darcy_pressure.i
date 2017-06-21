@@ -58,8 +58,15 @@ elem_type = TRI3
 []
 
 [Functions]
-  active = 'ra_func' #'ic_func ra_func'
+  active = 'ic_func ic_func_temp ra_func'
   [./ic_func]
+    type = ParsedFunction
+    value = '(1.0-y)*10'
+    #vars = 'alpha'
+    #vals = '16'
+  [../]
+
+  [./ic_func_temp]
     type = ParsedFunction
     value = '(1.0-y)*1'
     #vars = 'alpha'
@@ -68,24 +75,24 @@ elem_type = TRI3
 
   [./ra_func]
     type = ParsedFunction
-    value = '5'#'(1.0-y)*100'
+    value = '0'#'(1.0-y)*100'
     #vars = 'alpha'
     #vals = '16'
   [../]
 []
 
 [ICs]
-  active = '' #'mat_2'
+  active = 'mat_1 mat_2'
   [./mat_1]
     type = FunctionIC
-    variable = temp
+    variable = pressure
     function = ic_func
   [../]
 
   [./mat_2]
     type = FunctionRandomIC
     variable = temp
-    function = ic_func
+    function = ic_func_temp
     min = -0.01
     max = 0.01
     seed = 524685
@@ -96,11 +103,11 @@ elem_type = TRI3
 [Kernels]
   active = 'mass diff conv euler'
   [./mass]
-    type = PressureDiffusion
+    type = PressureDiffusion_test
     variable = pressure
     temperature = temp
     component = 1
-    sign = 1 #positive
+    sign = 1.0 #positive
   [../]
 
   [./diff]
@@ -147,15 +154,15 @@ elem_type = TRI3
   [./velocity_x_aux]
     type = VariableGradientComponent
     variable = velocity_x
-    gradient_variable = stream
-    component = 'y'
+    gradient_variable = pressure
+    component = 'x'
   [../]
 
   [./velocity_y_aux]
     type = VariableGradientComponent
     variable = velocity_y
-    gradient_variable = stream
-    component = 'x'
+    gradient_variable = pressure
+    component = 'y'
   [../]
 []
 
@@ -220,8 +227,8 @@ elem_type = TRI3
   start_time = 0
   end_time = 2.0
   scheme = 'crank-nicolson'
-  l_max_its = 40
-  nl_max_its = 20
+  l_max_its = 1000
+  nl_max_its = 200
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
   #petsc_options_iname = '-pc_type -pc_hypre_type'
   #petsc_options_value = 'hypre boomeramg'
@@ -242,6 +249,6 @@ elem_type = TRI3
 []
 
 [Outputs]
-  execute_on = 'initial timestep_end'
+  execute_on = 'timestep_end'
   exodus = true
 []

@@ -61,8 +61,9 @@ elem_type = TRI3
   [./mass]
     type = PressureDiffusion_test
     variable = pressure
+    temperature = temp
     component = 1
-    sign = -1 #positive
+    sign = 1 #positive
   [../]
 
   [./euler]
