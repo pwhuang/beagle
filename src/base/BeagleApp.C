@@ -23,6 +23,7 @@
 #include "PressureConvection.h"
 #include "StreamDiffusion.h"
 #include "PressureDiffusion.h"
+#include "PressureDiffusion_test.h"
 #include "Supg.h"
 
 //AuxKernel
@@ -85,6 +86,7 @@ BeagleApp::registerObjects(Factory & factory)
     registerKernel(PressureConvection);
     registerKernel(StreamDiffusion);
     registerKernel(PressureDiffusion);
+    registerKernel(PressureDiffusion_test);
     registerKernel(Supg);
     registerInitialCondition(FunctionRandomIC);
     registerAux(AuxDensity);

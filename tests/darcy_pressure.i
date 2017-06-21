@@ -3,7 +3,7 @@ type = GeneratedMesh
 dim = 2
 
 nx = 100
-ny = 50
+ny = 200
 
 xmin = 0.0
 xmax = 2.0
@@ -15,23 +15,24 @@ elem_type = TRI3
 []
 
 [MeshModifiers]
-  active = 'corner_node'
+  active = 'corner_node corner_node1'
   [./corner_node]
     type = AddExtraNodeset
     new_boundary = 'pinned_node'
     #nodes = '0'
-    coord = '0 1.0'
+    coord = '0.0 1.0'
   [../]
 
   [./corner_node1]
     type = AddExtraNodeset
     new_boundary = 'pinned_node2'
     #nodes = '0'
-    coord = '2.0 0.2'
+    coord = '2.0 1.0'
   [../]
 []
 
 [Variables]
+  active = 'pressure temp'
   [./pressure]
     order = FIRST
     family = LAGRANGE
@@ -57,7 +58,7 @@ elem_type = TRI3
 []
 
 [Functions]
-  active = 'ic_func ra_func'
+  active = 'ra_func' #'ic_func ra_func'
   [./ic_func]
     type = ParsedFunction
     value = '(1.0-y)*1'
@@ -67,14 +68,14 @@ elem_type = TRI3
 
   [./ra_func]
     type = ParsedFunction
-    value = '50'#'(1.0-y)*100'
+    value = '5'#'(1.0-y)*100'
     #vars = 'alpha'
     #vals = '16'
   [../]
 []
 
 [ICs]
-  active = 'mat_2'
+  active = '' #'mat_2'
   [./mat_1]
     type = FunctionIC
     variable = temp
@@ -221,15 +222,15 @@ elem_type = TRI3
   scheme = 'crank-nicolson'
   l_max_its = 40
   nl_max_its = 20
-  petsc_options = '-snes_mf_operator' #-ksp_monitor'
-  petsc_options_iname = '-pc_type -pc_hypre_type'
-  petsc_options_value = 'hypre boomeramg'
+  #petsc_options = '-snes_mf_operator' #-ksp_monitor'
+  #petsc_options_iname = '-pc_type -pc_hypre_type'
+  #petsc_options_value = 'hypre boomeramg'
 []
 
 [Postprocessors]
   [./Nusselt]
     type = SideFluxAverage
-    variable = temp
+    variable = pressure #temp
     boundary = 'top'
     diffusivity = 1.0
   [../]

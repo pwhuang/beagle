@@ -12,24 +12,24 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "PressureDiffusion.h"
+#include "PressureDiffusion_test.h"
 
 template<>
-InputParameters validParams<PressureDiffusion>()
+InputParameters validParams<PressureDiffusion_test>()
 {
   InputParameters params = validParams<Diffusion>();
   // Here we will look for a parameter from the input file
-  params.addCoupledVar("temperature", "temperature is required for PressureDiffusion.");
+  //params.addCoupledVar("temperature","temperature is required for PressureDiffusion_test.");
   params.addParam<unsigned>("component", "x y z component");
   params.addParam<Real>("sign", "The positive or negative sign of stream");
   return params;
 }
 
-PressureDiffusion::PressureDiffusion(const InputParameters & parameters) :
+PressureDiffusion_test::PressureDiffusion_test(const InputParameters & parameters) :
     Diffusion(parameters),
     // Initialize our member variable based on a default or input file
-    _temp(coupledValue("temperature")),
-    _grad_temp(coupledGradient("temperature")),
+    //_temp(coupledValue("temperature")),
+    //_grad_temp(coupledGradient("temperature")),
     _Ra(getMaterialProperty<Real>("rayleigh_material")),
     //_grad_Ra(getMaterialProperty<RealGradient>("rayleigh")),
     _component(getParam<unsigned>("component")),
@@ -37,15 +37,14 @@ PressureDiffusion::PressureDiffusion(const InputParameters & parameters) :
 {}
 
 Real
-PressureDiffusion::computeQpResidual()
+PressureDiffusion_test::computeQpResidual()
 {
-  return Diffusion::computeQpResidual() //+ _sign*_test[_i][_qp]*_Ra[_qp]*_grad_temp[_qp](_component);
-          //+ _grad_test[_i][_qp]*_temp[_qp]/_Ra[_qp]*_grad_Ra[_qp](_component);
-          + _sign*_grad_test[_i][_qp](_component)*_Ra[_qp]*_temp[_qp];
+  RealVectorValue _gravity = RealVectorValue(0, -1.0, 0);
+  return Diffusion::computeQpResidual() + _sign*_grad_test[_i][_qp]*_Ra[_qp]*_gravity;
 }
 
 Real
-PressureDiffusion::computeQpJacobian()
+PressureDiffusion_test::computeQpJacobian()
 {
   return Diffusion::computeQpJacobian();
 }

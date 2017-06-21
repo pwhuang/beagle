@@ -39,7 +39,7 @@ elem_type = TRI3
   [./temp]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0
+    #initial_condition = 0
   [../]
 []
 
@@ -73,7 +73,7 @@ elem_type = TRI3
 []
 
 [ICs]
-  active = ''
+  active = 'mat_2'
   [./mat_1]
     type = FunctionIC
     variable = temp
