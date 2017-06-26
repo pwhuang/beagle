@@ -12,38 +12,44 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef PressureConvection_H
-#define PressureConvection_H
+#ifndef DarcyVelocity_H
+#define DarcyVelocity_H
 
-#include "Kernel.h"
+#include "AuxKernel.h"
 
-class PressureConvection;
+
+//Forward Declarations
+class DarcyVelocity;
 
 template<>
-InputParameters validParams<PressureConvection>();
+InputParameters validParams<DarcyVelocity>();
 
-class PressureConvection : public Kernel
+/**
+ * Coupled auxiliary value
+ */
+class DarcyVelocity : public AuxKernel
 {
 public:
 
-  PressureConvection(const InputParameters & parameters);
+  /**
+   * Factory constructor, takes parameters so that all derived classes can be built using the same
+   * constructor.
+   */
+  DarcyVelocity(const InputParameters & parameters);
 
 protected:
+  virtual Real computeValue() override;
 
-  virtual Real computeQpResidual() override;
-
-  virtual Real computeQpJacobian() override;
-
-private:
-
-  //const MaterialProperty<Real> & _heat_capacity;
-  //Real _Ra;
-  const VariableGradient & _grad_p;
-  const VariableValue & _vel_x;
-  const VariableValue & _vel_y;
+  //const MaterialProperty<Real> & _permeability;
+  //const MaterialProperty<Real> & _viscosity;
+  //const MaterialProperty<Real> & _density;
+  const VariableGradient & _grad_pressure;
+  const VariableValue & _temp;
+  //RealVectorValue _gravity;
+  unsigned _component;
   const MaterialProperty<Real> & _Ra;
-  const unsigned _component;
-  //RealVectorValue _advection_speed;
+  Real _temp_ref;
+  //Real _value;
 };
 
-#endif //PressureConvection_H
+#endif //EXAMPLEAUX_H

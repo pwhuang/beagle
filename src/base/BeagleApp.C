@@ -30,6 +30,7 @@
 #include "AuxDensity.h"
 #include "AuxVelocity.h"
 #include "VariableGradientSign.h"
+#include "DarcyVelocity.h"
 
 //Materials
 #include "PorousMaterial.h"
@@ -92,6 +93,7 @@ BeagleApp::registerObjects(Factory & factory)
     registerAux(AuxDensity);
     registerAux(AuxVelocity);
     registerAux(VariableGradientSign);
+    registerAux(DarcyVelocity);
     registerMaterial(PorousMaterial);
     registerMaterial(RayleighMaterial);
 }

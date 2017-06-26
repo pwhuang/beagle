@@ -11,7 +11,7 @@ xmax = 2.0
 ymin = 0.0
 ymax = 1.0
 
-elem_type = TRI3
+elem_type = TRI6
 []
 
 [MeshModifiers]
@@ -33,7 +33,6 @@ elem_type = TRI3
 []
 
 [AuxVariables]
-  active = ''
   [./velocity_x]
     order = CONSTANT
     family = MONOMIAL
@@ -49,7 +48,7 @@ elem_type = TRI3
   active = 'ra_func'
   [./ra_func]
     type = ParsedFunction
-    value = '10'#'(1.0-y)*100'
+    value = '50'#'(1.0-y)*100'
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -61,9 +60,9 @@ elem_type = TRI3
   [./mass]
     type = PressureDiffusion_test
     variable = pressure
-    temperature = temp
+    temperature = 1
     component = 1
-    sign = 1 #positive
+    sign = -1
   [../]
 
   [./euler]
@@ -74,24 +73,25 @@ elem_type = TRI3
 []
 
 [AuxKernels]
-  active = ''
   [./velocity_x_aux]
-    type = VariableGradientComponent
+    type = DarcyVelocity
     variable = velocity_x
-    gradient_variable = stream
-    component = 'y'
+    pressure = pressure
+    temperature = 0.0
+    component = 0
   [../]
 
   [./velocity_y_aux]
-    type = VariableGradientComponent
+    type = DarcyVelocity
     variable = velocity_y
-    gradient_variable = stream
-    component = 'x'
+    pressure = pressure
+    temperature = 1.0
+    component = 1
   [../]
 []
 
 [BCs]
-  active = 'pressure_point_bc'#'pressure_bc bottom_bc'
+  active = 'pressure_bc'#'pressure_bc bottom_bc'
   [./pressure_point_bc]
     type = DirichletBC
     variable = pressure
@@ -147,6 +147,6 @@ elem_type = TRI3
 []
 
 [Outputs]
-  execute_on = 'initial timestep_end'
+  execute_on = 'timestep_end'
   exodus = true
 []

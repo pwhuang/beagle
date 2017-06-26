@@ -11,7 +11,7 @@ xmax = 2.0
 ymin = 0.0
 ymax = 1.0
 
-elem_type = TRI3
+elem_type = QUAD4
 []
 
 [MeshModifiers]
@@ -40,12 +40,12 @@ elem_type = TRI3
   [./temp]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0
+    initial_condition = 0.0
   [../]
 []
 
 [AuxVariables]
-  active = ''
+  #active = ''
   [./velocity_x]
     order = CONSTANT
     family = MONOMIAL
@@ -58,7 +58,7 @@ elem_type = TRI3
 []
 
 [Functions]
-  active = 'ic_func ic_func_temp ra_func'
+  active = 'ic_func ra_func ic_func_temp'
   [./ic_func]
     type = ParsedFunction
     value = '(1.0-y)*10'
@@ -75,14 +75,14 @@ elem_type = TRI3
 
   [./ra_func]
     type = ParsedFunction
-    value = '0'#'(1.0-y)*100'
+    value = '40'#'(1.0-y)*100'
     #vars = 'alpha'
     #vals = '16'
   [../]
 []
 
 [ICs]
-  active = 'mat_1 mat_2'
+  active = ''
   [./mat_1]
     type = FunctionIC
     variable = pressure
@@ -93,8 +93,8 @@ elem_type = TRI3
     type = FunctionRandomIC
     variable = temp
     function = ic_func_temp
-    min = -0.01
-    max = 0.01
+    min = 0
+    max = 0
     seed = 524685
   [../]
 []
@@ -107,7 +107,7 @@ elem_type = TRI3
     variable = pressure
     temperature = temp
     component = 1
-    sign = 1.0 #positive
+    sign = -1.0 #negative
   [../]
 
   [./diff]
@@ -121,6 +121,8 @@ elem_type = TRI3
     variable = temp
     pressure = pressure
     component = 1
+    velocity_x = velocity_x
+    velocity_y = velocity_y
     #Rayleigh_number = 61.36
   [../]
 
@@ -143,26 +145,28 @@ elem_type = TRI3
     type = Supg
     variable = temp
     advection_speed = velocity_y
-    h = 0.05
+    h = 0.005
     beta = 1.0
     component = 1
   [../]
 []
 
 [AuxKernels]
-  active = ''
+  #active = ''
   [./velocity_x_aux]
-    type = VariableGradientComponent
+    type = DarcyVelocity
     variable = velocity_x
-    gradient_variable = pressure
-    component = 'x'
+    pressure = pressure
+    temperature = 0
+    component = 0
   [../]
 
   [./velocity_y_aux]
-    type = VariableGradientComponent
+    type = DarcyVelocity
     variable = velocity_y
-    gradient_variable = pressure
-    component = 'y'
+    pressure = pressure
+    temperature = temp
+    component = 1
   [../]
 []
 
@@ -171,7 +175,7 @@ elem_type = TRI3
   [./no_flux_bc]
     type = DirichletBC
     variable = pressure
-    boundary = 'pinned_node'
+    boundary = 'top' #'pinned_node'
     value = 0.0
   [../]
 
@@ -187,13 +191,6 @@ elem_type = TRI3
     variable = temp
     boundary = 'bottom'
     value = 1.0
-  [../]
-
-  [./point_temp]
-    type = DirichletBC
-    variable = temp
-    boundary = 'pinned_node pinned_node2'
-    value = 0.7
   [../]
 []
 
@@ -225,19 +222,19 @@ elem_type = TRI3
   dt = 0.02
   dtmin = 0.001
   start_time = 0
-  end_time = 2.0
+  end_time = 10.0
   scheme = 'crank-nicolson'
-  l_max_its = 1000
+  l_max_its = 200
   nl_max_its = 200
-  #petsc_options = '-snes_mf_operator' #-ksp_monitor'
-  #petsc_options_iname = '-pc_type -pc_hypre_type'
-  #petsc_options_value = 'hypre boomeramg'
+  petsc_options = '-snes_mf_operator' #-ksp_monitor'
+  petsc_options_iname = '-pc_type -pc_hypre_type'
+  petsc_options_value = 'hypre boomeramg'
 []
 
 [Postprocessors]
   [./Nusselt]
     type = SideFluxAverage
-    variable = pressure #temp
+    variable = temp
     boundary = 'top'
     diffusivity = 1.0
   [../]
