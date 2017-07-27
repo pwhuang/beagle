@@ -29,6 +29,7 @@ PressureDiffusion_test::PressureDiffusion_test(const InputParameters & parameter
     Diffusion(parameters),
     // Initialize our member variable based on a default or input file
     _temp(coupledValue("temperature")),
+    _temp_var_num(coupled("temperature")),
     //_grad_temp(coupledGradient("temperature")),
     _Ra(getMaterialProperty<Real>("rayleigh_material")),
     //_grad_Ra(getMaterialProperty<RealGradient>("rayleigh")),
@@ -40,11 +41,23 @@ Real
 PressureDiffusion_test::computeQpResidual()
 {
   //RealVectorValue _gravity = RealVectorValue(0, -1.0, 0);
-  return Diffusion::computeQpResidual() + _sign*_grad_test[_i][_qp](1)*_Ra[_qp]*_temp[_qp];//*_gravity;
+  return Diffusion::computeQpResidual() + _sign*_grad_test[_i][_qp](_component)*_Ra[_qp]*_temp[_qp];//*_gravity;
 }
 
 Real
 PressureDiffusion_test::computeQpJacobian()
 {
   return Diffusion::computeQpJacobian();
+}
+
+
+Real
+PressureDiffusion_test::computeQpOffDiagJacobian(unsigned jvar)
+{
+  //Since the problem only has P and T, I would say the numbering is not important here.
+  //However, I should be more careful when I have more than 2 variables.
+  if(jvar == _temp_var_num)
+    return _sign*_grad_test[_i][_qp](1)*_Ra[_qp]*_phi[_j][_qp];
+  else
+    return 0;
 }

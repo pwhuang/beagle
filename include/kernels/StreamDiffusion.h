@@ -36,9 +36,11 @@ protected:
   virtual Real computeQpResidual() override;
 
   virtual Real computeQpJacobian() override;
+  virtual Real computeQpOffDiagJacobian(unsigned jvar) override;
 
   const VariableValue & _temp;
   const VariableGradient & _grad_temp;
+  unsigned _temp_var_num;
   const MaterialProperty<Real> & _Ra;
   //const MaterialProperty<RealGradient> & _grad_Ra;
   unsigned _component;

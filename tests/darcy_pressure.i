@@ -2,11 +2,11 @@
 type = GeneratedMesh
 dim = 2
 
-nx = 100
-ny = 200
+nx = 80
+ny = 40
 
 xmin = 0.0
-xmax = 2.0
+xmax = 4.0
 
 ymin = 0.0
 ymax = 1.0
@@ -15,19 +15,12 @@ elem_type = QUAD4
 []
 
 [MeshModifiers]
-  active = 'corner_node corner_node1'
+  active = ''
   [./corner_node]
     type = AddExtraNodeset
     new_boundary = 'pinned_node'
     #nodes = '0'
     coord = '0.0 1.0'
-  [../]
-
-  [./corner_node1]
-    type = AddExtraNodeset
-    new_boundary = 'pinned_node2'
-    #nodes = '0'
-    coord = '2.0 1.0'
   [../]
 []
 
@@ -75,7 +68,7 @@ elem_type = QUAD4
 
   [./ra_func]
     type = ParsedFunction
-    value = '40'#'(1.0-y)*100'
+    value = '40.0' #Rayleigh_number is set to be negative due to downwards gravity.
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -121,8 +114,6 @@ elem_type = QUAD4
     variable = temp
     pressure = pressure
     component = 1
-    velocity_x = velocity_x
-    velocity_y = velocity_y
     #Rayleigh_number = 61.36
   [../]
 
