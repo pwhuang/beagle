@@ -1,28 +1,13 @@
 [Mesh]
-  file = 'tests/single_layer.msh'
-  block_id = '11'
-  block_name = 'layer1'
-
-  boundary_id = '5 6 7 8'
-  boundary_name = 'bottom right top left'
-
-  distribution = PARALLEL
+  file = 'tests/mesh_fine.msh'
+  dim = 2
 []
 
 [MeshModifiers]
-  active = ''
-  [./corner_node]
-    type = AddExtraNodeset
-    new_boundary = 'pinned_node'
-    #nodes = '0'
-    coord = '0 0.8'
-  [../]
-
-  [./corner_node1]
-    type = AddExtraNodeset
-    new_boundary = 'pinned_node2'
-    #nodes = '0'
-    coord = '2.0 0.2'
+  [./scale]
+    type = Transform
+    transform = SCALE
+    vector_value = '0.0000645 0.0000645 0.0000645'
   [../]
 []
 
@@ -61,7 +46,7 @@
 
   [./ra_func]
     type = ParsedFunction
-    value = '50*x'
+    value = 'x*50'#'(1.0-y)*100'
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -106,7 +91,6 @@
     type = RayleighConvection
     variable = temp
     stream_function = stream
-    #Rayleigh_number = 61.36
   [../]
 
   [./euler]
@@ -172,25 +156,77 @@
     boundary = 'bottom'
     value = 1.0
   [../]
-
-  [./point_temp]
-    type = DirichletBC
-    variable = temp
-    boundary = 'pinned_node pinned_node2'
-    value = 0.7
-  [../]
 []
 
 [Materials]
-  active = 'ra_output'
-  [./ra_output]
-    type = RayleighMaterial
-    block = 'layer1'
-    function = 'ra_func'
-    min = 0
-    max = 0
-    seed = 363192
-    outputs = exodus
+  [./basement]
+   type = RayleighMaterial
+   block = 'basement'
+   function = 0.02
+   min = 0
+   max = 0
+   seed = 363192
+   outputs = exodus
+  [../]
+
+  [./cattamarra_Coal_Measures]
+   type = RayleighMaterial
+   block = 'coal_layer'
+   function = 0.16
+   min = 0
+   max = 0
+   seed = 363192
+   outputs = exodus
+  [../]
+
+  [./west_block]
+   type = RayleighMaterial
+   block = 'west_block'
+   function = 1.88
+   min = 0
+   max = 0
+   seed = 363192
+   outputs = exodus
+  [../]
+
+  [./aquifer_near_surface] # Yarragadee
+   type = RayleighMaterial
+   block = 'aquifer_near_surface'
+   function = 383.86
+   min = 0
+   max = 0
+   seed = 363192
+   outputs = exodus
+  [../]
+
+  [./surface_layers] #neocomian uncorformity
+   type = RayleighMaterial
+   block = 'surface_layers'
+   function = 208.977
+   min = 0
+   max = 0
+   seed = 363192
+   outputs = exodus
+  [../]
+
+  [./aquifer_subsurface]
+   type = RayleighMaterial
+   block = 'aquifer_subsurface'
+   function = 15.6266
+   min = 0
+   max = 0
+   seed = 363192
+   outputs = exodus
+  [../]
+
+  [./moho]
+   type = RayleighMaterial
+   block = 'moho'
+   function = 0.02
+   min = 0
+   max = 0
+   seed = 363192
+   outputs = exodus
   [../]
 []
 
@@ -207,12 +243,12 @@
   solve_type = 'PJFNK'
   #num_steps = 20
   dt = 0.02
-  dtmin = 0.001
+  dtmin = 0.00001
   start_time = 0
-  end_time = 10.0
+  end_time = 20.0
   scheme = 'crank-nicolson'
-  l_max_its = 40
-  nl_max_its = 20
+  l_max_its = 80
+  nl_max_its = 30
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
   #petsc_options_iname = '-pc_type -pc_hypre_type'
   #petsc_options_value = 'hypre boomeramg'

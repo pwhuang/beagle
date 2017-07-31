@@ -35,6 +35,7 @@
 //Materials
 #include "PorousMaterial.h"
 #include "RayleighMaterial.h"
+#include "RayleighMaterialFunc.h"
 
 template<>
 InputParameters validParams<BeagleApp>()
@@ -96,6 +97,7 @@ BeagleApp::registerObjects(Factory & factory)
     registerAux(DarcyVelocity);
     registerMaterial(PorousMaterial);
     registerMaterial(RayleighMaterial);
+    registerMaterial(RayleighMaterialFunc);
 }
 
 // External entry point for dynamic syntax association

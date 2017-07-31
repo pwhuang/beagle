@@ -12,27 +12,27 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef RayleighMaterial_H
-#define RayleighMaterial_H
+#ifndef RayleighMaterialFunc_H
+#define RayleighMaterialFunc_H
 
 #include "Material.h"
 #include "Function.h"
 #include "MooseRandom.h"
 
 //Forward Declarations
-class RayleighMaterial;
+class RayleighMaterialFunc;
 class Function;
 
 template<>
-InputParameters validParams<RayleighMaterial>();
+InputParameters validParams<RayleighMaterialFunc>();
 
 /**
  * Example material class that defines a few properties.
  */
-class RayleighMaterial : public Material
+class RayleighMaterialFunc : public Material
 {
 public:
-  RayleighMaterial(const InputParameters & parameters);
+  RayleighMaterialFunc(const InputParameters & parameters);
 
 protected:
   virtual void computeQpProperties() override;
@@ -46,4 +46,4 @@ protected:
   Real _range;
 };
 
-#endif //RayleighMaterial_H
+#endif //RayleighMaterialFunc_H

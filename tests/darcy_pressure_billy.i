@@ -1,44 +1,31 @@
 [Mesh]
-  file = 'tests/single_layer.msh'
-  block_id = '11'
-  block_name = 'layer1'
-
-  boundary_id = '5 6 7 8'
-  boundary_name = 'bottom right top left'
-
-  distribution = PARALLEL
+  file = 'tests/mesh_fine.msh'
+  dim = 2
 []
 
 [MeshModifiers]
-  active = ''
-  [./corner_node]
-    type = AddExtraNodeset
-    new_boundary = 'pinned_node'
-    #nodes = '0'
-    coord = '0 0.8'
-  [../]
-
-  [./corner_node1]
-    type = AddExtraNodeset
-    new_boundary = 'pinned_node2'
-    #nodes = '0'
-    coord = '2.0 0.2'
+  [./scale]
+    type = Transform
+    transform = SCALE
+    vector_value = '0.0000645 0.0000645 0.0000645'
   [../]
 []
 
 [Variables]
-  [./stream]
+  active = 'pressure temp'
+  [./pressure]
     order = FIRST
     family = LAGRANGE
   [../]
   [./temp]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0
+    #initial_condition = 0.0
   [../]
 []
 
 [AuxVariables]
+  #active = ''
   [./velocity_x]
     order = CONSTANT
     family = MONOMIAL
@@ -51,8 +38,15 @@
 []
 
 [Functions]
-  active = 'ic_func ra_func'
+  active = 'ic_func ra_func ic_func_temp'
   [./ic_func]
+    type = ParsedFunction
+    value = '(1.0-y)*10'
+    #vars = 'alpha'
+    #vals = '16'
+  [../]
+
+  [./ic_func_temp]
     type = ParsedFunction
     value = '(1.0-y)*1'
     #vars = 'alpha'
@@ -61,7 +55,7 @@
 
   [./ra_func]
     type = ParsedFunction
-    value = '50*x'
+    value = '40' #'40.0' #Rayleigh_number is set to be negative due to downwards gravity.
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -71,16 +65,16 @@
   active = 'mat_2'
   [./mat_1]
     type = FunctionIC
-    variable = temp
+    variable = pressure
     function = ic_func
   [../]
 
   [./mat_2]
     type = FunctionRandomIC
     variable = temp
-    function = ic_func
-    min = -0.01
-    max = 0.01
+    function = ic_func_temp
+    min = 0
+    max = 0
     seed = 524685
   [../]
 []
@@ -89,11 +83,11 @@
 [Kernels]
   active = 'mass diff conv euler'
   [./mass]
-    type = StreamDiffusion
-    variable = stream
+    type = PressureDiffusion_test
+    variable = pressure
     temperature = temp
-    component = 0
-    sign = -1 #This is intended to be -1. Do not change this!
+    component = 1
+    sign = -1.0 #negative
   [../]
 
   [./diff]
@@ -103,9 +97,10 @@
   [../]
 
   [./conv]
-    type = RayleighConvection
+    type = PressureConvection
     variable = temp
-    stream_function = stream
+    pressure = pressure
+    component = 1
     #Rayleigh_number = 61.36
   [../]
 
@@ -128,7 +123,7 @@
     type = Supg
     variable = temp
     advection_speed = velocity_y
-    h = 0.05
+    h = 0.005
     beta = 1.0
     component = 1
   [../]
@@ -136,17 +131,19 @@
 
 [AuxKernels]
   [./velocity_x_aux]
-    type = VariableGradientComponent
+    type = DarcyVelocity
     variable = velocity_x
-    gradient_variable = stream
-    component = 'y'
+    pressure = pressure
+    temperature = 0
+    component = 0
   [../]
 
   [./velocity_y_aux]
-    type = VariableGradientComponent
+    type = DarcyVelocity
     variable = velocity_y
-    gradient_variable = stream
-    component = 'x'
+    pressure = pressure
+    temperature = temp
+    component = 1
   [../]
 []
 
@@ -154,8 +151,8 @@
   active = 'no_flux_bc top_temp bottom_temp'
   [./no_flux_bc]
     type = DirichletBC
-    variable = stream
-    boundary = 'top bottom left right'
+    variable = pressure
+    boundary = 'top' #'pinned_node'
     value = 0.0
   [../]
 
@@ -172,25 +169,77 @@
     boundary = 'bottom'
     value = 1.0
   [../]
-
-  [./point_temp]
-    type = DirichletBC
-    variable = temp
-    boundary = 'pinned_node pinned_node2'
-    value = 0.7
-  [../]
 []
 
 [Materials]
-  active = 'ra_output'
-  [./ra_output]
-    type = RayleighMaterial
-    block = 'layer1'
-    function = 'ra_func'
-    min = 0
-    max = 0
-    seed = 363192
-    outputs = exodus
+  [./basement]
+   type = RayleighMaterial
+   block = 'basement'
+   function = 0.02
+   min = 0
+   max = 0
+   seed = 363192
+   outputs = exodus
+  [../]
+
+  [./cattamarra_Coal_Measures]
+   type = RayleighMaterial
+   block = 'coal_layer'
+   function = 0.16
+   min = 0
+   max = 0
+   seed = 363192
+   outputs = exodus
+  [../]
+
+  [./west_block]
+   type = RayleighMaterial
+   block = 'west_block'
+   function = 1.88
+   min = 0
+   max = 0
+   seed = 363192
+   outputs = exodus
+  [../]
+
+  [./aquifer_near_surface] # Yarragadee
+   type = RayleighMaterial
+   block = 'aquifer_near_surface'
+   function = 383.86
+   min = 0
+   max = 0
+   seed = 363192
+   outputs = exodus
+  [../]
+
+  [./surface_layers] #neocomian uncorformity
+   type = RayleighMaterial
+   block = 'surface_layers'
+   function = 208.977
+   min = 0
+   max = 0
+   seed = 363192
+   outputs = exodus
+  [../]
+
+  [./aquifer_subsurface]
+   type = RayleighMaterial
+   block = 'aquifer_subsurface'
+   function = 15.6266
+   min = 0
+   max = 0
+   seed = 363192
+   outputs = exodus
+  [../]
+
+  [./moho]
+   type = RayleighMaterial
+   block = 'moho'
+   function = 0.02
+   min = 0
+   max = 0
+   seed = 363192
+   outputs = exodus
   [../]
 []
 
@@ -209,10 +258,10 @@
   dt = 0.02
   dtmin = 0.001
   start_time = 0
-  end_time = 10.0
+  end_time = 8.0
   scheme = 'crank-nicolson'
-  l_max_its = 40
-  nl_max_its = 20
+  l_max_its = 200
+  nl_max_its = 200
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
   #petsc_options_iname = '-pc_type -pc_hypre_type'
   #petsc_options_value = 'hypre boomeramg'
@@ -233,6 +282,6 @@
 []
 
 [Outputs]
-  execute_on = 'initial timestep_end'
+  execute_on = 'timestep_end'
   exodus = true
 []
