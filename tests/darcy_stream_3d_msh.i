@@ -1,17 +1,12 @@
 [Mesh]
-type = GeneratedMesh
-dim = 2
+  file = 'tests/3d.msh'
+  block_id = '33'
+  block_name = 'layer1'
 
-nx = 50
-ny = 100
+  boundary_id = '25 27 26 29 30 28'
+  boundary_name = 'top bottom front back right left'
 
-xmin = 0.0
-xmax = 2.0
-
-ymin = 0.0
-ymax = 1.0
-
-elem_type = TRI3
+  parallel_type = DEFAULT
 []
 
 [MeshModifiers]
@@ -20,19 +15,16 @@ elem_type = TRI3
     type = AddExtraNodeset
     new_boundary = 'pinned_node'
     #nodes = '0'
-    coord = '0 0.8'
-  [../]
-
-  [./corner_node1]
-    type = AddExtraNodeset
-    new_boundary = 'pinned_node2'
-    #nodes = '0'
-    coord = '2.0 0.2'
+    coord = '0 0 0'
   [../]
 []
 
 [Variables]
-  [./stream]
+  [./psi_1]
+    order = FIRST
+    family = LAGRANGE
+  [../]
+  [./psi_2]
     order = FIRST
     family = LAGRANGE
   [../]
@@ -44,13 +36,19 @@ elem_type = TRI3
 []
 
 [AuxVariables]
+  active = ''
   [./velocity_x]
-    order = CONSTANT
+    order = FIRST
     family = MONOMIAL
   [../]
 
   [./velocity_y]
-    order = CONSTANT
+    order = FIRST
+    family = MONOMIAL
+  [../]
+
+  [./velocity_z]
+    order = FIRST
     family = MONOMIAL
   [../]
 []
@@ -59,14 +57,14 @@ elem_type = TRI3
   active = 'ic_func ra_func'
   [./ic_func]
     type = ParsedFunction
-    value = '(1.0-y)*1'
+    value = '1.0-z'
     #vars = 'alpha'
     #vals = '16'
   [../]
 
   [./ra_func]
     type = ParsedFunction
-    value = 'x*50'  #'(1.0-y)*100'
+    value = '50'#'(1.0-y)*100'
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -86,19 +84,33 @@ elem_type = TRI3
     function = ic_func
     min = -0.01
     max = 0.01
-    seed = 524685
+    seed = 52468
   [../]
 []
 
-
 [Kernels]
-  active = 'mass diff conv euler'
+  active = 'stream1 stream2 diff conv euler'
   [./mass]
+    type = MassBalance
+    variable = temp
+    velocity_x = psi_1
+    velocity_y = psi_2
+  [../]
+
+  [./stream1]
     type = StreamDiffusion
-    variable = stream
+    variable = psi_1
+    component = 1
+    sign = -1.0
     temperature = temp
+  [../]
+
+  [./stream2]
+    type = StreamDiffusion
+    variable = psi_2
     component = 0
-    sign = -1 #This is intended to be -1. Do not change this!
+    sign = 1.0
+    temperature = temp
   [../]
 
   [./diff]
@@ -108,10 +120,11 @@ elem_type = TRI3
   [../]
 
   [./conv]
-    type = RayleighConvection
+    type = RayleighConvection3d
     variable = temp
-    stream_function = stream
-    #Rayleigh_number = 61.36
+    stream_function1 = psi_1
+    stream_function2 = psi_2
+    #Rayleigh_number = 100.0
   [../]
 
   [./euler]
@@ -119,62 +132,88 @@ elem_type = TRI3
     variable = temp
     time_coefficient = 1.0
   [../]
-
-  [./supg_x]
-    type = Supg
-    variable = temp
-    advection_speed = velocity_x
-    h = 0.05
-    beta = 1.0
-    component = 0
-  [../]
-
-  [./supg_y]
-    type = Supg
-    variable = temp
-    advection_speed = velocity_y
-    h = 0.05
-    beta = 1.0
-    component = 1
-  [../]
 []
 
 [AuxKernels]
+  active = ''
   [./velocity_x_aux]
-    type = VariableGradientComponent
+    type = VariableGradientSign
     variable = velocity_x
-    gradient_variable = stream
-    component = 'y'
+    gradient_variable = psi_2
+    component = 'z'
+    sign = -1.0
   [../]
 
   [./velocity_y_aux]
-    type = VariableGradientComponent
+    type = VariableGradientSign
     variable = velocity_y
-    gradient_variable = stream
+    gradient_variable = psi_1
+    component = 'z'
+    sign = 1.0
+  [../]
+
+  [./velocity_z_aux2]
+    type = VariableGradientSign
+    variable = velocity_z
+    gradient_variable = psi_2
     component = 'x'
+    sign = 1.0
+  [../]
+
+  [./velocity_z_aux1]
+    type = VariableGradientSign
+    variable = velocity_z
+    gradient_variable = psi_1
+    component = 'y'
+    sign = -1.0
   [../]
 []
 
 [BCs]
-  active = 'no_flux_bc top_temp bottom_temp'
-  [./no_flux_bc]
+  active = 'no_flow_1 no_flow_2 top_temp bottom_temp'
+
+  [./Periodic]
+      active = ''
+      # Can use auto_direction with Generated Meshes
+      [./auto_1]
+        variable = psi_1
+        auto_direction = 'x y'
+      [../]
+      [./auto_2]
+        variable = psi_2
+        auto_direction = 'x y'
+      [../]
+      [./auto_3]
+        variable = temp
+        auto_direction = 'x y'
+      [../]
+  [../]
+
+  [./no_flow_1]
     type = DirichletBC
-    variable = stream
-    boundary = 'top bottom left right'
-    value = 0.0
+    variable = psi_1
+    boundary = 'front back bottom top'
+    value = 0
+  [../]
+
+  [./no_flow_2]
+    type = DirichletBC
+    variable = psi_2
+    boundary = 'front back left right'
+    value = 0
   [../]
 
   [./top_temp]
     type = DirichletBC
     variable = temp
-    boundary = 'top'
+    boundary = 'front'
     value = 0.0
   [../]
 
   [./bottom_temp]
     type = DirichletBC
     variable = temp
-    boundary = 'bottom'
+    boundary = 'back'
     value = 1.0
   [../]
 
@@ -190,12 +229,12 @@ elem_type = TRI3
   active = 'ra_output'
   [./ra_output]
     type = RayleighMaterial
-    block = 0
+    block = 'layer1'
     function = 'ra_func'
     min = 0
     max = 0
     seed = 363192
-    outputs = exodus
+    outputs = nemesis
   [../]
 []
 
@@ -211,13 +250,13 @@ elem_type = TRI3
   type = Transient
   solve_type = 'PJFNK'
   #num_steps = 20
-  dt = 0.005
+  dt = 0.01
   dtmin = 0.001
   start_time = 0
-  end_time = 0.01
+  end_time = 0.02
   scheme = 'crank-nicolson'
-  l_max_its = 40
-  nl_max_its = 20
+  l_max_its = 80
+  nl_max_its = 30
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
   #petsc_options_iname = '-pc_type -pc_hypre_type'
   #petsc_options_value = 'hypre boomeramg'
@@ -227,7 +266,7 @@ elem_type = TRI3
   [./Nusselt]
     type = SideFluxAverage
     variable = temp
-    boundary = 'top'
+    boundary = 'front'
     diffusivity = 1.0
   [../]
 
@@ -239,5 +278,6 @@ elem_type = TRI3
 
 [Outputs]
   execute_on = 'initial timestep_end'
-  exodus = true
+  #exodus = true
+  nemesis = true
 []

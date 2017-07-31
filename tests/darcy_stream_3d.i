@@ -16,10 +16,11 @@ zmin = 0.0
 zmax = 1.0
 
 elem_type = TET4
+#parallel_type = DISTRIBUTED
 []
 
 [MeshModifiers]
-  active = 'corner_node'
+  active = ''
   [./corner_node]
     type = AddExtraNodeset
     new_boundary = 'pinned_node'
@@ -180,7 +181,6 @@ elem_type = TET4
 
 [BCs]
   active = 'no_flow_1 no_flow_2 top_temp bottom_temp'
-
   [./Periodic]
       active = ''
       # Can use auto_direction with Generated Meshes
@@ -271,7 +271,7 @@ elem_type = TET4
     min = 0
     max = 0
     seed = 363192
-    outputs = exodus
+    outputs = nemesis
   [../]
 []
 
@@ -315,5 +315,5 @@ elem_type = TET4
 
 [Outputs]
   execute_on = 'initial timestep_end'
-  exodus = true
+  nemesis = true
 []

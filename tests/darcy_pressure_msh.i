@@ -1,17 +1,13 @@
 [Mesh]
-type = GeneratedMesh
-dim = 2
+  file = 'tests/single_layer.msh'
+  block_id = '11'
+  block_name = 'layer1'
 
-nx = 40
-ny = 40
+  boundary_id = '5 6 7 8'
+  boundary_name = 'bottom right top left'
 
-xmin = 0.0
-xmax = 2.0
-
-ymin = 0.0
-ymax = 1.0
-
-elem_type = TRI3
+  parallel_type = DISTRIBUTED
+  #partitioner = linear
 []
 
 [MeshModifiers]
@@ -189,7 +185,7 @@ elem_type = TRI3
   active = 'ra_output'
   [./ra_output]
     type = RayleighMaterial
-    block = 0
+    block = 'layer1'
     function = 'ra_func'
     min = 0
     max = 0
@@ -213,7 +209,7 @@ elem_type = TRI3
   dt = 0.02
   dtmin = 0.001
   start_time = 0
-  end_time = 2.0
+  end_time = 8.0
   scheme = 'crank-nicolson'
   l_max_its = 200
   nl_max_its = 200
