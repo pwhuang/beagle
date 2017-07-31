@@ -30,7 +30,6 @@ StreamDiffusion::StreamDiffusion(const InputParameters & parameters) :
     // Initialize our member variable based on a default or input file
     _temp(coupledValue("temperature")),
     _grad_temp(coupledGradient("temperature")),
-    _temp_var_num(coupled("temperature")),
     _Ra(getMaterialProperty<Real>("rayleigh_material")),
     //_grad_Ra(getMaterialProperty<RealGradient>("rayleigh")),
     _component(getParam<unsigned>("component")),
@@ -48,14 +47,4 @@ Real
 StreamDiffusion::computeQpJacobian()
 {
   return Diffusion::computeQpJacobian();
-}
-
-
-Real
-StreamDiffusion::computeQpOffDiagJacobian(unsigned jvar)
-{
-  if(jvar == _temp_var_num)
-    return _sign*_test[_i][_qp]*_grad_phi[_j][_qp](_component);
-  else
-    return 0;
 }

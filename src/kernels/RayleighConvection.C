@@ -27,8 +27,7 @@ RayleighConvection::RayleighConvection(const InputParameters & parameters) :
     Kernel(parameters),
     _Ra(getMaterialProperty<Real>("rayleigh_material")),
     //_Ra(getParam<Real>("Rayleigh_number")),
-    _grad_stream(coupledGradient("stream_function")),
-    _grad_stream_var_num(coupled("stream_function"))
+    _grad_stream(coupledGradient("stream_function"))
 {}
 
 Real RayleighConvection::computeQpResidual()
@@ -46,14 +45,4 @@ Real RayleighConvection::computeQpJacobian()
   //return _test[_i][_qp]*(_heat_capacity[_qp]*_porosity[_qp]
   //        *_advection_speed*_grad_phi[_j][_qp]);
   return _test[_i][_qp]*_Ra[_qp]*(_advection_speed*_grad_phi[_j][_qp]);
-}
-
-Real RayleighConvection::computeQpOffDiagJacobian(unsigned jvar)
-{
-  RealVectorValue _advection_speed = RealVectorValue(_grad_phi[_j][_qp](1), -1.0*_grad_phi[_j][_qp](0));
-  if(jvar==_grad_stream_var_num)
-    return _test[_i][_qp]*_Ra[_qp]*(_advection_speed*_grad_u[_qp]);
-  else
-    return 0;
-
 }

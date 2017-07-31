@@ -2,8 +2,8 @@
 type = GeneratedMesh
 dim = 2
 
-nx = 50
-ny = 100
+nx = 100
+ny = 50
 
 xmin = 0.0
 xmax = 2.0
@@ -66,7 +66,7 @@ elem_type = TRI3
 
   [./ra_func]
     type = ParsedFunction
-    value = 'x*50'  #'(1.0-y)*100'
+    value = 'x*50'#'(1.0-y)*100'
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -211,10 +211,14 @@ elem_type = TRI3
   type = Transient
   solve_type = 'PJFNK'
   #num_steps = 20
-  dt = 0.005
+  dt = 0.02
   dtmin = 0.001
   start_time = 0
+<<<<<<< HEAD
   end_time = 0.01
+=======
+  end_time = 2.0
+>>>>>>> parent of c64b343... off diagonals fixed
   scheme = 'crank-nicolson'
   l_max_its = 40
   nl_max_its = 20

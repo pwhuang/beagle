@@ -2,8 +2,13 @@
 type = GeneratedMesh
 dim = 2
 
+<<<<<<< HEAD
 nx = 40
 ny = 40
+=======
+nx = 100
+ny = 200
+>>>>>>> parent of c64b343... off diagonals fixed
 
 xmin = 0.0
 xmax = 2.0
@@ -15,12 +20,19 @@ elem_type = TRI3
 []
 
 [MeshModifiers]
-  active = ''
+  active = 'corner_node corner_node1'
   [./corner_node]
     type = AddExtraNodeset
     new_boundary = 'pinned_node'
     #nodes = '0'
     coord = '0.0 1.0'
+  [../]
+
+  [./corner_node1]
+    type = AddExtraNodeset
+    new_boundary = 'pinned_node2'
+    #nodes = '0'
+    coord = '2.0 1.0'
   [../]
 []
 
@@ -68,7 +80,11 @@ elem_type = TRI3
 
   [./ra_func]
     type = ParsedFunction
+<<<<<<< HEAD
     value = '40' #'40.0' #Rayleigh_number is set to be negative due to downwards gravity.
+=======
+    value = '40'#'(1.0-y)*100'
+>>>>>>> parent of c64b343... off diagonals fixed
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -114,6 +130,8 @@ elem_type = TRI3
     variable = temp
     pressure = pressure
     component = 1
+    velocity_x = velocity_x
+    velocity_y = velocity_y
     #Rayleigh_number = 61.36
   [../]
 

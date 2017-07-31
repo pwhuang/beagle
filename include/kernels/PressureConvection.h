@@ -31,17 +31,16 @@ public:
 protected:
 
   virtual Real computeQpResidual() override;
+
   virtual Real computeQpJacobian() override;
-  virtual Real computeQpOffDiagJacobian(unsigned jvar) override;
 
 private:
 
   //const MaterialProperty<Real> & _heat_capacity;
   //Real _Ra;
   const VariableGradient & _grad_p;
-  unsigned _grad_p_var_num;
-  //const VariableValue & _vel_x;
-  //const VariableValue & _vel_y;
+  const VariableValue & _vel_x;
+  const VariableValue & _vel_y;
   const MaterialProperty<Real> & _Ra;
   const unsigned _component;
   //RealVectorValue _advection_speed;

@@ -31,15 +31,13 @@ class PressureDiffusion_test : public Diffusion
 public:
 
   PressureDiffusion_test(const InputParameters & parameters);
-  //virtual ~PressureDiffusion_test() {}
 
 protected:
   virtual Real computeQpResidual() override;
+
   virtual Real computeQpJacobian() override;
-  virtual Real computeQpOffDiagJacobian(unsigned jvar) override;
 
   const VariableValue & _temp;
-  unsigned _temp_var_num;
   //const VariableGradient & _grad_temp;
   const MaterialProperty<Real> & _Ra;
   //const MaterialProperty<RealGradient> & _grad_Ra;

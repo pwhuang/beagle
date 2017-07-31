@@ -33,7 +33,6 @@ protected:
   virtual Real computeQpResidual() override;
 
   virtual Real computeQpJacobian() override;
-  virtual Real computeQpOffDiagJacobian(unsigned jvar) override;
 
 private:
 
@@ -41,7 +40,6 @@ private:
   const MaterialProperty<Real> & _Ra;
   //Real _Ra;
   const VariableGradient & _grad_stream;
-  unsigned _grad_stream_var_num;
 };
 
 #endif //RAYLEIGHCONVECTION_H
