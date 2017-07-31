@@ -1,17 +1,13 @@
 [Mesh]
-type = GeneratedMesh
-dim = 2
+  file = 'tests/single_layer.msh'
+  block_id = '11'
+  block_name = 'layer1'
 
-nx = 80
-ny = 40
+  boundary_id = '5 6 7 8'
+  boundary_name = 'bottom right top left'
 
-xmin = 0.0
-xmax = 4.0
-
-ymin = 0.0
-ymax = 1.0
-
-elem_type = QUAD4
+  parallel_type = DISTRIBUTED
+  #partitioner = linear
 []
 
 [MeshModifiers]
@@ -33,7 +29,7 @@ elem_type = QUAD4
   [./temp]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.0
+    #initial_condition = 0.0
   [../]
 []
 
@@ -68,14 +64,14 @@ elem_type = QUAD4
 
   [./ra_func]
     type = ParsedFunction
-    value = '40.0' #Rayleigh_number is set to be negative due to downwards gravity.
+    value = '40' #'40.0' #Rayleigh_number is set to be negative due to downwards gravity.
     #vars = 'alpha'
     #vals = '16'
   [../]
 []
 
 [ICs]
-  active = ''
+  active = 'mat_2'
   [./mat_1]
     type = FunctionIC
     variable = pressure
@@ -189,7 +185,7 @@ elem_type = QUAD4
   active = 'ra_output'
   [./ra_output]
     type = RayleighMaterial
-    block = 0
+    block = 'layer1'
     function = 'ra_func'
     min = 0
     max = 0
@@ -213,13 +209,13 @@ elem_type = QUAD4
   dt = 0.02
   dtmin = 0.001
   start_time = 0
-  end_time = 10.0
+  end_time = 8.0
   scheme = 'crank-nicolson'
   l_max_its = 200
   nl_max_its = 200
-  petsc_options = '-snes_mf_operator' #-ksp_monitor'
-  petsc_options_iname = '-pc_type -pc_hypre_type'
-  petsc_options_value = 'hypre boomeramg'
+  #petsc_options = '-snes_mf_operator' #-ksp_monitor'
+  #petsc_options_iname = '-pc_type -pc_hypre_type'
+  #petsc_options_value = 'hypre boomeramg'
 []
 
 [Postprocessors]

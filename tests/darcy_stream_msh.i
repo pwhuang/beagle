@@ -1,17 +1,12 @@
 [Mesh]
-type = GeneratedMesh
-dim = 2
+  file = 'tests/single_layer.msh'
+  block_id = '11'
+  block_name = 'layer1'
 
-nx = 80
-ny = 40
+  boundary_id = '5 6 7 8'
+  boundary_name = 'bottom right top left'
 
-xmin = 0.0
-xmax = 4.0
-
-ymin = 0.0
-ymax = 1.0
-
-elem_type = QUAD4
+  distribution = PARALLEL
 []
 
 [MeshModifiers]
@@ -20,25 +15,30 @@ elem_type = QUAD4
     type = AddExtraNodeset
     new_boundary = 'pinned_node'
     #nodes = '0'
-    coord = '0.0 1.0'
+    coord = '0 0.8'
+  [../]
+
+  [./corner_node1]
+    type = AddExtraNodeset
+    new_boundary = 'pinned_node2'
+    #nodes = '0'
+    coord = '2.0 0.2'
   [../]
 []
 
 [Variables]
-  active = 'pressure temp'
-  [./pressure]
+  [./stream]
     order = FIRST
     family = LAGRANGE
   [../]
   [./temp]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.0
+    #initial_condition = 0
   [../]
 []
 
 [AuxVariables]
-  #active = ''
   [./velocity_x]
     order = CONSTANT
     family = MONOMIAL
@@ -51,15 +51,8 @@ elem_type = QUAD4
 []
 
 [Functions]
-  active = 'ic_func ra_func ic_func_temp'
+  active = 'ic_func ra_func'
   [./ic_func]
-    type = ParsedFunction
-    value = '(1.0-y)*10'
-    #vars = 'alpha'
-    #vals = '16'
-  [../]
-
-  [./ic_func_temp]
     type = ParsedFunction
     value = '(1.0-y)*1'
     #vars = 'alpha'
@@ -68,26 +61,26 @@ elem_type = QUAD4
 
   [./ra_func]
     type = ParsedFunction
-    value = '40.0' #Rayleigh_number is set to be negative due to downwards gravity.
+    value = 'x*50'#'(1.0-y)*100'
     #vars = 'alpha'
     #vals = '16'
   [../]
 []
 
 [ICs]
-  active = ''
+  active = 'mat_2'
   [./mat_1]
     type = FunctionIC
-    variable = pressure
+    variable = temp
     function = ic_func
   [../]
 
   [./mat_2]
     type = FunctionRandomIC
     variable = temp
-    function = ic_func_temp
-    min = 0
-    max = 0
+    function = ic_func
+    min = -0.01
+    max = 0.01
     seed = 524685
   [../]
 []
@@ -96,11 +89,11 @@ elem_type = QUAD4
 [Kernels]
   active = 'mass diff conv euler'
   [./mass]
-    type = PressureDiffusion_test
-    variable = pressure
+    type = StreamDiffusion
+    variable = stream
     temperature = temp
-    component = 1
-    sign = -1.0 #negative
+    component = 0
+    sign = -1 #This is intended to be -1. Do not change this!
   [../]
 
   [./diff]
@@ -110,10 +103,9 @@ elem_type = QUAD4
   [../]
 
   [./conv]
-    type = PressureConvection
+    type = RayleighConvection
     variable = temp
-    pressure = pressure
-    component = 1
+    stream_function = stream
     #Rayleigh_number = 61.36
   [../]
 
@@ -136,28 +128,25 @@ elem_type = QUAD4
     type = Supg
     variable = temp
     advection_speed = velocity_y
-    h = 0.005
+    h = 0.05
     beta = 1.0
     component = 1
   [../]
 []
 
 [AuxKernels]
-  #active = ''
   [./velocity_x_aux]
-    type = DarcyVelocity
+    type = VariableGradientComponent
     variable = velocity_x
-    pressure = pressure
-    temperature = 0
-    component = 0
+    gradient_variable = stream
+    component = 'y'
   [../]
 
   [./velocity_y_aux]
-    type = DarcyVelocity
+    type = VariableGradientComponent
     variable = velocity_y
-    pressure = pressure
-    temperature = temp
-    component = 1
+    gradient_variable = stream
+    component = 'x'
   [../]
 []
 
@@ -165,8 +154,8 @@ elem_type = QUAD4
   active = 'no_flux_bc top_temp bottom_temp'
   [./no_flux_bc]
     type = DirichletBC
-    variable = pressure
-    boundary = 'top' #'pinned_node'
+    variable = stream
+    boundary = 'top bottom left right'
     value = 0.0
   [../]
 
@@ -183,18 +172,25 @@ elem_type = QUAD4
     boundary = 'bottom'
     value = 1.0
   [../]
+
+  [./point_temp]
+    type = DirichletBC
+    variable = temp
+    boundary = 'pinned_node pinned_node2'
+    value = 0.7
+  [../]
 []
 
 [Materials]
   active = 'ra_output'
   [./ra_output]
     type = RayleighMaterial
-    block = 0
+    block = 'layer1'
     function = 'ra_func'
     min = 0
     max = 0
     seed = 363192
-    outputs = exodus
+    outputs = nemesis
   [../]
 []
 
@@ -213,13 +209,13 @@ elem_type = QUAD4
   dt = 0.02
   dtmin = 0.001
   start_time = 0
-  end_time = 10.0
+  end_time = 2.0
   scheme = 'crank-nicolson'
-  l_max_its = 200
-  nl_max_its = 200
-  petsc_options = '-snes_mf_operator' #-ksp_monitor'
-  petsc_options_iname = '-pc_type -pc_hypre_type'
-  petsc_options_value = 'hypre boomeramg'
+  l_max_its = 40
+  nl_max_its = 20
+  #petsc_options = '-snes_mf_operator' #-ksp_monitor'
+  #petsc_options_iname = '-pc_type -pc_hypre_type'
+  #petsc_options_value = 'hypre boomeramg'
 []
 
 [Postprocessors]
@@ -237,6 +233,6 @@ elem_type = QUAD4
 []
 
 [Outputs]
-  execute_on = 'timestep_end'
-  exodus = true
+  execute_on = 'initial timestep_end'
+  nemesis = true
 []

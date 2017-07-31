@@ -29,6 +29,7 @@ PressureDiffusion_test::PressureDiffusion_test(const InputParameters & parameter
     Diffusion(parameters),
     // Initialize our member variable based on a default or input file
     _temp(coupledValue("temperature")),
+    _temp_var_num(coupled("temperature")),
     //_grad_temp(coupledGradient("temperature")),
     _Ra(getMaterialProperty<Real>("rayleigh_material")),
     //_grad_Ra(getMaterialProperty<RealGradient>("rayleigh")),
@@ -40,7 +41,7 @@ Real
 PressureDiffusion_test::computeQpResidual()
 {
   //RealVectorValue _gravity = RealVectorValue(0, -1.0, 0);
-  return Diffusion::computeQpResidual() + _sign*_grad_test[_i][_qp](1)*_Ra[_qp]*_temp[_qp];//*_gravity;
+  return Diffusion::computeQpResidual() + _sign*_grad_test[_i][_qp](_component)*_Ra[_qp]*_temp[_qp];//*_gravity;
 }
 
 Real
@@ -48,6 +49,7 @@ PressureDiffusion_test::computeQpJacobian()
 {
   return Diffusion::computeQpJacobian();
 }
+
 
 Real
 PressureDiffusion_test::computeQpOffDiagJacobian(unsigned jvar)
