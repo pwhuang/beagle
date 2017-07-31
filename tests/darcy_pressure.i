@@ -3,7 +3,11 @@ type = GeneratedMesh
 dim = 2
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 nx = 40
+=======
+nx = 80
+>>>>>>> parent of 574fb7d... modified kernels and input file. The modifications are for parallel meshes.
 ny = 40
 =======
 nx = 100
@@ -11,12 +15,12 @@ ny = 200
 >>>>>>> parent of c64b343... off diagonals fixed
 
 xmin = 0.0
-xmax = 2.0
+xmax = 4.0
 
 ymin = 0.0
 ymax = 1.0
 
-elem_type = TRI3
+elem_type = QUAD4
 []
 
 [MeshModifiers]
@@ -81,10 +85,14 @@ elem_type = TRI3
   [./ra_func]
     type = ParsedFunction
 <<<<<<< HEAD
+<<<<<<< HEAD
     value = '40' #'40.0' #Rayleigh_number is set to be negative due to downwards gravity.
 =======
     value = '40'#'(1.0-y)*100'
 >>>>>>> parent of c64b343... off diagonals fixed
+=======
+    value = '40.0' #Rayleigh_number is set to be negative due to downwards gravity.
+>>>>>>> parent of 574fb7d... modified kernels and input file. The modifications are for parallel meshes.
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -231,13 +239,13 @@ elem_type = TRI3
   dt = 0.02
   dtmin = 0.001
   start_time = 0
-  end_time = 2.0
+  end_time = 10.0
   scheme = 'crank-nicolson'
   l_max_its = 200
   nl_max_its = 200
-  #petsc_options = '-snes_mf_operator' #-ksp_monitor'
-  #petsc_options_iname = '-pc_type -pc_hypre_type'
-  #petsc_options_value = 'hypre boomeramg'
+  petsc_options = '-snes_mf_operator' #-ksp_monitor'
+  petsc_options_iname = '-pc_type -pc_hypre_type'
+  petsc_options_value = 'hypre boomeramg'
 []
 
 [Postprocessors]

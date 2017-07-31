@@ -215,16 +215,20 @@ elem_type = TRI3
   dtmin = 0.001
   start_time = 0
 <<<<<<< HEAD
+<<<<<<< HEAD
   end_time = 0.01
 =======
   end_time = 2.0
 >>>>>>> parent of c64b343... off diagonals fixed
+=======
+  end_time = 10.0
+>>>>>>> parent of 574fb7d... modified kernels and input file. The modifications are for parallel meshes.
   scheme = 'crank-nicolson'
   l_max_its = 40
   nl_max_its = 20
-  #petsc_options = '-snes_mf_operator' #-ksp_monitor'
-  #petsc_options_iname = '-pc_type -pc_hypre_type'
-  #petsc_options_value = 'hypre boomeramg'
+  petsc_options = '-snes_mf_operator' #-ksp_monitor'
+  petsc_options_iname = '-pc_type -pc_hypre_type'
+  petsc_options_value = 'hypre boomeramg'
 []
 
 [Postprocessors]

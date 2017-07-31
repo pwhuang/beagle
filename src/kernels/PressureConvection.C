@@ -43,14 +43,10 @@ Real PressureConvection::computeQpResidual()
   //return _test[_i][_qp]*(_heat_capacity[_qp]*_porosity[_qp]
   //        *_advection_speed*_grad_u[_qp]);
   //_advection_speed(_component) += _Ra[_qp]*_u[_qp];
-  /*
   return _test[_i][_qp]*(-_grad_p[_qp]*_grad_u[_qp])
           //_test[_i][_qp]*(_advection_speed*_grad_u[_qp]);
           + _test[_i][_qp]*_Ra[_qp]*_u[_qp]*_grad_u[_qp](_component);
-  */
 
-  //non linear form?
-  return _grad_test[_i][_qp]*_grad_p[_qp]*_u[_qp] - _grad_test[_i][_qp](_component)*_Ra[_qp]*_u[_qp]*_u[_qp];
 }
 
 Real PressureConvection::computeQpJacobian()
@@ -73,7 +69,7 @@ Real PressureConvection::computeQpJacobian()
 Real PressureConvection::computeQpOffDiagJacobian(unsigned jvar)
 {
   if (jvar == _grad_p_var_num)
-    return _grad_test[_i][_qp]*_grad_phi[_j][_qp]*_u[_qp]; //_test[_i][_qp]*(-_grad_phi[_j][_qp]*_grad_u[_qp]);
+    return _test[_i][_qp]*(-_grad_phi[_j][_qp]*_grad_u[_qp]);
   else
     return 0;
 }
