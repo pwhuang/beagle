@@ -18,7 +18,7 @@ template<>
 InputParameters validParams<MassBalance>()
 {
   InputParameters params = validParams<Kernel>();
-  //params.addCoupledVar("velocity_x","velocity_x");
+  params.addCoupledVar("velocity_x","velocity_x");
   params.addCoupledVar("velocity_y","velocity_y");
   return params;
 }
@@ -26,19 +26,16 @@ InputParameters validParams<MassBalance>()
 MassBalance::MassBalance(const InputParameters & parameters) :
     Kernel(parameters),
     // Initialize our member variable based on a default or input file
-    //_grad_velocity_x(coupledGradient("velocity_x")),
+    _grad_velocity_x(coupledGradient("velocity_x")),
     _grad_velocity_y(coupledGradient("velocity_y")),
-    //_u_vel_var_number(coupled("velocity_x")),
-    _v_vel_var_number(coupled("velocity_y")),
-    _permeability(getMaterialProperty<Real>("permeability")),
-    _viscosity(getMaterialProperty<Real>("viscosity")),
-    _density(getMaterialProperty<Real>("density"))
+    _u_vel_var_number(coupled("velocity_x")),
+    _v_vel_var_number(coupled("velocity_y"))
 {}
 
 Real
 MassBalance::computeQpResidual()
 {
-  return -(_grad_u[_qp](0) + _grad_velocity_y[_qp](1)) * _test[_i][_qp];
+  return (_grad_velocity_x[_qp](0) + _grad_velocity_y[_qp](1)) * _test[_i][_qp];
 }
 
 
@@ -46,22 +43,20 @@ MassBalance::computeQpResidual()
 Real
 MassBalance::computeQpJacobian()
 {
-  return -_grad_phi[_j][_qp](0) * _test[_i][_qp];
+  return 0;
 }
 
 
 Real
 MassBalance::computeQpOffDiagJacobian(unsigned jvar)
 {
-  /*
-  if (jvar == 0)//_u_vel_var_number)
-    return -_grad_phi[_j][_qp](0) * _test[_i][_qp];
 
-  else if (jvar == 1)//_v_vel_var_number)
-    return -_grad_phi[_j][_qp](1) * _test[_i][_qp];
+  if (jvar == _u_vel_var_number)
+    return _grad_phi[_j][_qp](0) * _test[_i][_qp];
+
+  else if (jvar == _v_vel_var_number)
+    return _grad_phi[_j][_qp](1) * _test[_i][_qp];
 
   else
     return 0;
-  */
-  return 0;
 }

@@ -1,30 +1,17 @@
 [Mesh]
-type = GeneratedMesh
-dim = 3
+  file = 'tests/billy_fault_coarse.e'
 
-nx = 20
-ny = 20
-nz = 20
+  boundary_id = '1 2 3 4 5 6'
+  boundary_name = 'back front left right bottom top'
 
-xmin = 0.0
-xmax = 1.0
-
-ymin = 0.0
-ymax = 1.0
-
-zmin = 0.0
-zmax = 1.0
-
-elem_type = TET4
+  parallel_type = DEFAULT
 []
 
 [MeshModifiers]
-  active = ''
-  [./corner_node]
-    type = AddExtraNodeset
-    new_boundary = 'pinned_node'
-    #nodes = '0'
-    coord = '0 0 0'
+  [./scale]
+    type = Transform
+    transform = SCALE
+    vector_value = '0.0002 0.0002 0.0002'
   [../]
 []
 
@@ -45,7 +32,6 @@ elem_type = TET4
 []
 
 [AuxVariables]
-  active = ''
   [./velocity_x]
     order = FIRST
     family = MONOMIAL
@@ -66,14 +52,14 @@ elem_type = TET4
   active = 'ic_func ra_func'
   [./ic_func]
     type = ParsedFunction
-    value = '1.0-z'
+    value = '-z'
     #vars = 'alpha'
     #vals = '16'
   [../]
 
   [./ra_func]
     type = ParsedFunction
-    value = '50' #'(1.0-y)*100'
+    value = '50'#'(1.0-y)*100'
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -98,7 +84,7 @@ elem_type = TET4
 []
 
 [Kernels]
-  active = 'stream1 stream2 diff conv euler'
+  active = 'mass stream1 stream2 diff conv euler'
   [./mass]
     type = MassBalance
     variable = temp
@@ -133,7 +119,6 @@ elem_type = TET4
     variable = temp
     stream_function1 = psi_1
     stream_function2 = psi_2
-    #Rayleigh_number = 100.0
   [../]
 
   [./euler]
@@ -144,7 +129,6 @@ elem_type = TET4
 []
 
 [AuxKernels]
-  active = ''
   [./velocity_x_aux]
     type = VariableGradientSign
     variable = velocity_x
@@ -180,24 +164,6 @@ elem_type = TET4
 
 [BCs]
   active = 'no_flow_1 no_flow_2 top_temp bottom_temp'
-
-  [./Periodic]
-      active = ''
-      # Can use auto_direction with Generated Meshes
-      [./auto_1]
-        variable = psi_1
-        auto_direction = 'x y'
-      [../]
-      [./auto_2]
-        variable = psi_2
-        auto_direction = 'x y'
-      [../]
-      [./auto_3]
-        variable = temp
-        auto_direction = 'x y'
-      [../]
-  [../]
-
   [./no_flow_1]
     type = DirichletBC
     variable = psi_1
@@ -210,20 +176,6 @@ elem_type = TET4
     variable = psi_2
     boundary = 'front back left right'
     value = 0
-  [../]
-
-  [./no_flow_z1]
-    type = DirichletBC
-    variable = psi_1
-    boundary = 'front back'
-    value = 0.0
-  [../]
-
-  [./no_flow_z2]
-    type = DirichletBC
-    variable = psi_2
-    boundary = 'front back'
-    value = 0.0
   [../]
 
   [./top_temp]
@@ -242,11 +194,50 @@ elem_type = TET4
 []
 
 [Materials]
-  active = 'ra_output'
-  [./ra_output]
+  [./ra_output_top]
+    type = RayleighMaterial
+    block = 2
+    function = '30'
+    min = 0
+    max = 0
+    seed = 363192
+    outputs = exodus
+  [../]
+
+  [./ra_output_middle]
+    type = RayleighMaterial
+    block = 1
+    function = '100'
+    min = 0
+    max = 0
+    seed = 363192
+    outputs = exodus
+  [../]
+
+  [./ra_output_bottom]
     type = RayleighMaterial
     block = 0
-    function = 'ra_func'
+    function = '45'
+    min = 0
+    max = 0
+    seed = 363192
+    outputs = exodus
+  [../]
+
+  [./ra_output_fault1]
+    type = RayleighMaterial
+    block = 3
+    function = '200'
+    min = 0
+    max = 0
+    seed = 363192
+    outputs = exodus
+  [../]
+
+  [./ra_output_fault2]
+    type = RayleighMaterial
+    block = 4
+    function = '160'
     min = 0
     max = 0
     seed = 363192
@@ -266,10 +257,10 @@ elem_type = TET4
   type = Transient
   solve_type = 'PJFNK'
   #num_steps = 20
-  dt = 0.1
+  dt = 0.01
   dtmin = 0.001
   start_time = 0
-  end_time = 10.0
+  end_time = 2.0
   scheme = 'crank-nicolson'
   l_max_its = 80
   nl_max_its = 30
@@ -293,6 +284,6 @@ elem_type = TET4
 []
 
 [Outputs]
-  execute_on = 'timestep_end'
+  execute_on = 'initial timestep_end'
   exodus = true
 []
