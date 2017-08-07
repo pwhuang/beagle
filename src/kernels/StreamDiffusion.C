@@ -40,7 +40,8 @@ StreamDiffusion::StreamDiffusion(const InputParameters & parameters) :
 Real
 StreamDiffusion::computeQpResidual()
 {
-  return Diffusion::computeQpResidual() + _sign*_test[_i][_qp]*_grad_temp[_qp](_component);
+  return Diffusion::computeQpResidual() - _sign*_grad_test[_i][_qp](_component)*_temp[_qp];
+          //+ _sign*_test[_i][_qp]*_grad_temp[_qp](_component); //Normal form
           //+ _grad_test[_i][_qp]*_temp[_qp]/_Ra[_qp]*_grad_Ra[_qp](_component);
 }
 
@@ -55,7 +56,8 @@ Real
 StreamDiffusion::computeQpOffDiagJacobian(unsigned jvar)
 {
   if(jvar == _temp_var_num)
-    return _sign*_test[_i][_qp]*_grad_phi[_j][_qp](_component);
+    return -_sign*_grad_test[_i][_qp](_component)*_phi[_j][_qp];
+            //+ _sign*_test[_i][_qp]*_grad_phi[_j][_qp](_component); //Normal form
   else
     return 0;
 }

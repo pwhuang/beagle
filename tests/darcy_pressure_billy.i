@@ -20,7 +20,7 @@
   [./temp]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0.0
+    initial_condition = 0.0
   [../]
 []
 
@@ -62,7 +62,7 @@
 []
 
 [ICs]
-  active = 'mat_2'
+  active = ''
   [./mat_1]
     type = FunctionIC
     variable = pressure
@@ -175,7 +175,7 @@
   [./basement]
    type = RayleighMaterial
    block = 'basement'
-   function = 0.02
+   function = -0.02
    min = 0
    max = 0
    seed = 363192
@@ -185,7 +185,7 @@
   [./cattamarra_Coal_Measures]
    type = RayleighMaterial
    block = 'coal_layer'
-   function = 0.16
+   function = -0.16
    min = 0
    max = 0
    seed = 363192
@@ -195,7 +195,7 @@
   [./west_block]
    type = RayleighMaterial
    block = 'west_block'
-   function = 1.88
+   function = -1.88
    min = 0
    max = 0
    seed = 363192
@@ -205,7 +205,7 @@
   [./aquifer_near_surface] # Yarragadee
    type = RayleighMaterial
    block = 'aquifer_near_surface'
-   function = 383.86
+   function = -383.86
    min = 0
    max = 0
    seed = 363192
@@ -215,7 +215,7 @@
   [./surface_layers] #neocomian uncorformity
    type = RayleighMaterial
    block = 'surface_layers'
-   function = 208.977
+   function = -208.977
    min = 0
    max = 0
    seed = 363192
@@ -225,7 +225,7 @@
   [./aquifer_subsurface]
    type = RayleighMaterial
    block = 'aquifer_subsurface'
-   function = 15.6266
+   function = -15.6266
    min = 0
    max = 0
    seed = 363192
@@ -235,7 +235,7 @@
   [./moho]
    type = RayleighMaterial
    block = 'moho'
-   function = 0.02
+   function = -0.02
    min = 0
    max = 0
    seed = 363192
@@ -255,7 +255,7 @@
   type = Transient
   solve_type = 'PJFNK'
   #num_steps = 20
-  dt = 0.02
+  dt = 0.2
   dtmin = 0.001
   start_time = 0
   end_time = 8.0

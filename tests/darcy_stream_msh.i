@@ -106,7 +106,6 @@
     type = RayleighConvection
     variable = temp
     stream_function = stream
-    #Rayleigh_number = 61.36
   [../]
 
   [./euler]
@@ -136,17 +135,19 @@
 
 [AuxKernels]
   [./velocity_x_aux]
-    type = VariableGradientComponent
+    type = VariableGradientSign
     variable = velocity_x
     gradient_variable = stream
     component = 'y'
+    sign = 1
   [../]
 
   [./velocity_y_aux]
-    type = VariableGradientComponent
+    type = VariableGradientSign
     variable = velocity_y
     gradient_variable = stream
     component = 'x'
+    sign = -1
   [../]
 []
 
@@ -186,7 +187,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 'ra_func'
+    function = 50 #'ra_func'
     min = 0
     max = 0
     seed = 363192
@@ -206,10 +207,10 @@
   type = Transient
   solve_type = 'PJFNK'
   #num_steps = 20
-  dt = 0.02
+  dt = 0.05
   dtmin = 0.001
   start_time = 0
-  end_time = 10.0
+  end_time = 1000.0
   scheme = 'crank-nicolson'
   l_max_its = 40
   nl_max_its = 20

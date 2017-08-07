@@ -29,7 +29,7 @@
   [./temp]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0.0
+    initial_condition = 0.0
   [../]
 []
 
@@ -71,7 +71,7 @@
 []
 
 [ICs]
-  active = 'mat_2'
+  active = ''
   [./mat_1]
     type = FunctionIC
     variable = pressure

@@ -48,6 +48,7 @@ Real RayleighConvection::computeQpJacobian()
   return _test[_i][_qp]*_Ra[_qp]*(_advection_speed*_grad_phi[_j][_qp]);
 }
 
+
 Real RayleighConvection::computeQpOffDiagJacobian(unsigned jvar)
 {
   RealVectorValue _advection_speed = RealVectorValue(_grad_phi[_j][_qp](1), -1.0*_grad_phi[_j][_qp](0));

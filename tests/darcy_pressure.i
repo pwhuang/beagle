@@ -210,16 +210,16 @@ elem_type = QUAD4
   type = Transient
   solve_type = 'PJFNK'
   #num_steps = 20
-  dt = 0.02
+  dt = 0.2
   dtmin = 0.001
   start_time = 0
-  end_time = 10.0
+  end_time = 100.0
   scheme = 'crank-nicolson'
   l_max_its = 200
   nl_max_its = 200
-  petsc_options = '-snes_mf_operator' #-ksp_monitor'
-  petsc_options_iname = '-pc_type -pc_hypre_type'
-  petsc_options_value = 'hypre boomeramg'
+  #petsc_options = '-snes_mf_operator' #-ksp_monitor'
+  #petsc_options_iname = '-pc_type -pc_hypre_type'
+  #petsc_options_value = 'hypre boomeramg'
 []
 
 [Postprocessors]

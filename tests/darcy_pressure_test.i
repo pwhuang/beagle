@@ -48,7 +48,7 @@ elem_type = TRI6
   active = 'ra_func'
   [./ra_func]
     type = ParsedFunction
-    value = '50'#'(1.0-y)*100'
+    value = '-50'#'(1.0-y)*100'
     #vars = 'alpha'
     #vals = '16'
   [../]

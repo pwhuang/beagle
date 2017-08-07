@@ -19,7 +19,7 @@ elem_type = TET4
 []
 
 [MeshModifiers]
-  active = 'corner_node'
+  active = ''
   [./corner_node]
     type = AddExtraNodeset
     new_boundary = 'pinned_node'
@@ -73,7 +73,7 @@ elem_type = TET4
 
   [./ra_func]
     type = ParsedFunction
-    value = '50'#'(1.0-y)*100'
+    value = '50' #'(1.0-y)*100'
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -226,20 +226,6 @@ elem_type = TET4
     value = 0.0
   [../]
 
-  [./no_flow_4]
-    type = DirichletBC
-    variable = psi_1
-    boundary = 'pinned_node'
-    value = 0.0
-  [../]
-
-  [./no_flow_5]
-    type = DirichletBC
-    variable = psi_2
-    boundary = 'pinned_node'
-    value = 0.0
-  [../]
-
   [./top_temp]
     type = DirichletBC
     variable = temp
@@ -252,13 +238,6 @@ elem_type = TET4
     variable = temp
     boundary = 'back'
     value = 1.0
-  [../]
-
-  [./point_temp]
-    type = DirichletBC
-    variable = temp
-    boundary = 'pinned_node pinned_node2'
-    value = 0.7
   [../]
 []
 

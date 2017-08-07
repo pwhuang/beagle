@@ -19,7 +19,7 @@
   [./temp]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0
+    initial_condition = 0
   [../]
 []
 
@@ -53,7 +53,7 @@
 []
 
 [ICs]
-  active = 'mat_2'
+  active = ''
   [./mat_1]
     type = FunctionIC
     variable = temp
@@ -242,7 +242,7 @@
   type = Transient
   solve_type = 'PJFNK'
   #num_steps = 20
-  dt = 0.02
+  dt = 0.01
   dtmin = 0.00001
   start_time = 0
   end_time = 20.0

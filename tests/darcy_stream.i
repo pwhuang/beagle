@@ -22,13 +22,6 @@ elem_type = TRI3
     #nodes = '0'
     coord = '0 0.8'
   [../]
-
-  [./corner_node1]
-    type = AddExtraNodeset
-    new_boundary = 'pinned_node2'
-    #nodes = '0'
-    coord = '2.0 0.2'
-  [../]
 []
 
 [Variables]
@@ -66,7 +59,7 @@ elem_type = TRI3
 
   [./ra_func]
     type = ParsedFunction
-    value = 'x*50'  #'(1.0-y)*100'
+    value = '42' #'x*50'
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -111,7 +104,6 @@ elem_type = TRI3
     type = RayleighConvection
     variable = temp
     stream_function = stream
-    #Rayleigh_number = 61.36
   [../]
 
   [./euler]
@@ -177,13 +169,6 @@ elem_type = TRI3
     boundary = 'bottom'
     value = 1.0
   [../]
-
-  [./point_temp]
-    type = DirichletBC
-    variable = temp
-    boundary = 'pinned_node pinned_node2'
-    value = 0.7
-  [../]
 []
 
 [Materials]
@@ -211,16 +196,16 @@ elem_type = TRI3
   type = Transient
   solve_type = 'PJFNK'
   #num_steps = 20
-  dt = 0.005
+  dt = 0.02
   dtmin = 0.001
   start_time = 0
-  end_time = 10.0
+  end_time = 300.0
   scheme = 'crank-nicolson'
   l_max_its = 40
   nl_max_its = 20
-  petsc_options = '-snes_mf_operator' #-ksp_monitor'
-  petsc_options_iname = '-pc_type -pc_hypre_type'
-  petsc_options_value = 'hypre boomeramg'
+  #petsc_options = '-snes_mf_operator' #-ksp_monitor'
+  #petsc_options_iname = '-pc_type -pc_hypre_type'
+  #petsc_options_value = 'hypre boomeramg'
 []
 
 [Postprocessors]
