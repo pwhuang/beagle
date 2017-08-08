@@ -4,7 +4,7 @@
   boundary_id = '1 2 3 4 5 6'
   boundary_name = 'back front left right bottom top'
 
-  parallel_type = DEFAULT
+  parallel_type = DISTRIBUTED
 []
 
 [MeshModifiers]

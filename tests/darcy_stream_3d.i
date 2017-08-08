@@ -1,21 +1,24 @@
 [Mesh]
-type = GeneratedMesh
-dim = 3
+  type = GeneratedMesh
+  dim = 3
 
-nx = 20
-ny = 20
-nz = 20
+  nx = 20
+  ny = 20
+  nz = 20
 
-xmin = 0.0
-xmax = 1.0
+  xmin = 0.0
+  xmax = 1.0
 
-ymin = 0.0
-ymax = 1.0
+  ymin = 0.0
+  ymax = 1.0
 
-zmin = 0.0
-zmax = 1.0
+  zmin = 0.0
+  zmax = 1.0
 
-elem_type = TET4
+  elem_type = HEX8
+  
+  parallel_type = DISTRIBUTED
+  partitioner = default
 []
 
 [MeshModifiers]
@@ -40,7 +43,7 @@ elem_type = TET4
   [./temp]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0
+    #initial_condition = 0
   [../]
 []
 
@@ -80,7 +83,7 @@ elem_type = TET4
 []
 
 [ICs]
-  active = ''
+  active = 'mat_2'
   [./mat_1]
     type = FunctionIC
     variable = temp
@@ -98,7 +101,7 @@ elem_type = TET4
 []
 
 [Kernels]
-  active = 'stream1 stream2 diff conv euler'
+  active = 'mass stream1 stream2 diff conv euler'
   [./mass]
     type = MassBalance
     variable = temp
