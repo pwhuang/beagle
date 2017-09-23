@@ -1,13 +1,13 @@
 [Mesh]
-  file = 'tests/3d.msh'
+  file = 'tests/3d_1e-1.msh' #'tests/darcy_stream_3d_msh_in.e'
   block_id = '33'
   block_name = 'layer1'
 
   boundary_id = '25 27 26 29 30 28'
   boundary_name = 'top bottom front back right left'
 
-  parallel_type = DISTRIBUTED
-  partitioner = parmetis
+  #parallel_type = DISTRIBUTED
+  #partitioner = parmetis
 []
 
 [MeshModifiers]
@@ -37,7 +37,7 @@
 []
 
 [AuxVariables]
-  active = ''
+  #active = ''
   [./velocity_x]
     order = FIRST
     family = MONOMIAL
@@ -65,7 +65,7 @@
 
   [./ra_func]
     type = ParsedFunction
-    value = '40' 
+    value = '5000'
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -83,14 +83,14 @@
     type = FunctionRandomIC
     variable = temp
     function = ic_func
-    min = -0.01
-    max = 0.01
+    min = -1e-4
+    max = 1e-4
     seed = 52468
   [../]
 []
 
 [Kernels]
-  active = 'stream1 stream2 diff conv euler'
+  active = 'mass stream1 stream2 diff conv euler'
   [./mass]
     type = MassBalance
     variable = temp
@@ -102,7 +102,7 @@
     type = StreamDiffusion
     variable = psi_1
     component = 1
-    sign = -1.0
+    sign = 1.0
     temperature = temp
   [../]
 
@@ -110,7 +110,7 @@
     type = StreamDiffusion
     variable = psi_2
     component = 0
-    sign = 1.0
+    sign = -1.0
     temperature = temp
   [../]
 
@@ -135,7 +135,7 @@
 []
 
 [AuxKernels]
-  active = ''
+  #active = ''
   [./velocity_x_aux]
     type = VariableGradientSign
     variable = velocity_x
@@ -152,26 +152,16 @@
     sign = 1.0
   [../]
 
-  [./velocity_z_aux2]
-    type = VariableGradientSign
+  [./velocity_z_aux]
+    type = StreamVelocityZ
     variable = velocity_z
-    gradient_variable = psi_2
-    component = 'x'
-    sign = 1.0
-  [../]
-
-  [./velocity_z_aux1]
-    type = VariableGradientSign
-    variable = velocity_z
-    gradient_variable = psi_1
-    component = 'y'
-    sign = -1.0
+    stream_function1 = psi_1
+    stream_function2 = psi_2
   [../]
 []
 
 [BCs]
-  active = 'no_flow_1 no_flow_2 top_temp bottom_temp'
-
+  #active = 'no_flow_1 no_flow_2 top_temp bottom_temp'
   [./no_flow_1]
     type = DirichletBC
     variable = psi_1
@@ -226,13 +216,23 @@
   type = Transient
   solve_type = 'PJFNK'
   #num_steps = 20
-  dt = 0.1
-  dtmin = 0.001
+  dt = 1e-4
+  #dtmin = 0.001
   start_time = 0
-  end_time = 10.0
+  end_time = 100000.0
   scheme = 'crank-nicolson'
-  l_max_its = 80
-  nl_max_its = 30
+  l_max_its = 40
+  nl_max_its = 20
+  trans_ss_check = true
+  ss_check_tol = 1e-07
+
+  #[./TimeStepper]
+  #  type = PostprocessorDT
+  #  postprocessor = CFL_time_step
+  #  dt = 1e-5
+  #  scale = 0.2
+  #  factor = 0
+  #[../]
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
   #petsc_options_iname = '-pc_type -pc_hypre_type'
   #petsc_options_value = 'hypre boomeramg'
@@ -247,8 +247,16 @@
   [../]
 
   [./alive_time]
-    type = RunTime
-    time_type = alive
+    type = PerformanceData
+    event = ALIVE
+    column = total_time_with_sub
+  [../]
+
+  [./CFL_time_step]
+    type = LevelSetCFLCondition
+    velocity_x = velocity_x
+    velocity_y = velocity_y
+    velocity_z = velocity_z
   [../]
 []
 

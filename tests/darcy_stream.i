@@ -217,8 +217,9 @@ elem_type = TRI3
   [../]
 
   [./alive_time]
-    type = RunTime
-    time_type = alive
+    type = PerformanceData
+    event = ALIVE
+    column = total_time_with_sub
   [../]
 []
 

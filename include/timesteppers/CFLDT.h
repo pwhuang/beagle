@@ -12,39 +12,38 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef RayleighConvection3d_H
-#define RayleighConvection3d_H
+#ifndef CFLDT_H
+#define CFLDT_H
 
-#include "Kernel.h"
+#include "TimeStepper.h"
+#include "PostprocessorInterface.h"
 
-class RayleighConvection3d;
+class CFLDT;
 
-template<>
-InputParameters validParams<RayleighConvection3d>();
+template <>
+InputParameters validParams<CFLDT>();
 
-class RayleighConvection3d : public Kernel
+/**
+ * Computes the value of dt based on a postprocessor value
+ */
+class CFLDT : public TimeStepper, public PostprocessorInterface
 {
 public:
-
-  RayleighConvection3d(const InputParameters & parameters);
+  CFLDT(const InputParameters & parameters);
 
 protected:
+  virtual Real computeInitialDT() override;
+  virtual Real computeDT() override;
 
-  virtual Real computeQpResidual() override;
-  virtual Real computeQpJacobian() override;
-  virtual Real computeQpOffDiagJacobian(unsigned jvar) override;
+  const PostprocessorValue & _pps_value;
+  bool _has_initial_dt;
+  Real _initial_dt;
 
-private:
+  /// Multiplier applied to the postprocessor value
+  const Real & _scale;
 
-  //const MaterialProperty<Real> & _heat_capacity;
-  //const MaterialProperty<Real> & _porosity;
-  //Real _Ra;
-  const MaterialProperty<Real> & _Ra;
-  const VariableGradient & _grad_stream1;
-  const VariableGradient & _grad_stream2;
-  unsigned _grad_stream1_var_num;
-  unsigned _grad_stream2_var_num;
-  
+  /// Factor added to the postprocessor value
+  const Real & _factor;
 };
 
-#endif //RayleighConvection3d_H
+#endif /* CFLDT_H */

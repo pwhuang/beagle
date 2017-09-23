@@ -11,32 +11,36 @@
 /*                                                              */
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
-#include "VariableGradientSign.h"
+#include "StreamVelocityZ.h"
 
 template <>
 InputParameters
-validParams<VariableGradientSign>()
+validParams<StreamVelocityZ>()
 {
   MooseEnum component("x=0 y=1 z=2");
   InputParameters params = validParams<AuxKernel>();
-  params.addRequiredCoupledVar("gradient_variable",
+  params.addRequiredCoupledVar("stream_function1",
                                "The variable from which to compute the gradient component");
-  params.addParam<MooseEnum>("component", component, "The gradient component to compute");
-  params.addParam<Real>("sign", 1, "The sign. It should be -1 or 1.");
+  params.addRequiredCoupledVar("stream_function2",
+                               "The variable from which to compute the gradient component");
+
+  //params.addParam<MooseEnum>("component", component, "The gradient component to compute");
+  //params.addParam<Real>("sign", 1, "The sign. It should be -1 or 1.");
   return params;
 }
 
-VariableGradientSign::VariableGradientSign(const InputParameters & parameters)
+StreamVelocityZ::StreamVelocityZ(const InputParameters & parameters)
   : AuxKernel(parameters),
-    _gradient(coupledGradient("gradient_variable")),
-    _scale(getMaterialProperty<Real>("rayleigh_material")),
-    _component(getParam<MooseEnum>("component")),
-    _sign(getParam<Real>("sign"))
+    _str1(coupledGradient("stream_function1")),
+    _str2(coupledGradient("stream_function2")),
+    _scale(getMaterialProperty<Real>("rayleigh_material"))
+    //_component(getParam<MooseEnum>("component")),
+    //_sign(getParam<Real>("sign"))
 {
 }
 
 Real
-VariableGradientSign::computeValue()
+StreamVelocityZ::computeValue()
 {
-  return _sign*_scale[_qp]*_gradient[_qp](_component);
+  return _scale[_qp]*(_str2[_qp](0)-_str1[_qp](1));
 }

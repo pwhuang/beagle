@@ -12,39 +12,44 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef RayleighConvection3d_H
-#define RayleighConvection3d_H
+#ifndef StreamVelocityZ_H
+#define StreamVelocityZ_H
 
-#include "Kernel.h"
+// MOOSE includes
+#include "AuxKernel.h"
 
-class RayleighConvection3d;
+// Forward declarations
+class StreamVelocityZ;
 
-template<>
-InputParameters validParams<RayleighConvection3d>();
+template <>
+InputParameters validParams<StreamVelocityZ>();
 
-class RayleighConvection3d : public Kernel
+/**
+ * Extract a component from the gradient of a variable
+ */
+class StreamVelocityZ : public AuxKernel
 {
 public:
-
-  RayleighConvection3d(const InputParameters & parameters);
+  /**
+   * Class constructor
+   * @param parameters Input parameters for the object
+   */
+  StreamVelocityZ(const InputParameters & parameters);
 
 protected:
-
-  virtual Real computeQpResidual() override;
-  virtual Real computeQpJacobian() override;
-  virtual Real computeQpOffDiagJacobian(unsigned jvar) override;
+  virtual Real computeValue() override;
 
 private:
+  /// Reference to the gradient of the coupled variable
+  const VariableGradient & _str1;
+  const VariableGradient & _str2;
 
-  //const MaterialProperty<Real> & _heat_capacity;
-  //const MaterialProperty<Real> & _porosity;
-  //Real _Ra;
-  const MaterialProperty<Real> & _Ra;
-  const VariableGradient & _grad_stream1;
-  const VariableGradient & _grad_stream2;
-  unsigned _grad_stream1_var_num;
-  unsigned _grad_stream2_var_num;
-  
+  // Scaling Material Property
+  const MaterialProperty<Real> & _scale;
+
+  /// Desired component
+  //int _component;
+  //Real _sign;
 };
 
-#endif //RayleighConvection3d_H
+#endif // StreamVelocityZ_H

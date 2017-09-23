@@ -43,6 +43,9 @@ private:
   /// Reference to the gradient of the coupled variable
   const VariableGradient & _gradient;
 
+  // Scaling Material Property
+  const MaterialProperty<Real> & _scale;
+
   /// Desired component
   int _component;
   Real _sign;

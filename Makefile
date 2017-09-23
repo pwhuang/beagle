@@ -22,6 +22,7 @@ include $(FRAMEWORK_DIR)/moose.mk
 ################################## MODULES ####################################
 ALL_MODULES := no
 NAVIER_STOKES := no
+LEVEL_SET := yes
 include $(MOOSE_DIR)/modules/modules.mk
 ###############################################################################
 

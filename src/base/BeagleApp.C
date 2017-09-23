@@ -2,6 +2,7 @@
 #include "Moose.h"
 #include "AppFactory.h"
 //#include "ModulesApp.h"
+#include "LevelSetApp.h"
 #include "MooseSyntax.h"
 
 #include "PorousDiffusion.h"
@@ -13,6 +14,9 @@
 
 //ics
 #include "FunctionRandomIC.h"
+
+//bcs
+#include "CoupledNeumannBC.h"
 
 //kernel
 #include "ExampleDiffusion.h"
@@ -31,11 +35,15 @@
 #include "AuxVelocity.h"
 #include "VariableGradientSign.h"
 #include "DarcyVelocity.h"
+#include "StreamVelocityZ.h"
 
 //Materials
 #include "PorousMaterial.h"
 #include "RayleighMaterial.h"
 #include "RayleighMaterialFunc.h"
+
+//TimeSteppers
+#include "CFLDT.h"
 
 template<>
 InputParameters validParams<BeagleApp>()
@@ -48,11 +56,13 @@ BeagleApp::BeagleApp(InputParameters parameters) :
     MooseApp(parameters)
 {
   Moose::registerObjects(_factory);
-//ModulesApp::registerObjects(_factory);
+  //ModulesApp::registerObjects(_factory);
+  LevelSetApp::registerObjects(_factory);
   BeagleApp::registerObjects(_factory);
 
   Moose::associateSyntax(_syntax, _action_factory);
   //ModulesApp::associateSyntax(_syntax, _action_factory);
+  LevelSetApp::associateSyntax(_syntax, _action_factory);
   BeagleApp::associateSyntax(_syntax, _action_factory);
 }
 
@@ -91,13 +101,16 @@ BeagleApp::registerObjects(Factory & factory)
     registerKernel(PressureDiffusion_test);
     registerKernel(Supg);
     registerInitialCondition(FunctionRandomIC);
+    registerBoundaryCondition(CoupledNeumannBC);
     registerAux(AuxDensity);
     registerAux(AuxVelocity);
     registerAux(VariableGradientSign);
     registerAux(DarcyVelocity);
+    registerAux(StreamVelocityZ);
     registerMaterial(PorousMaterial);
     registerMaterial(RayleighMaterial);
     registerMaterial(RayleighMaterialFunc);
+    registerTimeStepper(CFLDT);
 }
 
 // External entry point for dynamic syntax association

@@ -11,32 +11,28 @@
 /*                                                              */
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
-#include "VariableGradientSign.h"
+
+#include "CoupledNeumannBC.h"
 
 template <>
 InputParameters
-validParams<VariableGradientSign>()
+validParams<CoupledNeumannBC>()
 {
-  MooseEnum component("x=0 y=1 z=2");
-  InputParameters params = validParams<AuxKernel>();
-  params.addRequiredCoupledVar("gradient_variable",
-                               "The variable from which to compute the gradient component");
-  params.addParam<MooseEnum>("component", component, "The gradient component to compute");
-  params.addParam<Real>("sign", 1, "The sign. It should be -1 or 1.");
+  InputParameters params = validParams<IntegratedBC>();
+
+  params.addRequiredCoupledVar("stream_function2", "stream_function2 or phi2");
   return params;
 }
 
-VariableGradientSign::VariableGradientSign(const InputParameters & parameters)
-  : AuxKernel(parameters),
-    _gradient(coupledGradient("gradient_variable")),
-    _scale(getMaterialProperty<Real>("rayleigh_material")),
-    _component(getParam<MooseEnum>("component")),
-    _sign(getParam<Real>("sign"))
+CoupledNeumannBC::CoupledNeumannBC(const InputParameters & parameters)
+  : IntegratedBC(parameters),
+    //_str1(coupledGradient("stream_function1")),
+    _str2(coupledGradient("stream_function2"))
 {
 }
 
 Real
-VariableGradientSign::computeValue()
+CoupledNeumannBC::computeQpResidual()
 {
-  return _sign*_scale[_qp]*_gradient[_qp](_component);
+  return -_test[_i][_qp] * (-_grad_u[_qp](1)+_str2[_qp](0));
 }

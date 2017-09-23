@@ -12,39 +12,45 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef RayleighConvection3d_H
-#define RayleighConvection3d_H
+#ifndef COUPLEDNEUMANNBC_H
+#define COUPLEDNEUMANNBC_H
 
-#include "Kernel.h"
+#include "IntegratedBC.h"
 
-class RayleighConvection3d;
+// Forward Declarations
+class CoupledNeumannBC;
 
-template<>
-InputParameters validParams<RayleighConvection3d>();
+template <>
+InputParameters validParams<CoupledNeumannBC>();
 
-class RayleighConvection3d : public Kernel
+/**
+ * Implements a simple constant Neumann BC where grad(u)=alpha * v on the boundary.
+ * Uses the term produced from integrating the diffusion operator by parts.
+ */
+class CoupledNeumannBC : public IntegratedBC
 {
 public:
-
-  RayleighConvection3d(const InputParameters & parameters);
+  /**
+   * Factory constructor, takes parameters so that all derived classes can be built using the same
+   * constructor.
+   */
+  CoupledNeumannBC(const InputParameters & parameters);
 
 protected:
-
   virtual Real computeQpResidual() override;
-  virtual Real computeQpJacobian() override;
-  virtual Real computeQpOffDiagJacobian(unsigned jvar) override;
 
 private:
+  /**
+   * Multiplier on the boundary.
+   */
+  //Real _alpha;
 
-  //const MaterialProperty<Real> & _heat_capacity;
-  //const MaterialProperty<Real> & _porosity;
-  //Real _Ra;
-  const MaterialProperty<Real> & _Ra;
-  const VariableGradient & _grad_stream1;
-  const VariableGradient & _grad_stream2;
-  unsigned _grad_stream1_var_num;
-  unsigned _grad_stream2_var_num;
-  
+  /**
+   * Holds the values at the quadrature points
+   * of a coupled variable.
+   */
+  //const VariableGradient & _str1;
+  const VariableGradient & _str2;
 };
 
-#endif //RayleighConvection3d_H
+#endif // COUPLEDNEUMANNBC_H

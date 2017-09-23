@@ -6,7 +6,7 @@
   boundary_id = '5 6 7 8'
   boundary_name = 'bottom right top left'
 
-  distribution = PARALLEL
+  second_order = true
 []
 
 [MeshModifiers]
@@ -16,13 +16,6 @@
     new_boundary = 'pinned_node'
     #nodes = '0'
     coord = '0 0.8'
-  [../]
-
-  [./corner_node1]
-    type = AddExtraNodeset
-    new_boundary = 'pinned_node2'
-    #nodes = '0'
-    coord = '2.0 0.2'
   [../]
 []
 
@@ -45,6 +38,11 @@
   [../]
 
   [./velocity_y]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+
+  [./vel_norm]
     order = CONSTANT
     family = MONOMIAL
   [../]
@@ -79,8 +77,8 @@
     type = FunctionRandomIC
     variable = temp
     function = ic_func
-    min = -0.01
-    max = 0.01
+    min = -1e-5
+    max = 1e-5
     seed = 524685
   [../]
 []
@@ -93,7 +91,7 @@
     variable = stream
     temperature = temp
     component = 0
-    sign = -1 #This is intended to be -1. Do not change this!
+    sign = 1 #This is intended to be 1. Do not change this!
   [../]
 
   [./diff]
@@ -149,6 +147,13 @@
     component = 'x'
     sign = -1
   [../]
+
+  [./vel_norm_aux]
+    type = VectorMagnitudeAux
+    variable = vel_norm
+    x = velocity_x
+    y = velocity_y
+  [../]
 []
 
 [BCs]
@@ -173,13 +178,6 @@
     boundary = 'bottom'
     value = 1.0
   [../]
-
-  [./point_temp]
-    type = DirichletBC
-    variable = temp
-    boundary = 'pinned_node pinned_node2'
-    value = 0.7
-  [../]
 []
 
 [Materials]
@@ -187,7 +185,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 50 #'ra_func'
+    function = 10000 #'ra_func'
     min = 0
     max = 0
     seed = 363192
@@ -206,14 +204,26 @@
 [Executioner]
   type = Transient
   solve_type = 'PJFNK'
+  #abort_on_solve_fail = true
   #num_steps = 20
-  dt = 0.05
-  dtmin = 0.001
+  dt = 0.01
+  #dtmin = 0.0001
   start_time = 0
   end_time = 1000.0
   scheme = 'crank-nicolson'
   l_max_its = 40
   nl_max_its = 20
+  trans_ss_check = true
+  ss_check_tol = 1e-07
+  #ss_tmin = 0.2
+
+  [./TimeStepper]
+    type = PostprocessorDT
+    postprocessor = CFL_time_step
+    dt = 1e-2
+    scale = 0.95
+    factor = 0
+  [../]
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
   #petsc_options_iname = '-pc_type -pc_hypre_type'
   #petsc_options_value = 'hypre boomeramg'
@@ -228,8 +238,15 @@
   [../]
 
   [./alive_time]
-    type = RunTime
-    time_type = alive
+    type = PerformanceData
+    event = ALIVE
+    column = total_time_with_sub
+  [../]
+
+  [./CFL_time_step]
+    type = LevelSetCFLCondition
+    velocity_x = velocity_x
+    velocity_y = velocity_y
   [../]
 []
 

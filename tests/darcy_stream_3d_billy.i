@@ -97,7 +97,7 @@
     type = StreamDiffusion
     variable = psi_1
     component = 1
-    sign = -1.0
+    sign = 1.0
     temperature = temp
   [../]
 
@@ -105,7 +105,7 @@
     type = StreamDiffusion
     variable = psi_2
     component = 0
-    sign = 1.0
+    sign = -1.0
     temperature = temp
   [../]
 

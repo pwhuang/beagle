@@ -2,9 +2,9 @@
   type = GeneratedMesh
   dim = 3
 
-  nx = 20
-  ny = 20
-  nz = 20
+  nx = 10
+  ny = 10
+  nz = 10
 
   xmin = 0.0
   xmax = 1.0
@@ -16,9 +16,9 @@
   zmax = 1.0
 
   elem_type = HEX8
-  
-  parallel_type = DISTRIBUTED
-  partitioner = default
+
+  #parallel_type = DISTRIBUTED
+  #partitioner = default
 []
 
 [MeshModifiers]
@@ -76,9 +76,7 @@
 
   [./ra_func]
     type = ParsedFunction
-    value = '50' #'(1.0-y)*100'
-    #vars = 'alpha'
-    #vals = '16'
+    value = 50 #'(1.0-y)*100'
   [../]
 []
 
@@ -94,14 +92,14 @@
     type = FunctionRandomIC
     variable = temp
     function = ic_func
-    min = -0.01
-    max = 0.01
+    min = -1e-6
+    max = 1e-6
     seed = 52468
   [../]
 []
 
 [Kernels]
-  active = 'mass stream1 stream2 diff conv euler'
+  active = 'stream1 stream2 diff conv euler'
   [./mass]
     type = MassBalance
     variable = temp
@@ -113,7 +111,7 @@
     type = StreamDiffusion
     variable = psi_1
     component = 1
-    sign = -1.0
+    sign = 1.0
     temperature = temp
   [../]
 
@@ -121,7 +119,7 @@
     type = StreamDiffusion
     variable = psi_2
     component = 0
-    sign = 1.0
+    sign = -1.0
     temperature = temp
   [../]
 
@@ -136,7 +134,6 @@
     variable = temp
     stream_function1 = psi_1
     stream_function2 = psi_2
-    #Rayleigh_number = 100.0
   [../]
 
   [./euler]
@@ -183,23 +180,6 @@
 
 [BCs]
   active = 'no_flow_1 no_flow_2 top_temp bottom_temp'
-
-  [./Periodic]
-      active = ''
-      # Can use auto_direction with Generated Meshes
-      [./auto_1]
-        variable = psi_1
-        auto_direction = 'x y'
-      [../]
-      [./auto_2]
-        variable = psi_2
-        auto_direction = 'x y'
-      [../]
-      [./auto_3]
-        variable = temp
-        auto_direction = 'x y'
-      [../]
-  [../]
 
   [./no_flow_1]
     type = DirichletBC
@@ -290,8 +270,9 @@
   [../]
 
   [./alive_time]
-    type = RunTime
-    time_type = alive
+    type = PerformanceData
+    event = ALIVE
+    column = total_time_with_sub
   [../]
 []
 
