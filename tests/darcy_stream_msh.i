@@ -6,11 +6,17 @@
   boundary_id = '5 6 7 8'
   boundary_name = 'bottom right top left'
 
-  second_order = true
+  #second_order = true
 []
 
 [MeshModifiers]
-  active = ''
+  active = 'side'
+  [./side]
+    type = BoundingBoxNodeSet
+    new_boundary = 'top_half'
+    bottom_left = '0.5 1 0'
+    top_right = '1.5 1 0'
+  [../]
   [./corner_node]
     type = AddExtraNodeset
     new_boundary = 'pinned_node'
@@ -38,11 +44,6 @@
   [../]
 
   [./velocity_y]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
-
-  [./vel_norm]
     order = CONSTANT
     family = MONOMIAL
   [../]
@@ -77,8 +78,8 @@
     type = FunctionRandomIC
     variable = temp
     function = ic_func
-    min = -1e-5
-    max = 1e-5
+    min = -1e-2
+    max = 1e-2
     seed = 524685
   [../]
 []
@@ -147,22 +148,22 @@
     component = 'x'
     sign = -1
   [../]
-
-  [./vel_norm_aux]
-    type = VectorMagnitudeAux
-    variable = vel_norm
-    x = velocity_x
-    y = velocity_y
-  [../]
 []
 
 [BCs]
   active = 'no_flux_bc top_temp bottom_temp'
+  [./flux_bc]
+    type = DirichletBC
+    variable = stream
+    boundary = 'top_half'
+    value = 0.05
+  [../]
+  
   [./no_flux_bc]
     type = DirichletBC
     variable = stream
     boundary = 'top bottom left right'
-    value = 0.0
+    value = 0
   [../]
 
   [./top_temp]
@@ -185,7 +186,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 10000 #'ra_func'
+    function = 500 #'ra_func'
     min = 0
     max = 0
     seed = 363192
@@ -209,7 +210,7 @@
   dt = 0.01
   #dtmin = 0.0001
   start_time = 0
-  end_time = 1000.0
+  #end_time = 1000.0
   scheme = 'crank-nicolson'
   l_max_its = 40
   nl_max_its = 20
@@ -220,7 +221,7 @@
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
-    dt = 1e-2
+    dt = 1e-1
     scale = 0.95
     factor = 0
   [../]

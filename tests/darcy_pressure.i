@@ -68,7 +68,7 @@ elem_type = QUAD4
 
   [./ra_func]
     type = ParsedFunction
-    value = '40.0' #Rayleigh_number is set to be negative due to downwards gravity.
+    value = '50.0' #Rayleigh_number is set to be negative due to downwards gravity.
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -100,7 +100,7 @@ elem_type = QUAD4
     variable = pressure
     temperature = temp
     component = 1
-    sign = -1.0 #negative
+    sign = 1.0
   [../]
 
   [./diff]
@@ -228,11 +228,6 @@ elem_type = QUAD4
     variable = temp
     boundary = 'top'
     diffusivity = 1.0
-  [../]
-
-  [./alive_time]
-    type = RunTime
-    time_type = alive
   [../]
 []
 

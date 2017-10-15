@@ -6,7 +6,7 @@
   boundary_id = '5 6 7 8'
   boundary_name = 'bottom right top left'
 
-  parallel_type = DISTRIBUTED
+  #parallel_type = DISTRIBUTED
   #partitioner = linear
 []
 
@@ -21,7 +21,6 @@
 []
 
 [Variables]
-  active = 'pressure temp'
   [./pressure]
     order = FIRST
     family = LAGRANGE
@@ -29,7 +28,7 @@
   [./temp]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.0
+    #initial_condition = 0.0
   [../]
 []
 
@@ -50,28 +49,22 @@
   active = 'ic_func ra_func ic_func_temp'
   [./ic_func]
     type = ParsedFunction
-    value = '(1.0-y)*10'
-    #vars = 'alpha'
-    #vals = '16'
+    value = '-(1.0-y)*(1.0-y)*25'
   [../]
 
   [./ic_func_temp]
     type = ParsedFunction
     value = '(1.0-y)*1'
-    #vars = 'alpha'
-    #vals = '16'
   [../]
 
   [./ra_func]
     type = ParsedFunction
-    value = '40' #'40.0' #Rayleigh_number is set to be negative due to downwards gravity.
-    #vars = 'alpha'
-    #vals = '16'
+    value = '50'
   [../]
 []
 
 [ICs]
-  active = ''
+  active = 'mat_1 mat_2'
   [./mat_1]
     type = FunctionIC
     variable = pressure
@@ -82,8 +75,8 @@
     type = FunctionRandomIC
     variable = temp
     function = ic_func_temp
-    min = 0
-    max = 0
+    min = -1e-2
+    max = 1e-2
     seed = 524685
   [../]
 []
@@ -96,7 +89,6 @@
     variable = pressure
     temperature = temp
     component = 1
-    sign = -1.0 #negative
   [../]
 
   [./diff]
@@ -110,31 +102,12 @@
     variable = temp
     pressure = pressure
     component = 1
-    #Rayleigh_number = 61.36
   [../]
 
   [./euler]
     type = ExampleTimeDerivative
     variable = temp
     time_coefficient = 1.0
-  [../]
-
-  [./supg_x]
-    type = Supg
-    variable = temp
-    advection_speed = velocity_x
-    h = 0.05
-    beta = 1.0
-    component = 0
-  [../]
-
-  [./supg_y]
-    type = Supg
-    variable = temp
-    advection_speed = velocity_y
-    h = 0.005
-    beta = 1.0
-    component = 1
   [../]
 []
 
@@ -162,7 +135,7 @@
   [./no_flux_bc]
     type = DirichletBC
     variable = pressure
-    boundary = 'top' #'pinned_node'
+    boundary = 'top'
     value = 0.0
   [../]
 
@@ -190,7 +163,7 @@
     min = 0
     max = 0
     seed = 363192
-    outputs = exodus
+    #outputs = exodus
   [../]
 []
 
@@ -224,11 +197,6 @@
     variable = temp
     boundary = 'top'
     diffusivity = 1.0
-  [../]
-
-  [./alive_time]
-    type = RunTime
-    time_type = alive
   [../]
 []
 

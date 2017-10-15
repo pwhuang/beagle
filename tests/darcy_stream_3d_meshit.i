@@ -1,10 +1,11 @@
 [Mesh]
-  file = 'tests/3d_1e-1.msh' #'tests/darcy_stream_3d_msh_in.e'
-  block_id = '33'
-  block_name = 'layer1'
+  file = 'tests/2layer.e' #'tests/darcy_stream_3d_msh_in.e'
+  block_id = '0 1'
+  block_name = 'layer1 layer2'
 
-  boundary_id = '25 27 26 29 30 28'
-  boundary_name = 'top bottom front back right left'
+
+  boundary_id = '1 2 3 4 5 6'
+  boundary_name = 'bottom top back right front left'
 
   #parallel_type = DISTRIBUTED
   #partitioner = parmetis
@@ -32,7 +33,7 @@
   [./temp]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0
+    initial_condition = 0
   [../]
 []
 
@@ -72,7 +73,7 @@
 []
 
 [ICs]
-  active = 'mat_2'
+  active = ''
   [./mat_1]
     type = FunctionIC
     variable = temp
@@ -83,8 +84,8 @@
     type = FunctionRandomIC
     variable = temp
     function = ic_func
-    min = 0
-    max = 1e-2
+    min = -1e-4
+    max = 1e-4
     seed = 52468
   [../]
 []
@@ -163,18 +164,18 @@
 [BCs]
   #active = 'no_flow_1 no_flow_2 top_temp bottom_temp'
   [./no_flow_1]
-    type =  PresetBC
+    type =  DirichletBC
     variable = psi_1
-    #boundary = 'bottom top left right'
-    boundary = 'bottom top left right front back'
+    boundary = 'bottom top left right'
+    #boundary = 'bottom top left right front back'
     value = 0
   [../]
 
   [./no_flow_2]
-    type = PresetBC
+    type = DirichletBC
     variable = psi_2
-    #boundary = 'bottom top front back'
-    boundary = 'bottom top left right front back'
+    boundary = 'bottom top front back'
+    #boundary = 'bottom top left right front back'
     value = 0
   [../]
 
@@ -194,11 +195,20 @@
 []
 
 [Materials]
-  active = 'ra_output'
-  [./ra_output]
+  [./ra_output1]
     type = RayleighMaterial
     block = 'layer1'
     function = 'ra_func'
+    min = 0
+    max = 0
+    seed = 363192
+    outputs = exodus
+  [../]
+
+  [./ra_output2]
+    type = RayleighMaterial
+    block = 'layer2'
+    function = '40'
     min = 0
     max = 0
     seed = 363192
@@ -217,11 +227,11 @@
 [Executioner]
   type = Transient
   solve_type = 'PJFNK'
-  num_steps = 1000
+  #num_steps = 20
   #dt = 1e-2
   #dtmin = 0.001
   start_time = 0
-  #end_time = 100000.0
+  end_time = 100000.0
   scheme = 'crank-nicolson'
   l_max_its = 40
   nl_max_its = 20
@@ -231,7 +241,7 @@
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
-    dt = 1e-2
+    dt = 1e-5
     scale = 0.9
     factor = 0
   [../]

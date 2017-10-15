@@ -40,10 +40,10 @@ protected:
 
   const VariableValue & _temp;
   unsigned _temp_var_num;
-  //const VariableGradient & _grad_temp;
+  const VariableGradient & _grad_temp;
   const MaterialProperty<Real> & _Ra;
   //const MaterialProperty<RealGradient> & _grad_Ra;
   unsigned _component;
-  Real _sign;
+  //Real _sign;
 };
 #endif //PressureDiffusion_test_H

@@ -27,7 +27,7 @@
   [./temp]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0
+    #initial_condition = 0
   [../]
 []
 
@@ -66,7 +66,7 @@
 []
 
 [ICs]
-  active = ''
+  active = 'mat_2'
   [./mat_1]
     type = FunctionIC
     variable = temp
@@ -77,8 +77,8 @@
     type = FunctionRandomIC
     variable = temp
     function = ic_func
-    min = -0.01
-    max = 0.01
+    min = -1e-2
+    max = 1e-2
     seed = 52468
   [../]
 []
@@ -96,7 +96,7 @@
     type = StreamDiffusion
     variable = psi_1
     component = 1
-    sign = -1.0
+    sign = 1.0
     temperature = temp
   [../]
 
@@ -104,7 +104,7 @@
     type = StreamDiffusion
     variable = psi_2
     component = 0
-    sign = 1.0
+    sign = -1.0
     temperature = temp
   [../]
 
@@ -145,20 +145,11 @@
     sign = 1.0
   [../]
 
-  [./velocity_z_aux2]
-    type = VariableGradientSign
+  [./velocity_z_aux]
+    type = StreamVelocityZ
     variable = velocity_z
-    gradient_variable = psi_2
-    component = 'x'
-    sign = 1.0
-  [../]
-
-  [./velocity_z_aux1]
-    type = VariableGradientSign
-    variable = velocity_z
-    gradient_variable = psi_1
-    component = 'y'
-    sign = -1.0
+    stream_function1 = psi_1
+    stream_function2 = psi_2
   [../]
 []
 
@@ -227,7 +218,7 @@
   [./ra_output_fault1]
     type = RayleighMaterial
     block = 3
-    function = '200'
+    function = '2000'
     min = 0
     max = 0
     seed = 363192
@@ -237,7 +228,7 @@
   [./ra_output_fault2]
     type = RayleighMaterial
     block = 4
-    function = '160'
+    function = '1600'
     min = 0
     max = 0
     seed = 363192
@@ -257,13 +248,21 @@
   type = Transient
   solve_type = 'PJFNK'
   #num_steps = 20
-  dt = 0.01
-  dtmin = 0.001
+  #dt = 0.01
+  #dtmin = 0.001
   start_time = 0
-  end_time = 2.0
+  #end_time = 2.0
   scheme = 'crank-nicolson'
   l_max_its = 80
   nl_max_its = 30
+
+  [./TimeStepper]
+    type = PostprocessorDT
+    postprocessor = CFL_time_step
+    dt = 1e-4
+    scale = 0.9
+    factor = 0
+  [../]
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
   #petsc_options_iname = '-pc_type -pc_hypre_type'
   #petsc_options_value = 'hypre boomeramg'
@@ -277,11 +276,14 @@
     diffusivity = 1.0
   [../]
 
-  [./alive_time]
-    type = RunTime
-    time_type = alive
+  [./CFL_time_step]
+    type = LevelSetCFLCondition
+    velocity_x = velocity_x
+    velocity_y = velocity_y
+    velocity_z = velocity_z
   [../]
 []
+
 
 [Outputs]
   execute_on = 'initial timestep_end'

@@ -11,7 +11,7 @@ xmax = 2.0
 ymin = 0.0
 ymax = 1.0
 
-elem_type = TRI6
+elem_type = TRI3
 []
 
 [MeshModifiers]
@@ -137,13 +137,6 @@ elem_type = TRI6
 [Executioner]
   type = Steady #Transient
   solve_type = 'PJFNK'
-[]
-
-[Postprocessors]
-  [./alive_time]
-    type = RunTime
-    time_type = alive
-  [../]
 []
 
 [Outputs]

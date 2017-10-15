@@ -274,11 +274,6 @@
     boundary = 'top'
     diffusivity = 1.0
   [../]
-
-  [./alive_time]
-    type = RunTime
-    time_type = alive
-  [../]
 []
 
 [Outputs]
