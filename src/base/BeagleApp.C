@@ -29,6 +29,9 @@
 #include "PressureDiffusion.h"
 #include "PressureDiffusion_test.h"
 #include "Supg.h"
+#include "Vorticity.h"
+#include "VelocityDiffusion.h"
+#include "VelocityDiffusionZ.h"
 
 //AuxKernel
 #include "AuxDensity.h"
@@ -100,6 +103,9 @@ BeagleApp::registerObjects(Factory & factory)
     registerKernel(PressureDiffusion);
     registerKernel(PressureDiffusion_test);
     registerKernel(Supg);
+    registerKernel(Vorticity);
+    registerKernel(VelocityDiffusion);
+    registerKernel(VelocityDiffusionZ);
     registerInitialCondition(FunctionRandomIC);
     registerBoundaryCondition(CoupledNeumannBC);
     registerAux(AuxDensity);

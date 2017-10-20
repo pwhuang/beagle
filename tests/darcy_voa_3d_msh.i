@@ -1,51 +1,42 @@
 [Mesh]
-  file = 'tests/single_layer.msh'
-  block_id = '11'
+  file = 'tests/3d_1e-1.msh' #'tests/darcy_stream_3d_msh_in.e'
+  block_id = '33'
   block_name = 'layer1'
 
-  boundary_id = '5 6 7 8'
-  boundary_name = 'bottom right top left'
+  boundary_id = '25 27 26 29 30 28'
+  boundary_name = 'top bottom front back right left'
 
-  #second_order = true
+  #parallel_type = DISTRIBUTED
+  #partitioner = parmetis
+  second_order = true
 []
 
 [MeshModifiers]
   active = ''
-  [./side]
-    type = BoundingBoxNodeSet
-    new_boundary = 'top_half'
-    bottom_left = '0.5 1 0'
-    top_right = '1.5 1 0'
-  [../]
   [./corner_node]
     type = AddExtraNodeset
     new_boundary = 'pinned_node'
     #nodes = '0'
-    coord = '0 0.8'
+    coord = '0 0 0'
   [../]
 []
 
 [Variables]
-  [./stream]
-    order = FIRST
-    family = LAGRANGE
-  [../]
   [./temp]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0
   [../]
-[]
-
-[AuxVariables]
-  [./velocity_x]
-    order = CONSTANT
-    family = MONOMIAL
+  [./vel_x]
+    order = FIRST
+    family = LAGRANGE
   [../]
-
-  [./velocity_y]
-    order = CONSTANT
-    family = MONOMIAL
+  [./vel_y]
+    order = FIRST
+    family = LAGRANGE
+  [../]
+  [./vel_z]
+    order = FIRST
+    family = LAGRANGE
   [../]
 []
 
@@ -53,14 +44,14 @@
   active = 'ic_func ra_func'
   [./ic_func]
     type = ParsedFunction
-    value = '(1.0-y)*1'
+    value = '1.0-z'
     #vars = 'alpha'
     #vals = '16'
   [../]
 
   [./ra_func]
     type = ParsedFunction
-    value = '50*x'
+    value = 200
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -78,21 +69,43 @@
     type = FunctionRandomIC
     variable = temp
     function = ic_func
-    min = -1e-2
+    min = 0
     max = 1e-2
-    seed = 524685
+    seed = 52468
   [../]
 []
 
-
 [Kernels]
-  active = 'mass diff conv euler'
   [./mass]
-    type = StreamDiffusion
-    variable = stream
+    type = MassBalance
+    variable = temp
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = vel_z
+  [../]
+
+  [./momentum_x]
+    type = VelocityDiffusion
+    variable = vel_x
     temperature = temp
     component = 0
-    sign = 1 #This is intended to be 1. Do not change this!
+    sign = 0
+  [../]
+
+  [./momentum_y]
+    type = VelocityDiffusion
+    variable = vel_y
+    temperature = temp
+    component = 1
+    sign = 0
+  [../]
+
+  [./momentum_z]
+    type = VelocityDiffusionZ
+    variable = vel_z
+    temperature = temp
+    component = 0
+    sign = 0
   [../]
 
   [./diff]
@@ -102,9 +115,11 @@
   [../]
 
   [./conv]
-    type = RayleighConvection
+    type = ExampleConvection
     variable = temp
-    stream_function = stream
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = vel_z
   [../]
 
   [./euler]
@@ -112,57 +127,30 @@
     variable = temp
     time_coefficient = 1.0
   [../]
-
-  [./supg_x]
-    type = Supg
-    variable = temp
-    advection_speed = velocity_x
-    h = 0.05
-    beta = 1.0
-    component = 0
-  [../]
-
-  [./supg_y]
-    type = Supg
-    variable = temp
-    advection_speed = velocity_y
-    h = 0.05
-    beta = 1.0
-    component = 1
-  [../]
-[]
-
-[AuxKernels]
-  [./velocity_x_aux]
-    type = VariableGradientSign
-    variable = velocity_x
-    gradient_variable = stream
-    component = 'y'
-    sign = 1
-  [../]
-
-  [./velocity_y_aux]
-    type = VariableGradientSign
-    variable = velocity_y
-    gradient_variable = stream
-    component = 'x'
-    sign = -1
-  [../]
 []
 
 [BCs]
-  active = 'no_flux_bc top_temp bottom_temp'
-  [./flux_bc]
-    type = DirichletBC
-    variable = stream
-    boundary = 'top_half'
-    value = 0.05
+  [./no_flow_1]
+    type =  PresetBC
+    variable = vel_x
+    #boundary = 'front back'
+    boundary = 'front back left right top bottom'
+    value = 0
   [../]
 
-  [./no_flux_bc]
+  [./no_flow_2]
     type = PresetBC
-    variable = stream
-    boundary = 'top bottom left right'
+    variable = vel_y
+    #boundary = 'left right'
+    boundary = 'front back left right top bottom'
+    value = 0
+  [../]
+
+  [./no_flow_3]
+    type = PresetBC
+    variable = vel_z
+    #boundary = 'top bottom'
+    boundary = 'front back left right top bottom'
     value = 0
   [../]
 
@@ -186,7 +174,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 1000 #'ra_func'
+    function = 'ra_func'
     min = 0
     max = 0
     seed = 363192
@@ -195,6 +183,7 @@
 []
 
 [Preconditioning]
+  active = ''
   [./SMP]
     type = SMP
     full = true
@@ -205,29 +194,26 @@
 [Executioner]
   type = Transient
   solve_type = 'PJFNK'
-  #abort_on_solve_fail = true
-  #num_steps = 1000
-  dt = 0.01
-  #dtmin = 0.0001
+  num_steps = 1000
+  #dt = 1e-3
+  #dtmin = 0.001
   start_time = 0
-  #end_time = 1000.0
+  #end_time = 100000.0
   scheme = 'crank-nicolson'
-  l_max_its = 40
-  nl_max_its = 20
+  l_max_its = 100
+  nl_max_its = 30
   trans_ss_check = true
-  ss_check_tol = 1e-06
-  #ss_tmin = 0.2
+  ss_check_tol = 1e-07
 
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
-    dt = 1e-2
-    scale = 0.95
+    dt = 1e-3
+    scale = 0.2
     factor = 0
   [../]
-  #petsc_options = '-snes_mf_operator' #-ksp_monitor'
-  #petsc_options_iname = '-pc_type -pc_hypre_type'
-  #petsc_options_value = 'hypre boomeramg'
+  #petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
+  #petsc_options_value = 'hypre    boomeramg      101'
 []
 
 [Postprocessors]
@@ -246,8 +232,9 @@
 
   [./CFL_time_step]
     type = LevelSetCFLCondition
-    velocity_x = velocity_x
-    velocity_y = velocity_y
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = vel_z
   [../]
 []
 

@@ -26,7 +26,11 @@
 []
 
 [Variables]
-  [./stream]
+  [./vel_x]
+    order = FIRST
+    family = LAGRANGE
+  [../]
+  [./vel_y]
     order = FIRST
     family = LAGRANGE
   [../]
@@ -34,18 +38,6 @@
     order = FIRST
     family = LAGRANGE
     #initial_condition = 0
-  [../]
-[]
-
-[AuxVariables]
-  [./velocity_x]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
-
-  [./velocity_y]
-    order = CONSTANT
-    family = MONOMIAL
   [../]
 []
 
@@ -86,13 +78,21 @@
 
 
 [Kernels]
-  active = 'mass diff conv euler'
   [./mass]
-    type = StreamDiffusion
-    variable = stream
+    type = MassBalance
+    variable = vel_y
+    velocity_x = vel_x
+  [../]
+
+  [./momentum]
+    type = Vorticity
+    variable = vel_x
+    velocity_1 = vel_y
     temperature = temp
-    component = 0
-    sign = 1 #This is intended to be 1. Do not change this!
+    component_1 = 1
+    component_2 = 0
+    component_3 = 0
+    sign = 1.0
   [../]
 
   [./diff]
@@ -102,9 +102,11 @@
   [../]
 
   [./conv]
-    type = RayleighConvection
+    type = ExampleConvection
     variable = temp
-    stream_function = stream
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = 0
   [../]
 
   [./euler]
@@ -112,56 +114,19 @@
     variable = temp
     time_coefficient = 1.0
   [../]
-
-  [./supg_x]
-    type = Supg
-    variable = temp
-    advection_speed = velocity_x
-    h = 0.05
-    beta = 1.0
-    component = 0
-  [../]
-
-  [./supg_y]
-    type = Supg
-    variable = temp
-    advection_speed = velocity_y
-    h = 0.05
-    beta = 1.0
-    component = 1
-  [../]
-[]
-
-[AuxKernels]
-  [./velocity_x_aux]
-    type = VariableGradientSign
-    variable = velocity_x
-    gradient_variable = stream
-    component = 'y'
-    sign = 1
-  [../]
-
-  [./velocity_y_aux]
-    type = VariableGradientSign
-    variable = velocity_y
-    gradient_variable = stream
-    component = 'x'
-    sign = -1
-  [../]
 []
 
 [BCs]
-  active = 'no_flux_bc top_temp bottom_temp'
-  [./flux_bc]
+  [./no_flux_bc1]
     type = DirichletBC
-    variable = stream
-    boundary = 'top_half'
-    value = 0.05
+    variable = vel_x
+    boundary = 'top bottom left right'
+    value = 0
   [../]
 
-  [./no_flux_bc]
-    type = PresetBC
-    variable = stream
+  [./no_flux_bc2]
+    type = DirichletBC
+    variable = vel_y
     boundary = 'top bottom left right'
     value = 0
   [../]
@@ -186,7 +151,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 1000 #'ra_func'
+    function = 200 #'ra_func'
     min = 0
     max = 0
     seed = 363192
@@ -196,9 +161,9 @@
 
 [Preconditioning]
   [./SMP]
-    type = SMP
+    type = FDP
     full = true
-    solve_type = 'NEWTON'
+    #solve_type = 'NEWTON'
   [../]
 []
 
@@ -206,7 +171,7 @@
   type = Transient
   solve_type = 'PJFNK'
   #abort_on_solve_fail = true
-  #num_steps = 1000
+  #num_steps = 20
   dt = 0.01
   #dtmin = 0.0001
   start_time = 0
@@ -215,13 +180,13 @@
   l_max_its = 40
   nl_max_its = 20
   trans_ss_check = true
-  ss_check_tol = 1e-06
+  ss_check_tol = 1e-07
   #ss_tmin = 0.2
 
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
-    dt = 1e-2
+    dt = 1e-1
     scale = 0.95
     factor = 0
   [../]
@@ -246,8 +211,8 @@
 
   [./CFL_time_step]
     type = LevelSetCFLCondition
-    velocity_x = velocity_x
-    velocity_y = velocity_y
+    velocity_x = vel_x
+    velocity_y = vel_y
   [../]
 []
 

@@ -12,36 +12,38 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef MASSBALANCE_H
-#define MASSBALANCE_H
+#ifndef VelocityDiffusion_H
+#define VelocityDiffusion_H
 
-#include "Kernel.h"
+#include "Diffusion.h"
 
 //Forward Declarations
-class MassBalance;
+class VelocityDiffusion;
 
 /* This class extends the Diffusion kernel to multiply by a coefficient
  * read from the input file
  */
 template<>
-InputParameters validParams<MassBalance>();
+InputParameters validParams<VelocityDiffusion>();
 
-class MassBalance : public Kernel
+class VelocityDiffusion : public Diffusion
 {
 public:
 
-  MassBalance(const InputParameters & parameters);
+  VelocityDiffusion(const InputParameters & parameters);
 
 protected:
   virtual Real computeQpResidual() override;
   virtual Real computeQpJacobian() override;
-  virtual Real computeQpOffDiagJacobian(unsigned jvar);
+  virtual Real computeQpOffDiagJacobian(unsigned jvar) override;
 
-  const VariableGradient & _grad_velocity_x;
-  const VariableGradient & _grad_velocity_y;
-  const VariableGradient & _grad_velocity_z;
-  unsigned _u_vel_var_number;
-  unsigned _v_vel_var_number;
-  unsigned _w_vel_var_number;
+  const VariableValue & _temp;
+  const VariableGradient & _grad_temp;
+  unsigned _temp_var_num;
+  const MaterialProperty<Real> & _Ra;
+  //const MaterialProperty<RealGradient> & _grad_Ra;
+  unsigned _component_1;
+  unsigned _component_2;
+  Real _sign;
 };
-#endif //EXAMPLEDIFFUSION_H
+#endif //VelocityDiffusion_H

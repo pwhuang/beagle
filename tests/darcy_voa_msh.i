@@ -6,7 +6,7 @@
   boundary_id = '5 6 7 8'
   boundary_name = 'bottom right top left'
 
-  #second_order = true
+  second_order = true
 []
 
 [MeshModifiers]
@@ -26,26 +26,18 @@
 []
 
 [Variables]
-  [./stream]
-    order = FIRST
-    family = LAGRANGE
-  [../]
   [./temp]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
     #initial_condition = 0
   [../]
-[]
-
-[AuxVariables]
-  [./velocity_x]
-    order = CONSTANT
-    family = MONOMIAL
+  [./vel_x]
+    order = FIRST
+    family = LAGRANGE
   [../]
-
-  [./velocity_y]
-    order = CONSTANT
-    family = MONOMIAL
+  [./vel_y]
+    order = FIRST
+    family = LAGRANGE
   [../]
 []
 
@@ -86,13 +78,22 @@
 
 
 [Kernels]
-  active = 'mass diff conv euler'
-  [./mass]
-    type = StreamDiffusion
-    variable = stream
+  [./momentum_x]
+    type = VelocityDiffusion
+    variable = vel_x
     temperature = temp
-    component = 0
-    sign = 1 #This is intended to be 1. Do not change this!
+    component_1 = 0
+    component_2 = 1
+    sign = -1
+  [../]
+
+  [./momentum_y]
+    type = VelocityDiffusion
+    variable = vel_y
+    temperature = temp
+    component_1 = 0
+    component_2 = 0
+    sign = 1
   [../]
 
   [./diff]
@@ -102,9 +103,11 @@
   [../]
 
   [./conv]
-    type = RayleighConvection
+    type = ExampleConvection
     variable = temp
-    stream_function = stream
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = 0
   [../]
 
   [./euler]
@@ -112,57 +115,23 @@
     variable = temp
     time_coefficient = 1.0
   [../]
-
-  [./supg_x]
-    type = Supg
-    variable = temp
-    advection_speed = velocity_x
-    h = 0.05
-    beta = 1.0
-    component = 0
-  [../]
-
-  [./supg_y]
-    type = Supg
-    variable = temp
-    advection_speed = velocity_y
-    h = 0.05
-    beta = 1.0
-    component = 1
-  [../]
-[]
-
-[AuxKernels]
-  [./velocity_x_aux]
-    type = VariableGradientSign
-    variable = velocity_x
-    gradient_variable = stream
-    component = 'y'
-    sign = 1
-  [../]
-
-  [./velocity_y_aux]
-    type = VariableGradientSign
-    variable = velocity_y
-    gradient_variable = stream
-    component = 'x'
-    sign = -1
-  [../]
 []
 
 [BCs]
-  active = 'no_flux_bc top_temp bottom_temp'
-  [./flux_bc]
+  active = 'no_flux_bc_x no_flux_bc_y top_temp bottom_temp'
+  [./no_flux_bc_x]
     type = DirichletBC
-    variable = stream
-    boundary = 'top_half'
-    value = 0.05
+    variable = vel_x
+    #boundary = 'top bottom left right'
+    boundary = 'left right'
+    value = 0
   [../]
 
-  [./no_flux_bc]
-    type = PresetBC
-    variable = stream
-    boundary = 'top bottom left right'
+  [./no_flux_bc_y]
+    type = DirichletBC
+    variable = vel_y
+    #boundary = 'top bottom left right'
+    boundary = 'top bottom'
     value = 0
   [../]
 
@@ -206,8 +175,8 @@
   type = Transient
   solve_type = 'PJFNK'
   #abort_on_solve_fail = true
-  #num_steps = 1000
-  dt = 0.01
+  num_steps = 1000
+  #dt = 0.001
   #dtmin = 0.0001
   start_time = 0
   #end_time = 1000.0
@@ -221,8 +190,8 @@
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
-    dt = 1e-2
-    scale = 0.95
+    dt = 1e-3
+    scale = 0.8
     factor = 0
   [../]
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
@@ -246,8 +215,9 @@
 
   [./CFL_time_step]
     type = LevelSetCFLCondition
-    velocity_x = velocity_x
-    velocity_y = velocity_y
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = 0
   [../]
 []
 

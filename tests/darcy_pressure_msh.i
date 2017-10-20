@@ -11,12 +11,18 @@
 []
 
 [MeshModifiers]
-  active = ''
   [./corner_node]
     type = AddExtraNodeset
     new_boundary = 'pinned_node'
     #nodes = '0'
     coord = '0.0 1.0'
+  [../]
+
+  [./corner_node2]
+    type = AddExtraNodeset
+    new_boundary = 'pinned_node2'
+    #nodes = '0'
+    coord = '2.0 1.0'
   [../]
 []
 
@@ -49,7 +55,7 @@
   active = 'ic_func ra_func ic_func_temp'
   [./ic_func]
     type = ParsedFunction
-    value = '-(1.0-y)*(1.0-y)*25'
+    value = '-(1.0-y)*(1.0-y)*100'
   [../]
 
   [./ic_func_temp]
@@ -59,7 +65,7 @@
 
   [./ra_func]
     type = ParsedFunction
-    value = '50'
+    value = '200'
   [../]
 []
 
@@ -135,7 +141,7 @@
   [./no_flux_bc]
     type = DirichletBC
     variable = pressure
-    boundary = 'top'
+    boundary = 'pinned_node pinned_node2'
     value = 0.0
   [../]
 
@@ -179,13 +185,24 @@
   type = Transient
   solve_type = 'PJFNK'
   #num_steps = 20
-  dt = 0.02
-  dtmin = 0.001
+  #dt = 0.02
+  #dtmin = 0.001
   start_time = 0
-  end_time = 8.0
+  #end_time = 8.0
   scheme = 'crank-nicolson'
-  l_max_its = 200
-  nl_max_its = 200
+  l_max_its = 40
+  nl_max_its = 60
+  trans_ss_check = true
+  ss_check_tol = 1e-06
+
+
+  [./TimeStepper]
+    type = PostprocessorDT
+    postprocessor = CFL_time_step
+    dt = 1e-3
+    scale = 0.95
+    factor = 0
+  [../]
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
   #petsc_options_iname = '-pc_type -pc_hypre_type'
   #petsc_options_value = 'hypre boomeramg'
@@ -197,6 +214,12 @@
     variable = temp
     boundary = 'top'
     diffusivity = 1.0
+  [../]
+
+  [./CFL_time_step]
+    type = LevelSetCFLCondition
+    velocity_x = velocity_x
+    velocity_y = velocity_y
   [../]
 []
 

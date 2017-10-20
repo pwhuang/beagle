@@ -33,6 +33,7 @@ protected:
   virtual Real computeQpResidual() override;
 
   virtual Real computeQpJacobian() override;
+  virtual Real computeQpOffDiagJacobian(unsigned jvar) override;
 
 private:
 
@@ -41,7 +42,10 @@ private:
   const VariableValue & _advection_speed_x;
   const VariableValue & _advection_speed_y;
   const VariableValue & _advection_speed_z;
-  Real _Ra;
+  unsigned _vel_x_var_num;
+  unsigned _vel_y_var_num;
+  unsigned _vel_z_var_num;
+  const MaterialProperty<Real> & _Ra;
 };
 
 #endif //EXAMPLECONVECTION_H

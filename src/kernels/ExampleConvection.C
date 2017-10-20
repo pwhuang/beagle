@@ -18,34 +18,47 @@ template<>
 InputParameters validParams<ExampleConvection>()
 {
   InputParameters params = validParams<Kernel>();
-  params.addCoupledVar("advection_speed_x", "advection_speed_x");
-  params.addCoupledVar("advection_speed_y", "advection_speed_y");
-  params.addCoupledVar("advection_speed_z", "advection_speed_z");
+  params.addCoupledVar("velocity_x", "velocity_x");
+  params.addCoupledVar("velocity_y", "velocity_y");
+  params.addCoupledVar("velocity_z", "velocity_z");
   return params;
 }
 
 ExampleConvection::ExampleConvection(const InputParameters & parameters) :
     Kernel(parameters),
-    //_heat_capacity(getMaterialProperty<Real>("heat_capacity")),
-    //_porosity(getMaterialProperty<Real>("porosity")),
-    _advection_speed_x(coupledValue("advection_speed_x")),
-    _advection_speed_y(coupledValue("advection_speed_y")),
-    _advection_speed_z(coupledValue("advection_speed_z"))
+    _advection_speed_x(coupledValue("velocity_x")),
+    _advection_speed_y(coupledValue("velocity_y")),
+    _advection_speed_z(coupledValue("velocity_z")),
+    _vel_x_var_num(coupled("velocity_x")),
+    _vel_y_var_num(coupled("velocity_y")),
+    _vel_z_var_num(coupled("velocity_z")),
+    _Ra(getMaterialProperty<Real>("rayleigh_material"))
 {}
 
 Real ExampleConvection::computeQpResidual()
 {
   RealVectorValue _advection_speed = RealVectorValue(_advection_speed_x[ _qp ], _advection_speed_y[ _qp ], _advection_speed_z[ _qp ]);
-  //return _test[_i][_qp]*(_heat_capacity[_qp]*_porosity[_qp]
-  //        *_advection_speed*_grad_u[_qp]);
   return _test[_i][_qp]*(_advection_speed*_grad_u[_qp]);
-
 }
 
 Real ExampleConvection::computeQpJacobian()
 {
   RealVectorValue _advection_speed = RealVectorValue(_advection_speed_x[ _qp ], _advection_speed_y[ _qp ], _advection_speed_z[ _qp ]);
-  //return _test[_i][_qp]*(_heat_capacity[_qp]*_porosity[_qp]
-  //        *_advection_speed*_grad_phi[_j][_qp]);
   return _test[_i][_qp]*(_advection_speed*_grad_phi[_j][_qp]);
+}
+
+Real ExampleConvection::computeQpOffDiagJacobian(unsigned jvar)
+{
+
+  if (jvar == _vel_x_var_num)
+    return _phi[_j][_qp] * _grad_u[_qp](0) * _test[_i][_qp];
+
+  else if (jvar == _vel_y_var_num)
+    return _phi[_j][_qp] * _grad_u[_qp](1) * _test[_i][_qp];
+
+  else if (jvar == _vel_z_var_num)
+    return _phi[_j][_qp] * _grad_u[_qp](2) * _test[_i][_qp];
+
+  else
+    return 0;
 }

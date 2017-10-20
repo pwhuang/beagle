@@ -1,21 +1,15 @@
 [Mesh]
-  file = 'tests/single_layer.msh'
-  block_id = '11'
-  block_name = 'layer1'
-
-  boundary_id = '5 6 7 8'
-  boundary_name = 'bottom right top left'
-
-  #second_order = true
+  file = 'tests/elder.msh'
+  second_order = true
 []
 
 [MeshModifiers]
-  active = ''
+  active = 'side'
   [./side]
     type = BoundingBoxNodeSet
-    new_boundary = 'top_half'
-    bottom_left = '0.5 1 0'
-    top_right = '1.5 1 0'
+    new_boundary = 'bottom_half'
+    bottom_left = '1 0 0'
+    top_right = '3 0 0'
   [../]
   [./corner_node]
     type = AddExtraNodeset
@@ -26,26 +20,20 @@
 []
 
 [Variables]
-  [./stream]
-    order = FIRST
-    family = LAGRANGE
-  [../]
   [./temp]
     order = FIRST
     family = LAGRANGE
     #initial_condition = 0
   [../]
-[]
 
-[AuxVariables]
-  [./velocity_x]
-    order = CONSTANT
-    family = MONOMIAL
+  [./vel_x]
+    order = FIRST
+    family = LAGRANGE
   [../]
 
-  [./velocity_y]
-    order = CONSTANT
-    family = MONOMIAL
+  [./vel_y]
+    order = FIRST
+    family = LAGRANGE
   [../]
 []
 
@@ -60,7 +48,7 @@
 
   [./ra_func]
     type = ParsedFunction
-    value = '50*x'
+    value = '400' #'x*50'
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -77,22 +65,32 @@
   [./mat_2]
     type = FunctionRandomIC
     variable = temp
-    function = ic_func
-    min = -1e-2
-    max = 1e-2
+    function = '0' #ic_func
+    min = -0.01
+    max = 0.01
     seed = 524685
   [../]
 []
 
 
+
 [Kernels]
-  active = 'mass diff conv euler'
-  [./mass]
-    type = StreamDiffusion
-    variable = stream
+  [./momentum_x]
+    type = VelocityDiffusion
+    variable = vel_x
     temperature = temp
-    component = 0
-    sign = 1 #This is intended to be 1. Do not change this!
+    component_1 = 1
+    component_2 = 0
+    sign = -1
+  [../]
+
+  [./momentum_y]
+    type = VelocityDiffusion
+    variable = vel_y
+    temperature = temp
+    component_1 = 0
+    component_2 = 0
+    sign = 1
   [../]
 
   [./diff]
@@ -102,9 +100,11 @@
   [../]
 
   [./conv]
-    type = RayleighConvection
+    type = ExampleConvection
     variable = temp
-    stream_function = stream
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = 0
   [../]
 
   [./euler]
@@ -112,71 +112,37 @@
     variable = temp
     time_coefficient = 1.0
   [../]
-
-  [./supg_x]
-    type = Supg
-    variable = temp
-    advection_speed = velocity_x
-    h = 0.05
-    beta = 1.0
-    component = 0
-  [../]
-
-  [./supg_y]
-    type = Supg
-    variable = temp
-    advection_speed = velocity_y
-    h = 0.05
-    beta = 1.0
-    component = 1
-  [../]
-[]
-
-[AuxKernels]
-  [./velocity_x_aux]
-    type = VariableGradientSign
-    variable = velocity_x
-    gradient_variable = stream
-    component = 'y'
-    sign = 1
-  [../]
-
-  [./velocity_y_aux]
-    type = VariableGradientSign
-    variable = velocity_y
-    gradient_variable = stream
-    component = 'x'
-    sign = -1
-  [../]
 []
 
 [BCs]
-  active = 'no_flux_bc top_temp bottom_temp'
-  [./flux_bc]
+  active = 'no_flux_bc_x no_flux_bc_y top_temp bottom_temp'
+  [./no_flux_bc_x]
     type = DirichletBC
-    variable = stream
-    boundary = 'top_half'
-    value = 0.05
+    variable = vel_x
+    #boundary = 'top bottom left right'
+    boundary = 'left right'
+    value = 0
   [../]
 
-  [./no_flux_bc]
-    type = PresetBC
-    variable = stream
-    boundary = 'top bottom left right'
+  [./no_flux_bc_y]
+    type = DirichletBC
+    variable = vel_y
+    #boundary = 'top bottom left right'
+    boundary = 'top bottom'
     value = 0
   [../]
 
   [./top_temp]
     type = DirichletBC
     variable = temp
-    boundary = 'top'
+    boundary = 'top bottom right left'
     value = 0.0
   [../]
 
   [./bottom_temp]
     type = DirichletBC
     variable = temp
-    boundary = 'bottom'
+    boundary = 'bottom_half'
     value = 1.0
   [../]
 []
@@ -185,16 +151,17 @@
   active = 'ra_output'
   [./ra_output]
     type = RayleighMaterial
-    block = 'layer1'
-    function = 1000 #'ra_func'
+    block = 'layer1' #0
+    function = 'ra_func'
     min = 0
     max = 0
     seed = 363192
-    outputs = exodus
+    #outputs = exodus
   [../]
 []
 
 [Preconditioning]
+  #active = ''
   [./SMP]
     type = SMP
     full = true
@@ -204,27 +171,26 @@
 
 [Executioner]
   type = Transient
-  solve_type = 'PJFNK'
-  #abort_on_solve_fail = true
-  #num_steps = 1000
-  dt = 0.01
-  #dtmin = 0.0001
+  #solve_type = 'PJFNK'
+  #num_steps = 1
+  #dt = 0.001
+  #dtmin = 0.001
   start_time = 0
-  #end_time = 1000.0
+  #end_time = 300.0
   scheme = 'crank-nicolson'
-  l_max_its = 40
-  nl_max_its = 20
+  l_max_its = 100
+  nl_max_its = 30
   trans_ss_check = true
   ss_check_tol = 1e-06
-  #ss_tmin = 0.2
 
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
-    dt = 1e-2
-    scale = 0.95
+    dt = 1e-3
+    scale = 0.8
     factor = 0
   [../]
+
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
   #petsc_options_iname = '-pc_type -pc_hypre_type'
   #petsc_options_value = 'hypre boomeramg'
@@ -246,8 +212,8 @@
 
   [./CFL_time_step]
     type = LevelSetCFLCondition
-    velocity_x = velocity_x
-    velocity_y = velocity_y
+    velocity_x = vel_x
+    velocity_y = vel_y
   [../]
 []
 

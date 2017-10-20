@@ -20,6 +20,7 @@ InputParameters validParams<MassBalance>()
   InputParameters params = validParams<Kernel>();
   params.addCoupledVar("velocity_x","velocity_x");
   params.addCoupledVar("velocity_y","velocity_y");
+  params.addCoupledVar("velocity_z","velocity_z");
   return params;
 }
 
@@ -28,14 +29,17 @@ MassBalance::MassBalance(const InputParameters & parameters) :
     // Initialize our member variable based on a default or input file
     _grad_velocity_x(coupledGradient("velocity_x")),
     _grad_velocity_y(coupledGradient("velocity_y")),
+    _grad_velocity_z(coupledGradient("velocity_z")),
     _u_vel_var_number(coupled("velocity_x")),
-    _v_vel_var_number(coupled("velocity_y"))
+    _v_vel_var_number(coupled("velocity_y")),
+    _w_vel_var_number(coupled("velocity_z"))
 {}
 
 Real
 MassBalance::computeQpResidual()
 {
-  return (_grad_velocity_x[_qp](0) + _grad_velocity_y[_qp](1)) * _test[_i][_qp];
+  return //(_grad_velocity_x[_qp](0) + _grad_velocity_y[_qp](1) + _grad_velocity_z[_qp](2)) * _test[_i][_qp];
+  (_grad_velocity_x[_qp](0) + _grad_u[_qp](1) ) * _test[_i][_qp];
 }
 
 
@@ -43,7 +47,7 @@ MassBalance::computeQpResidual()
 Real
 MassBalance::computeQpJacobian()
 {
-  return 0;
+  return _grad_phi[_j][_qp](1)*_test[_i][_qp];
 }
 
 
@@ -54,8 +58,11 @@ MassBalance::computeQpOffDiagJacobian(unsigned jvar)
   if (jvar == _u_vel_var_number)
     return _grad_phi[_j][_qp](0) * _test[_i][_qp];
 
-  else if (jvar == _v_vel_var_number)
-    return _grad_phi[_j][_qp](1) * _test[_i][_qp];
+  //else if (jvar == _v_vel_var_number)
+    //return _grad_phi[_j][_qp](1) * _test[_i][_qp];
+
+  else if (jvar == _w_vel_var_number)
+    return _grad_phi[_j][_qp](2) * _test[_i][_qp];
 
   else
     return 0;

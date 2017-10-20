@@ -1,17 +1,18 @@
 [Mesh]
-type = GeneratedMesh
-dim = 2
+  file = 'tests/elder.msh'
+  #type = GeneratedMesh
+  #dim = 2
 
-nx = 200
-ny = 50
+  #nx = 200
+  #ny = 50
 
-xmin = 0.0
-xmax = 4.0
+  #xmin = 0.0
+  #xmax = 4.0
 
-ymin = 0.0
-ymax = 1.0
+  #ymin = 0.0
+  #ymax = 1.0
 
-elem_type = QUAD4
+  #elem_type = QUAD4
 []
 
 [MeshModifiers]
@@ -38,7 +39,7 @@ elem_type = QUAD4
   [./temp]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0
+    #initial_condition = 0.5
   [../]
 []
 
@@ -72,7 +73,7 @@ elem_type = QUAD4
 []
 
 [ICs]
-  active = ''
+  active = 'mat_2'
   [./mat_1]
     type = FunctionIC
     variable = temp
@@ -82,10 +83,12 @@ elem_type = QUAD4
   [./mat_2]
     type = FunctionRandomIC
     variable = temp
-    function = ic_func
+    function = 0
     min = -0.01
     max = 0.01
-    seed = 524685
+    #seed = 524685 #S1
+    #seed = 123456 #S2
+    seed = 9478
   [../]
 []
 
@@ -181,7 +184,7 @@ elem_type = QUAD4
   active = 'ra_output'
   [./ra_output]
     type = RayleighMaterial
-    block = 0
+    block = 'layer1'
     function = 'ra_func'
     min = 0
     max = 0
@@ -205,10 +208,13 @@ elem_type = QUAD4
   dt = 0.005
   dtmin = 0.001
   start_time = 0
-  end_time = 300.0
+  #end_time = 300.0
   scheme = 'crank-nicolson'
   l_max_its = 40
   nl_max_its = 20
+
+  trans_ss_check = true
+  ss_check_tol = 1e-06
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
   #petsc_options_iname = '-pc_type -pc_hypre_type'
   #petsc_options_value = 'hypre boomeramg'

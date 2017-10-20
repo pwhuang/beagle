@@ -36,7 +36,7 @@ Real RayleighConvection::computeQpResidual()
   RealVectorValue _advection_speed = RealVectorValue(_grad_stream[_qp](1), -1.0*_grad_stream[_qp](0));
   //return _test[_i][_qp]*(_heat_capacity[_qp]*_porosity[_qp]
   //        *_advection_speed*_grad_u[_qp]);
-  return _test[_i][_qp]*_Ra[_qp]*(_advection_speed*_grad_u[_qp]);
+  return _test[_i][_qp]*(_Ra[_qp]*_advection_speed*_grad_u[_qp]);
 
 }
 
@@ -45,7 +45,7 @@ Real RayleighConvection::computeQpJacobian()
   RealVectorValue _advection_speed = RealVectorValue(_grad_stream[_qp](1), -1.0*_grad_stream[_qp](0));
   //return _test[_i][_qp]*(_heat_capacity[_qp]*_porosity[_qp]
   //        *_advection_speed*_grad_phi[_j][_qp]);
-  return _test[_i][_qp]*_Ra[_qp]*(_advection_speed*_grad_phi[_j][_qp]);
+  return _test[_i][_qp]*(_Ra[_qp]*_advection_speed*_grad_phi[_j][_qp]);
 }
 
 
@@ -53,7 +53,7 @@ Real RayleighConvection::computeQpOffDiagJacobian(unsigned jvar)
 {
   RealVectorValue _advection_speed = RealVectorValue(_grad_phi[_j][_qp](1), -1.0*_grad_phi[_j][_qp](0));
   if(jvar==_grad_stream_var_num)
-    return _test[_i][_qp]*_Ra[_qp]*(_advection_speed*_grad_u[_qp]);
+    return _test[_i][_qp]*(_Ra[_qp]*_advection_speed*_grad_u[_qp]);
   else
     return 0;
 
