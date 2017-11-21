@@ -2,12 +2,12 @@
   type = GeneratedMesh
   dim = 3
 
-  nx = 10
+  nx = 20
   ny = 10
   nz = 10
 
   xmin = 0.0
-  xmax = 1.0
+  xmax = 2.0
 
   ymin = 0.0
   ymax = 1.0
@@ -48,7 +48,7 @@
 []
 
 [AuxVariables]
-  active = ''
+  #active = ''
   [./velocity_x]
     order = FIRST
     family = MONOMIAL
@@ -69,14 +69,14 @@
   active = 'ic_func ra_func'
   [./ic_func]
     type = ParsedFunction
-    value = '1.0-z'
+    value = '1.0-y'
     #vars = 'alpha'
     #vals = '16'
   [../]
 
   [./ra_func]
     type = ParsedFunction
-    value = 50 #'(1.0-y)*100'
+    value = -200 #'(1.0-y)*100'
   [../]
 []
 
@@ -92,14 +92,14 @@
     type = FunctionRandomIC
     variable = temp
     function = ic_func
-    min = -1e-6
-    max = 1e-6
+    min = 0
+    max = 1e-2
     seed = 52468
   [../]
 []
 
 [Kernels]
-  active = 'stream1 stream2 diff conv euler'
+  active = 'mass stream1 stream2 diff conv euler'
   [./mass]
     type = MassBalance
     variable = temp
@@ -110,7 +110,7 @@
   [./stream1]
     type = StreamDiffusion
     variable = psi_1
-    component = 1
+    component = 2
     sign = 1.0
     temperature = temp
   [../]
@@ -144,32 +144,22 @@
 []
 
 [AuxKernels]
-  active = ''
   [./velocity_x_aux]
     type = VariableGradientSign
     variable = velocity_x
     gradient_variable = psi_2
-    component = 'z'
-    sign = -1.0
+    component = 'y'
+    sign = 1.0
   [../]
 
   [./velocity_y_aux]
-    type = VariableGradientSign
+    type = StreamVelocityZ
     variable = velocity_y
-    gradient_variable = psi_1
-    component = 'z'
-    sign = 1.0
+    stream_function1 = psi_1
+    stream_function2 = psi_2
   [../]
 
-  [./velocity_z_aux2]
-    type = VariableGradientSign
-    variable = velocity_z
-    gradient_variable = psi_2
-    component = 'x'
-    sign = 1.0
-  [../]
-
-  [./velocity_z_aux1]
+  [./velocity_z_aux]
     type = VariableGradientSign
     variable = velocity_z
     gradient_variable = psi_1
@@ -180,46 +170,31 @@
 
 [BCs]
   active = 'no_flow_1 no_flow_2 top_temp bottom_temp'
-
   [./no_flow_1]
     type = DirichletBC
     variable = psi_1
-    boundary = 'front back bottom top'
+    boundary = 'front back bottom top left right'
     value = 0
   [../]
 
   [./no_flow_2]
     type = DirichletBC
     variable = psi_2
-    boundary = 'front back left right'
+    boundary = 'front back left right bottom top'
     value = 0
-  [../]
-
-  [./no_flow_z1]
-    type = DirichletBC
-    variable = psi_1
-    boundary = 'front back'
-    value = 0.0
-  [../]
-
-  [./no_flow_z2]
-    type = DirichletBC
-    variable = psi_2
-    boundary = 'front back'
-    value = 0.0
   [../]
 
   [./top_temp]
     type = DirichletBC
     variable = temp
-    boundary = 'front'
+    boundary = 'top'
     value = 0.0
   [../]
 
   [./bottom_temp]
     type = DirichletBC
     variable = temp
-    boundary = 'back'
+    boundary = 'bottom'
     value = 1.0
   [../]
 []
@@ -249,7 +224,7 @@
   type = Transient
   solve_type = 'PJFNK'
   #num_steps = 20
-  dt = 0.1
+  dt = 0.02
   dtmin = 0.001
   start_time = 0
   end_time = 10.0
@@ -265,7 +240,7 @@
   [./Nusselt]
     type = SideFluxAverage
     variable = temp
-    boundary = 'front'
+    boundary = 'top'
     diffusivity = 1.0
   [../]
 

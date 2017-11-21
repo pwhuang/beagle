@@ -42,5 +42,5 @@ StreamVelocityZ::StreamVelocityZ(const InputParameters & parameters)
 Real
 StreamVelocityZ::computeValue()
 {
-  return _scale[_qp]*(_str2[_qp](0)-_str1[_qp](1));
+  return _scale[_qp]*(_str1[_qp](2)-_str2[_qp](0));
 }

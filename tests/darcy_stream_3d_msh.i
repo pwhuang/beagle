@@ -65,7 +65,7 @@
 
   [./ra_func]
     type = ParsedFunction
-    value = 200
+    value = 150
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -96,6 +96,7 @@
     variable = temp
     velocity_x = psi_1
     velocity_y = psi_2
+    velocity_Z = 0
   [../]
 
   [./stream1]
