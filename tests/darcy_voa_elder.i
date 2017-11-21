@@ -50,7 +50,7 @@
     type = ParsedFunction
     value = '400' #'x*50'
     #vars = 'alpha'
-    #vals = '16'
+    #vals = '17'
   [../]
 []
 
@@ -172,7 +172,7 @@
 [Executioner]
   type = Transient
   #solve_type = 'PJFNK'
-  #num_steps = 1
+  num_steps = 1
   #dt = 0.001
   #dtmin = 0.001
   start_time = 0

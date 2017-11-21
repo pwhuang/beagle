@@ -1,18 +1,18 @@
 [Mesh]
-  file = 'tests/elder.msh'
-  #type = GeneratedMesh
-  #dim = 2
+  #file = 'tests/elder.msh'
+  type = GeneratedMesh
+  dim = 2
 
-  #nx = 200
-  #ny = 50
+  nx = 200
+  ny = 50
 
-  #xmin = 0.0
-  #xmax = 4.0
+  xmin = 0.0
+  xmax = 4.0
 
-  #ymin = 0.0
-  #ymax = 1.0
+  ymin = 0.0
+  ymax = 1.0
 
-  #elem_type = QUAD4
+  elem_type = QUAD4
 []
 
 [MeshModifiers]
@@ -73,7 +73,7 @@
 []
 
 [ICs]
-  active = 'mat_2'
+  active = ''
   [./mat_1]
     type = FunctionIC
     variable = temp
@@ -184,7 +184,7 @@
   active = 'ra_output'
   [./ra_output]
     type = RayleighMaterial
-    block = 'layer1'
+    block = 0#'layer1'
     function = 'ra_func'
     min = 0
     max = 0

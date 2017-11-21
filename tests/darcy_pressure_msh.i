@@ -6,8 +6,8 @@
   boundary_id = '5 6 7 8'
   boundary_name = 'bottom right top left'
 
-  #parallel_type = DISTRIBUTED
-  #partitioner = linear
+  #parallel_type =
+  #partitioner = metis
 []
 
 [MeshModifiers]
