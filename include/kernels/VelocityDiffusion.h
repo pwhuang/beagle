@@ -45,5 +45,6 @@ protected:
   unsigned _component_1;
   unsigned _component_2;
   Real _sign;
+  Real _scale;
 };
 #endif //VelocityDiffusion_H

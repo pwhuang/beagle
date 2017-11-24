@@ -13,9 +13,9 @@
   active = ''
   [./side]
     type = BoundingBoxNodeSet
-    new_boundary = 'top_half'
-    bottom_left = '0.5 1 0'
-    top_right = '1.5 1 0'
+    new_boundary = 'bottom_half'
+    bottom_left = '0.5 0 0'
+    top_right = '1.5 0 0'
   [../]
   [./corner_node]
     type = AddExtraNodeset
@@ -70,7 +70,7 @@
     type = FunctionRandomIC
     variable = temp
     function = ic_func
-    min = -1e-2
+    min = 0
     max = 1e-2
     seed = 524685
   [../]
@@ -82,9 +82,10 @@
     type = VelocityDiffusion
     variable = vel_x
     temperature = temp
-    component_1 = 0
-    component_2 = 1
-    sign = -1
+    component_1 = 1
+    component_2 = 0
+    sign = 1.0
+    scale = 0.5
   [../]
 
   [./momentum_y]
@@ -93,7 +94,8 @@
     temperature = temp
     component_1 = 0
     component_2 = 0
-    sign = 1
+    sign = -1.0
+    scale = 1.0
   [../]
 
   [./diff]
@@ -155,7 +157,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 1000 #'ra_func'
+    function = 50 #'ra_func'
     min = 0
     max = 0
     seed = 363192
@@ -165,23 +167,23 @@
 
 [Preconditioning]
   [./SMP]
-    type = SMP
     full = true
+    type = SMP
     solve_type = 'NEWTON'
   [../]
 []
 
 [Executioner]
   type = Transient
-  solve_type = 'PJFNK'
+  #solve_type = 'PJFNK'
   #abort_on_solve_fail = true
-  num_steps = 1000
+  num_steps = 1
   #dt = 0.001
   #dtmin = 0.0001
   start_time = 0
   #end_time = 1000.0
   scheme = 'crank-nicolson'
-  l_max_its = 40
+  l_max_its = 60
   nl_max_its = 20
   trans_ss_check = true
   ss_check_tol = 1e-06
@@ -191,7 +193,7 @@
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-3
-    scale = 0.8
+    scale = 0.01
     factor = 0
   [../]
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
@@ -222,6 +224,6 @@
 []
 
 [Outputs]
-  execute_on = 'initial timestep_end'
+  execute_on = 'timestep_end'
   exodus = true
 []

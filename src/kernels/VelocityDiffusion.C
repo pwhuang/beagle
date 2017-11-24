@@ -23,6 +23,7 @@ InputParameters validParams<VelocityDiffusion>()
   params.addParam<unsigned>("component_1", "x y z component");
   params.addParam<unsigned>("component_2", "x y z component");
   params.addParam<Real>("sign", "The positive or negative sign of VelocityDiffusion");
+  params.addParam<Real>("scale", "The scale of the cross differentiation term. VelocityDiffusion");
   return params;
 }
 
@@ -36,19 +37,22 @@ VelocityDiffusion::VelocityDiffusion(const InputParameters & parameters) :
     //_grad_Ra(getMaterialProperty<RealGradient>("rayleigh")),
     _component_1(getParam<unsigned>("component_1")),
     _component_2(getParam<unsigned>("component_2")),
-    _sign(getParam<Real>("sign"))
+    _sign(getParam<Real>("sign")),
+    _scale(getParam<Real>("scale"))
 {}
 
 Real
 VelocityDiffusion::computeQpResidual()
 {
-  return -1.0*Diffusion::computeQpResidual() + _Ra[_qp]*_sign*_grad_test[_i][_qp](_component_1)*_grad_temp[_qp](_component_2);
+  return Diffusion::computeQpResidual()
+         + _sign*_Ra[_qp]*(_scale * _grad_test[_i][_qp](_component_1)*_grad_temp[_qp](_component_2)
+         +  (1.0-_scale) * _grad_test[_i][_qp](_component_2)*_grad_temp[_qp](_component_1));
 }
 
 Real
 VelocityDiffusion::computeQpJacobian()
 {
-  return -1.0*Diffusion::computeQpJacobian();
+  return Diffusion::computeQpJacobian();
 }
 
 
@@ -56,7 +60,8 @@ Real
 VelocityDiffusion::computeQpOffDiagJacobian(unsigned jvar)
 {
   if(jvar == _temp_var_num)
-    return _Ra[_qp]*_sign * _grad_test[_i][_qp](_component_1)*_grad_phi[_j][_qp](_component_2);
+    return _sign*_Ra[_qp]*(_scale * _grad_test[_i][_qp](_component_1)*_grad_phi[_j][_qp](_component_2)
+           +(1.0-_scale) * _grad_test[_i][_qp](_component_2)*_grad_phi[_j][_qp](_component_1));
   else
     return 0;
 }

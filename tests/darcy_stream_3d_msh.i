@@ -4,7 +4,7 @@
   block_name = 'layer1'
 
   boundary_id = '25 27 26 29 30 28'
-  boundary_name = 'top bottom front back right left'
+  boundary_name = 'front back top bottom right left'#'top bottom front back right left'
 
   #parallel_type = DISTRIBUTED
   #partitioner = parmetis
@@ -58,7 +58,7 @@
   active = 'ic_func ra_func'
   [./ic_func]
     type = ParsedFunction
-    value = '1.0-z'
+    value = '1.0-y'
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -96,14 +96,14 @@
     variable = temp
     velocity_x = psi_1
     velocity_y = psi_2
-    velocity_Z = 0
+    velocity_z = 0
   [../]
 
   [./stream1]
     type = StreamDiffusion
     variable = psi_1
     component = 1
-    sign = 1.0
+    sign = -1.0
     temperature = temp
   [../]
 
@@ -111,7 +111,7 @@
     type = StreamDiffusion
     variable = psi_2
     component = 0
-    sign = -1.0
+    sign = 1.0
     temperature = temp
   [../]
 
@@ -141,23 +141,23 @@
     type = VariableGradientSign
     variable = velocity_x
     gradient_variable = psi_2
-    component = 'z'
-    sign = -1.0
-  [../]
-
-  [./velocity_y_aux]
-    type = VariableGradientSign
-    variable = velocity_y
-    gradient_variable = psi_1
-    component = 'z'
+    component = 'y'
     sign = 1.0
   [../]
 
-  [./velocity_z_aux]
+  [./velocity_y_aux]
     type = StreamVelocityZ
-    variable = velocity_z
+    variable = velocity_y
     stream_function1 = psi_1
     stream_function2 = psi_2
+  [../]
+
+  [./velocity_z_aux]
+    type = VariableGradientSign
+    variable = velocity_z
+    gradient_variable = psi_1
+    component = 'y'
+    sign = -1.0
   [../]
 []
 

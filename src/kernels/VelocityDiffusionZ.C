@@ -20,8 +20,8 @@ InputParameters validParams<VelocityDiffusionZ>()
   InputParameters params = validParams<Diffusion>();
   // Here we will look for a parameter from the input file
   params.addCoupledVar("temperature","temperature is required for VelocityDiffusionZ.");
-  params.addParam<unsigned>("component", "x y z component");
-  params.addParam<Real>("sign", "The positive or negative sign of VelocityDiffusionZ");
+  //params.addParam<unsigned>("component", "x y z component");
+  //params.addParam<Real>("sign", "The positive or negative sign of VelocityDiffusionZ");
   return params;
 }
 
@@ -31,23 +31,23 @@ VelocityDiffusionZ::VelocityDiffusionZ(const InputParameters & parameters) :
     _temp(coupledValue("temperature")),
     _grad_temp(coupledGradient("temperature")),
     _temp_var_num(coupled("temperature")),
-    _Ra(getMaterialProperty<Real>("rayleigh_material")),
+    _Ra(getMaterialProperty<Real>("rayleigh_material"))
     //_grad_Ra(getMaterialProperty<RealGradient>("rayleigh")),
-    _component(getParam<unsigned>("component")),
-    _sign(getParam<Real>("sign"))
+    //_component(getParam<unsigned>("component")),
+    //_sign(getParam<Real>("sign"))
 {}
 
 Real
 VelocityDiffusionZ::computeQpResidual()
 {
-  return -1.0*Diffusion::computeQpResidual()
-  + (_grad_test[_i][_qp](0)*_grad_temp[_qp](0) + _grad_test[_i][_qp](1)*_grad_temp[_qp](1));
+  return Diffusion::computeQpResidual()
+  -_Ra[_qp]*(_grad_test[_i][_qp](0)*_grad_temp[_qp](0) + _grad_test[_i][_qp](2)*_grad_temp[_qp](2));
 }
 
 Real
 VelocityDiffusionZ::computeQpJacobian()
 {
-  return -1.0*Diffusion::computeQpJacobian();
+  return Diffusion::computeQpJacobian();
 }
 
 
@@ -55,7 +55,7 @@ Real
 VelocityDiffusionZ::computeQpOffDiagJacobian(unsigned jvar)
 {
   if(jvar == _temp_var_num)
-    return (_grad_test[_i][_qp](0)*_grad_phi[_j][_qp](0) + _grad_test[_i][_qp](1)*_grad_phi[_j][_qp](1));
+    return -_Ra[_qp]*(_grad_test[_i][_qp](0)*_grad_phi[_j][_qp](0) + _grad_test[_i][_qp](2)*_grad_phi[_j][_qp](2));
   else
     return 0;
 }

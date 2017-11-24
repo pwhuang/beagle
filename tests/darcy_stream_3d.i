@@ -76,7 +76,7 @@
 
   [./ra_func]
     type = ParsedFunction
-    value = -200 #'(1.0-y)*100'
+    value = 200 #'(1.0-y)*100'
   [../]
 []
 
@@ -111,7 +111,7 @@
     type = StreamDiffusion
     variable = psi_1
     component = 2
-    sign = 1.0
+    sign = -1.0
     temperature = temp
   [../]
 
@@ -119,7 +119,7 @@
     type = StreamDiffusion
     variable = psi_2
     component = 0
-    sign = -1.0
+    sign = 1.0
     temperature = temp
   [../]
 

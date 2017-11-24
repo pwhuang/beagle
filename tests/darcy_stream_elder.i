@@ -39,7 +39,7 @@
   [./temp]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0.5
+    initial_condition = 0
   [../]
 []
 
@@ -142,17 +142,19 @@
 
 [AuxKernels]
   [./velocity_x_aux]
-    type = VariableGradientComponent
+    type = VariableGradientSign
     variable = velocity_x
     gradient_variable = stream
     component = 'y'
+    sign = 1.0
   [../]
 
   [./velocity_y_aux]
-    type = VariableGradientComponent
+    type = VariableGradientSign
     variable = velocity_y
     gradient_variable = stream
     component = 'x'
+    sign = -1.0
   [../]
 []
 
@@ -205,7 +207,7 @@
   type = Transient
   solve_type = 'PJFNK'
   #num_steps = 20
-  dt = 0.005
+  dt = 0.002
   dtmin = 0.001
   start_time = 0
   #end_time = 300.0
@@ -236,6 +238,6 @@
 []
 
 [Outputs]
-  execute_on = 'initial timestep_end'
+  execute_on = 'timestep_end'
   exodus = true
 []

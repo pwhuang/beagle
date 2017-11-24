@@ -23,7 +23,7 @@
   [./temp]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0
+    initial_condition = 0
   [../]
 
   [./vel_x]
@@ -48,14 +48,14 @@
 
   [./ra_func]
     type = ParsedFunction
-    value = '400' #'x*50'
+    value = 400 #'x*50'
     #vars = 'alpha'
     #vals = '17'
   [../]
 []
 
 [ICs]
-  active = 'mat_2'
+  active = ''
   [./mat_1]
     type = FunctionIC
     variable = temp
@@ -66,13 +66,11 @@
     type = FunctionRandomIC
     variable = temp
     function = '0' #ic_func
-    min = -0.01
+    min = 0
     max = 0.01
     seed = 524685
   [../]
 []
-
-
 
 [Kernels]
   [./momentum_x]
@@ -81,7 +79,8 @@
     temperature = temp
     component_1 = 1
     component_2 = 0
-    sign = -1
+    sign = 1.0
+    scale = 0
   [../]
 
   [./momentum_y]
@@ -90,7 +89,8 @@
     temperature = temp
     component_1 = 0
     component_2 = 0
-    sign = 1
+    sign = -1.0
+    scale = 1.0
   [../]
 
   [./diff]
@@ -171,8 +171,8 @@
 
 [Executioner]
   type = Transient
-  #solve_type = 'PJFNK'
-  num_steps = 1
+  solve_type = 'PJFNK'
+  num_steps = 2000
   #dt = 0.001
   #dtmin = 0.001
   start_time = 0
@@ -186,8 +186,8 @@
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
-    dt = 1e-3
-    scale = 0.8
+    dt = 5e-3
+    scale = 0.5
     factor = 0
   [../]
 
@@ -218,6 +218,6 @@
 []
 
 [Outputs]
-  execute_on = 'initial timestep_end'
+  execute_on = 'timestep_end'
   exodus = true
 []

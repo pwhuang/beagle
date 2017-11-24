@@ -4,7 +4,7 @@
   block_name = 'layer1'
 
   boundary_id = '25 27 26 29 30 28'
-  boundary_name = 'top bottom front back right left'
+  boundary_name = 'front back top bottom right left' #'top bottom front back right left'
 
   #parallel_type = DISTRIBUTED
   #partitioner = parmetis
@@ -44,7 +44,7 @@
   active = 'ic_func ra_func'
   [./ic_func]
     type = ParsedFunction
-    value = '1.0-z'
+    value = '1.0-y'
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -76,36 +76,30 @@
 []
 
 [Kernels]
-  [./mass]
-    type = MassBalance
-    variable = temp
-    velocity_x = vel_x
-    velocity_y = vel_y
-    velocity_z = vel_z
-  [../]
-
   [./momentum_x]
     type = VelocityDiffusion
     variable = vel_x
     temperature = temp
-    component = 0
-    sign = 0
+    component_1 = 1
+    component_2 = 0
+    sign = 1
+    scale = 0.5
   [../]
 
   [./momentum_y]
-    type = VelocityDiffusion
+    type = VelocityDiffusionZ
     variable = vel_y
     temperature = temp
-    component = 1
-    sign = 0
   [../]
 
   [./momentum_z]
-    type = VelocityDiffusionZ
+    type = VelocityDiffusion
     variable = vel_z
     temperature = temp
-    component = 0
-    sign = 0
+    component_1 = 1
+    component_2 = 2
+    sign = 1
+    scale = 0.5
   [../]
 
   [./diff]
@@ -133,24 +127,24 @@
   [./no_flow_1]
     type =  PresetBC
     variable = vel_x
-    #boundary = 'front back'
-    boundary = 'front back left right top bottom'
+    boundary = 'left right'
+    #boundary = 'front back left right top bottom'
     value = 0
   [../]
 
   [./no_flow_2]
     type = PresetBC
     variable = vel_y
-    #boundary = 'left right'
-    boundary = 'front back left right top bottom'
+    boundary = 'top bottom'
+    #boundary = 'front back left right top bottom'
     value = 0
   [../]
 
   [./no_flow_3]
     type = PresetBC
     variable = vel_z
-    #boundary = 'top bottom'
-    boundary = 'front back left right top bottom'
+    boundary = 'front back'
+    #boundary = 'front back left right top bottom'
     value = 0
   [../]
 
