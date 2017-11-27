@@ -43,5 +43,5 @@ DarcyVelocity::DarcyVelocity(const InputParameters & parameters) :
 Real
 DarcyVelocity::computeValue()
 {
-  return -_grad_pressure[_qp](_component) + _Ra[_qp]*_temp[_qp];
+  return -_grad_pressure[_qp](_component) + _temp[_qp];
 }

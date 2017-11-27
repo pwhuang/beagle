@@ -15,7 +15,7 @@
   zmin = 0.0
   zmax = 1.0
 
-  elem_type = HEX8
+  elem_type = HEX20
 
   #parallel_type = DISTRIBUTED
   #partitioner = default
@@ -37,15 +37,15 @@
     family = LAGRANGE
   [../]
   [./vel_x]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
   [../]
   [./vel_y]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
   [../]
   [./vel_z]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
   [../]
 []

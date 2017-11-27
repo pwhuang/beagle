@@ -17,7 +17,7 @@
 []
 
 [MeshModifiers]
-  #active = 'side'
+  active = ''
   [./side]
     type = BoundingBoxNodeSet
     new_boundary = 'bottom_half'
@@ -148,7 +148,7 @@
   [./top_temp]
     type = DirichletBC
     variable = temp
-    boundary = 'top bottom_out right left'
+    boundary = 'top'
     value = 0.0
   [../]
 
@@ -186,7 +186,7 @@
   type = Transient
   solve_type = 'PJFNK'
   num_steps = 2000
-  #dt = 0.001
+  dt = 1e-3
   #dtmin = 0.001
   start_time = 0
   #end_time = 300.0
@@ -196,13 +196,13 @@
   trans_ss_check = true
   ss_check_tol = 1e-06
 
-  [./TimeStepper]
-    type = PostprocessorDT
-    postprocessor = CFL_time_step
-    dt = 1e-3
-    scale = 0.1
-    factor = 0
-  [../]
+  #[./TimeStepper]
+  #  type = PostprocessorDT
+  #  postprocessor = CFL_time_step
+  #  dt = 1e-3
+  #  scale = 0.9/400.0
+  #  factor = 0
+  #[../]
 
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
   #petsc_options_iname = '-pc_type -pc_hypre_type'
@@ -228,9 +228,25 @@
     velocity_x = vel_x
     velocity_y = vel_y
   [../]
+
+  [./L2_temp]
+    type = ElementL2Norm
+    variable = temp
+  [../]
+
+  [./L2_vel_x]
+    type = ElementL2Norm
+    variable = vel_x
+  [../]
+
+  [./L2_vel_y]
+    type = ElementL2Norm
+    variable = vel_y
+  [../]
 []
 
 [Outputs]
   execute_on = 'timestep_end'
   exodus = true
+  csv = true
 []

@@ -41,7 +41,7 @@ Real
 PressureDiffusion_test::computeQpResidual()
 {
   //RealVectorValue _gravity = RealVectorValue(0, -1.0, 0);
-  return Diffusion::computeQpResidual() - _grad_test[_i][_qp](_component)*_Ra[_qp]*_temp[_qp];
+  return Diffusion::computeQpResidual() - _grad_test[_i][_qp](_component)*_temp[_qp];
 }
 
 Real
@@ -57,7 +57,7 @@ PressureDiffusion_test::computeQpOffDiagJacobian(unsigned jvar)
   //Since the problem only has P and T, I would say the numbering is not important here.
   //However, I should be more careful when I have more than 2 variables.
   if(jvar == _temp_var_num)
-    return -_grad_test[_i][_qp](_component)*_Ra[_qp]*_phi[_j][_qp];
+    return -_grad_test[_i][_qp](_component)*_phi[_j][_qp];
   else
     return 0;
 }
