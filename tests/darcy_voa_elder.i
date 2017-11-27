@@ -1,10 +1,23 @@
 [Mesh]
-  file = 'tests/elder.msh'
-  second_order = true
+  file = 'tests/mesh/elder.msh'
+  #second_order = true
+  #type = GeneratedMesh
+  #dim = 2
+
+  #nx = 200
+  #ny = 50
+
+  #xmin = 0.0
+  #xmax = 4.0
+
+  #ymin = 0.0
+  #ymax = 1.0
+
+  #elem_type = QUAD8
 []
 
 [MeshModifiers]
-  active = 'side'
+  #active = 'side'
   [./side]
     type = BoundingBoxNodeSet
     new_boundary = 'bottom_half'
@@ -27,12 +40,12 @@
   [../]
 
   [./vel_x]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
   [../]
 
   [./vel_y]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
   [../]
 []
@@ -79,8 +92,8 @@
     temperature = temp
     component_1 = 1
     component_2 = 0
-    sign = 1.0
-    scale = 0
+    sign = -1.0
+    scale = 0.0
   [../]
 
   [./momentum_y]
@@ -89,8 +102,8 @@
     temperature = temp
     component_1 = 0
     component_2 = 0
-    sign = -1.0
-    scale = 1.0
+    sign = 1.0
+    scale = 0.0
   [../]
 
   [./diff]
@@ -128,14 +141,14 @@
     type = DirichletBC
     variable = vel_y
     #boundary = 'top bottom left right'
-    boundary = 'top bottom'
+    boundary = 'top bottom_half bottom_out'
     value = 0
   [../]
 
   [./top_temp]
     type = DirichletBC
     variable = temp
-    boundary = 'top bottom right left'
+    boundary = 'top bottom_out right left'
     value = 0.0
   [../]
 
@@ -151,7 +164,7 @@
   active = 'ra_output'
   [./ra_output]
     type = RayleighMaterial
-    block = 'layer1' #0
+    block = 'layer1'
     function = 'ra_func'
     min = 0
     max = 0
@@ -186,8 +199,8 @@
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
-    dt = 5e-3
-    scale = 0.5
+    dt = 1e-3
+    scale = 0.1
     factor = 0
   [../]
 

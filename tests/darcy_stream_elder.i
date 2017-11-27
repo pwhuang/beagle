@@ -1,18 +1,19 @@
 [Mesh]
-  #file = 'tests/elder.msh'
-  type = GeneratedMesh
-  dim = 2
+  file = 'tests/mesh/elder.msh'
+  #type = GeneratedMesh
+  #dim = 2
 
-  nx = 200
-  ny = 50
+  #nx = 200
+  #ny = 50
 
-  xmin = 0.0
-  xmax = 4.0
+  #xmin = 0.0
+  #xmax = 4.0
 
-  ymin = 0.0
-  ymax = 1.0
+  #ymin = 0.0
+  #ymax = 1.0
 
-  elem_type = QUAD4
+  #elem_type = QUAD4
+  #second_order = true
 []
 
 [MeshModifiers]
@@ -45,12 +46,12 @@
 
 [AuxVariables]
   [./velocity_x]
-    order = CONSTANT
+    order = FIRST
     family = MONOMIAL
   [../]
 
   [./velocity_y]
-    order = CONSTANT
+    order = FIRST
     family = MONOMIAL
   [../]
 []
@@ -163,14 +164,14 @@
   [./no_flux_bc]
     type = DirichletBC
     variable = stream
-    boundary = 'top bottom left right'
+    boundary = 'top bottom_half bottom_out left right'
     value = 0.0
   [../]
 
   [./top_temp]
     type = DirichletBC
     variable = temp
-    boundary = 'top right left bottom'
+    boundary = 'top right left bottom_out'
     value = 0.0
   [../]
 
@@ -186,7 +187,7 @@
   active = 'ra_output'
   [./ra_output]
     type = RayleighMaterial
-    block = 0#'layer1'
+    block = 'layer1'
     function = 'ra_func'
     min = 0
     max = 0

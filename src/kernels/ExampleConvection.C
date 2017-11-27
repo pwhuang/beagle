@@ -38,26 +38,26 @@ ExampleConvection::ExampleConvection(const InputParameters & parameters) :
 Real ExampleConvection::computeQpResidual()
 {
   RealVectorValue _advection_speed = RealVectorValue(_advection_speed_x[ _qp ], _advection_speed_y[ _qp ], _advection_speed_z[ _qp ]);
-  return _test[_i][_qp]*(_advection_speed*_grad_u[_qp]);
+  return _Ra[_qp]*_test[_i][_qp]*(_advection_speed*_grad_u[_qp]);
 }
 
 Real ExampleConvection::computeQpJacobian()
 {
   RealVectorValue _advection_speed = RealVectorValue(_advection_speed_x[ _qp ], _advection_speed_y[ _qp ], _advection_speed_z[ _qp ]);
-  return _test[_i][_qp]*(_advection_speed*_grad_phi[_j][_qp]);
+  return _Ra[_qp]*_test[_i][_qp]*(_advection_speed*_grad_phi[_j][_qp]);
 }
 
 Real ExampleConvection::computeQpOffDiagJacobian(unsigned jvar)
 {
 
   if (jvar == _vel_x_var_num)
-    return _phi[_j][_qp] * _grad_u[_qp](0) * _test[_i][_qp];
+    return _Ra[_qp]*_phi[_j][_qp] * _grad_u[_qp](0) * _test[_i][_qp];
 
   else if (jvar == _vel_y_var_num)
-    return _phi[_j][_qp] * _grad_u[_qp](1) * _test[_i][_qp];
+    return _Ra[_qp]*_phi[_j][_qp] * _grad_u[_qp](1) * _test[_i][_qp];
 
   else if (jvar == _vel_z_var_num)
-    return _phi[_j][_qp] * _grad_u[_qp](2) * _test[_i][_qp];
+    return _Ra[_qp]*_phi[_j][_qp] * _grad_u[_qp](2) * _test[_i][_qp];
 
   else
     return 0;

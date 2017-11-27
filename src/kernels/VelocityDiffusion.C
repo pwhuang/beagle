@@ -32,6 +32,10 @@ VelocityDiffusion::VelocityDiffusion(const InputParameters & parameters) :
     // Initialize our member variable based on a default or input file
     _temp(coupledValue("temperature")),
     _grad_temp(coupledGradient("temperature")),
+    _second_temp(coupledSecond("temperature")),
+    _second_u(second()),
+    _second_test(secondTest()),
+    _second_phi(secondPhi()),
     _temp_var_num(coupled("temperature")),
     _Ra(getMaterialProperty<Real>("rayleigh_material")),
     //_grad_Ra(getMaterialProperty<RealGradient>("rayleigh")),
@@ -45,8 +49,10 @@ Real
 VelocityDiffusion::computeQpResidual()
 {
   return Diffusion::computeQpResidual()
-         + _sign*_Ra[_qp]*(_scale * _grad_test[_i][_qp](_component_1)*_grad_temp[_qp](_component_2)
-         +  (1.0-_scale) * _grad_test[_i][_qp](_component_2)*_grad_temp[_qp](_component_1));
+         //+ _sign*_Ra[_qp]*(_scale * _grad_test[_i][_qp](_component_1)*_grad_temp[_qp](_component_2)
+         //+  (1.0-_scale) * _grad_test[_i][_qp](_component_2)*_grad_temp[_qp](_component_1));
+         + _sign*_second_test[_i][_qp](_component_1, _component_2)*_temp[_qp];
+         //+ _sign*_test[_i][_qp]*_second_temp[_qp](_component_1, _component_2);
 }
 
 Real
@@ -60,8 +66,10 @@ Real
 VelocityDiffusion::computeQpOffDiagJacobian(unsigned jvar)
 {
   if(jvar == _temp_var_num)
-    return _sign*_Ra[_qp]*(_scale * _grad_test[_i][_qp](_component_1)*_grad_phi[_j][_qp](_component_2)
-           +(1.0-_scale) * _grad_test[_i][_qp](_component_2)*_grad_phi[_j][_qp](_component_1));
+    return //_sign*_Ra[_qp]*(_scale * _grad_test[_i][_qp](_component_1)*_grad_phi[_j][_qp](_component_2)
+           //+(1.0-_scale) * _grad_test[_i][_qp](_component_2)*_grad_phi[_j][_qp](_component_1));
+           _sign*_second_test[_i][_qp](_component_1, _component_2)*_phi[_j][_qp];
+           //_sign*_test[_i][_qp]*_second_phi[_j][_qp](_component_1, _component_2);
   else
     return 0;
 }

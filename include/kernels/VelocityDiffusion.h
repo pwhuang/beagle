@@ -39,6 +39,10 @@ protected:
 
   const VariableValue & _temp;
   const VariableGradient & _grad_temp;
+  const VariableSecond & _second_temp;
+  const VariableSecond & _second_u;
+  const VariableTestSecond & _second_test;
+  const VariablePhiSecond & _second_phi;
   unsigned _temp_var_num;
   const MaterialProperty<Real> & _Ra;
   //const MaterialProperty<RealGradient> & _grad_Ra;
