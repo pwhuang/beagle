@@ -12,50 +12,54 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "VelocityDiffusionZ.h"
+#include "VelocityDiffusionZ_secondu.h"
 
 template<>
-InputParameters validParams<VelocityDiffusionZ>()
+InputParameters validParams<VelocityDiffusionZ_secondu>()
 {
   InputParameters params = validParams<Diffusion>();
   // Here we will look for a parameter from the input file
   params.addCoupledVar("temperature","temperature is required for VelocityDiffusionZ.");
   //params.addParam<unsigned>("component", "x y z component");
-  //params.addParam<Real>("sign", "The positive or negative sign of VelocityDiffusionZ");
+  params.addParam<Real>("sign", "The positive or negative sign of VelocityDiffusionZ");
   return params;
 }
 
-VelocityDiffusionZ::VelocityDiffusionZ(const InputParameters & parameters) :
+VelocityDiffusionZ_secondu::VelocityDiffusionZ_secondu(const InputParameters & parameters) :
     Diffusion(parameters),
     // Initialize our member variable based on a default or input file
     _temp(coupledValue("temperature")),
     _grad_temp(coupledGradient("temperature")),
+    _second_temp(coupledSecond("temperature")),
+    _second_u(second()),
+    _second_test(secondTest()),
+    _second_phi(secondPhi()),
     _temp_var_num(coupled("temperature")),
-    _Ra(getMaterialProperty<Real>("rayleigh_material"))
+    _Ra(getMaterialProperty<Real>("rayleigh_material")),
     //_grad_Ra(getMaterialProperty<RealGradient>("rayleigh")),
     //_component(getParam<unsigned>("component")),
-    //_sign(getParam<Real>("sign"))
+    _sign(getParam<Real>("sign"))
 {}
 
 Real
-VelocityDiffusionZ::computeQpResidual()
+VelocityDiffusionZ_secondu::computeQpResidual()
 {
   return Diffusion::computeQpResidual()
-  -(_grad_test[_i][_qp](0)*_grad_temp[_qp](0) + _grad_test[_i][_qp](2)*_grad_temp[_qp](2));
+         + _sign*_test[_i][_qp]*(_second_temp[_qp](0, 0) + _second_temp[_qp](2, 2));
 }
 
 Real
-VelocityDiffusionZ::computeQpJacobian()
+VelocityDiffusionZ_secondu::computeQpJacobian()
 {
   return Diffusion::computeQpJacobian();
 }
 
 
 Real
-VelocityDiffusionZ::computeQpOffDiagJacobian(unsigned jvar)
+VelocityDiffusionZ_secondu::computeQpOffDiagJacobian(unsigned jvar)
 {
   if(jvar == _temp_var_num)
-    return -(_grad_test[_i][_qp](0)*_grad_phi[_j][_qp](0) + _grad_test[_i][_qp](2)*_grad_phi[_j][_qp](2));
+    return  _sign*_test[_i][_qp]*(_second_phi[_j][_qp](0, 0) + _second_phi[_j][_qp](2, 2));
   else
     return 0;
 }

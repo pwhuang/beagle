@@ -12,40 +12,43 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef PressureConvection_H
-#define PressureConvection_H
+#ifndef VelocityDiffusion_second_H
+#define VelocityDiffusion_second_H
 
-#include "Kernel.h"
+#include "Diffusion.h"
 
-class PressureConvection;
+//Forward Declarations
+class VelocityDiffusion_second;
 
+/* This class extends the Diffusion kernel to multiply by a coefficient
+ * read from the input file
+ */
 template<>
-InputParameters validParams<PressureConvection>();
+InputParameters validParams<VelocityDiffusion_second>();
 
-class PressureConvection : public Kernel
+class VelocityDiffusion_second : public Diffusion
 {
 public:
 
-  PressureConvection(const InputParameters & parameters);
+  VelocityDiffusion_second(const InputParameters & parameters);
 
 protected:
-
   virtual Real computeQpResidual() override;
   virtual Real computeQpJacobian() override;
   virtual Real computeQpOffDiagJacobian(unsigned jvar) override;
 
-private:
-
-  //const MaterialProperty<Real> & _heat_capacity;
-  //Real _Ra;
-  const VariableGradient & _grad_p;
-  const VariableValue & _p;
-  unsigned _grad_p_var_num;
-  //const VariableValue & _vel_x;
-  //const VariableValue & _vel_y;
+  const VariableValue & _temp;
+  const VariableGradient & _grad_temp;
+  const VariableSecond & _second_temp;
+  const VariableSecond & _second_u;
+  const VariableTestSecond & _second_test;
+  const VariablePhiSecond & _second_phi;
+  unsigned _temp_var_num;
   const MaterialProperty<Real> & _Ra;
-  const unsigned _component;
-  //RealVectorValue _advection_speed;
+  //const MaterialProperty<RealGradient> & _grad_Ra;
+  unsigned _component_1;
+  unsigned _component_2;
+  Real _sign;
+  Real _scale;
 };
-
-#endif //PressureConvection_H
+#endif //VelocityDiffusion_second_H

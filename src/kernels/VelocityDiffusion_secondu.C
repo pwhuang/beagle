@@ -12,10 +12,10 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "VelocityDiffusion.h"
+#include "VelocityDiffusion_secondu.h"
 
 template<>
-InputParameters validParams<VelocityDiffusion>()
+InputParameters validParams<VelocityDiffusion_secondu>()
 {
   InputParameters params = validParams<Diffusion>();
   // Here we will look for a parameter from the input file
@@ -27,7 +27,7 @@ InputParameters validParams<VelocityDiffusion>()
   return params;
 }
 
-VelocityDiffusion::VelocityDiffusion(const InputParameters & parameters) :
+VelocityDiffusion_secondu::VelocityDiffusion_secondu(const InputParameters & parameters) :
     Diffusion(parameters),
     // Initialize our member variable based on a default or input file
     _temp(coupledValue("temperature")),
@@ -46,30 +46,30 @@ VelocityDiffusion::VelocityDiffusion(const InputParameters & parameters) :
 {}
 
 Real
-VelocityDiffusion::computeQpResidual()
+VelocityDiffusion_secondu::computeQpResidual()
 {
   return Diffusion::computeQpResidual()
          //+ _sign*_Ra[_qp]*(_scale * _grad_test[_i][_qp](_component_1)*_grad_temp[_qp](_component_2)
          //+  (1.0-_scale) * _grad_test[_i][_qp](_component_2)*_grad_temp[_qp](_component_1));
-         + _sign*_second_test[_i][_qp](_component_1, _component_2)*_temp[_qp];
-         //+ _sign*_test[_i][_qp]*_second_temp[_qp](_component_1, _component_2);
+         //+ _sign*_Ra[_qp]*_second_test[_i][_qp](_component_1, _component_2)*_temp[_qp];
+         + _sign*_test[_i][_qp]*_second_temp[_qp](_component_1, _component_2);
 }
 
 Real
-VelocityDiffusion::computeQpJacobian()
+VelocityDiffusion_secondu::computeQpJacobian()
 {
   return Diffusion::computeQpJacobian();
 }
 
 
 Real
-VelocityDiffusion::computeQpOffDiagJacobian(unsigned jvar)
+VelocityDiffusion_secondu::computeQpOffDiagJacobian(unsigned jvar)
 {
   if(jvar == _temp_var_num)
     return //_sign*_Ra[_qp]*(_scale * _grad_test[_i][_qp](_component_1)*_grad_phi[_j][_qp](_component_2)
            //+(1.0-_scale) * _grad_test[_i][_qp](_component_2)*_grad_phi[_j][_qp](_component_1));
-           _sign*_second_test[_i][_qp](_component_1, _component_2)*_phi[_j][_qp];
-           //_sign*_test[_i][_qp]*_second_phi[_j][_qp](_component_1, _component_2);
+           //_sign*_Ra[_qp]*_second_test[_i][_qp](_component_1, _component_2)*_phi[_j][_qp];
+           _sign*_test[_i][_qp]*_second_phi[_j][_qp](_component_1, _component_2);
   else
     return 0;
 }

@@ -29,6 +29,7 @@ PressureConvection::PressureConvection(const InputParameters & parameters) :
     Kernel(parameters),
     //_Ra(getParam<Real>("Rayleigh_number")),
     _grad_p(coupledGradient("pressure")),
+    _p(coupledValue("pressure")),
     _grad_p_var_num(coupled("pressure")),
     //_vel_x(coupledValue("velocity_x")),
     //_vel_y(coupledValue("velocity_y")),

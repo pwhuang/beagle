@@ -1,23 +1,23 @@
 [Mesh]
-  file = 'tests/mesh/elder.msh'
+  #file = 'tests/mesh/elder.msh'
   #second_order = true
-  #type = GeneratedMesh
-  #dim = 2
+  type = GeneratedMesh
+  dim = 2
 
-  #nx = 200
-  #ny = 50
+  nx = 80
+  ny = 20
 
-  #xmin = 0.0
-  #xmax = 4.0
+  xmin = 0.0
+  xmax = 4.0
 
-  #ymin = 0.0
-  #ymax = 1.0
+  ymin = 0.0
+  ymax = 1.0
 
-  #elem_type = QUAD8
+  elem_type = QUAD9
 []
 
 [MeshModifiers]
-  active = ''
+  active = 'side'
   [./side]
     type = BoundingBoxNodeSet
     new_boundary = 'bottom_half'
@@ -34,13 +34,13 @@
 
 [Variables]
   [./temp]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
     initial_condition = 0
   [../]
 
   [./vel_x]
-    order = SECOND
+    order = FIRST
     family = LAGRANGE
   [../]
 
@@ -87,23 +87,23 @@
 
 [Kernels]
   [./momentum_x]
-    type = VelocityDiffusion
+    type = VelocityDiffusion_second
     variable = vel_x
     temperature = temp
     component_1 = 1
     component_2 = 0
     sign = -1.0
-    scale = 0.0
+    scale = -1.0
   [../]
 
   [./momentum_y]
-    type = VelocityDiffusion
+    type = VelocityDiffusion_secondu
     variable = vel_y
     temperature = temp
     component_1 = 0
     component_2 = 0
     sign = 1.0
-    scale = 0.0
+    scale = 1.0
   [../]
 
   [./diff]
@@ -141,7 +141,8 @@
     type = DirichletBC
     variable = vel_y
     #boundary = 'top bottom left right'
-    boundary = 'top bottom_half bottom_out'
+    #boundary = 'top bottom_half bottom_out'
+    boundary = 'top bottom'
     value = 0
   [../]
 
@@ -164,7 +165,7 @@
   active = 'ra_output'
   [./ra_output]
     type = RayleighMaterial
-    block = 'layer1'
+    block = 0 #'layer1'
     function = 'ra_func'
     min = 0
     max = 0
@@ -184,17 +185,18 @@
 
 [Executioner]
   type = Transient
-  solve_type = 'PJFNK'
-  num_steps = 2000
+  #solve_type = PJFNK
+  num_steps = 1000
   dt = 1e-3
   #dtmin = 0.001
   start_time = 0
   #end_time = 300.0
   scheme = 'crank-nicolson'
-  l_max_its = 100
-  nl_max_its = 30
-  trans_ss_check = true
-  ss_check_tol = 1e-06
+  l_max_its = 80
+  nl_max_its = 40
+  #trans_ss_check = true
+  #ss_check_tol = 1e-06
+  #ss_tmin = 30
 
   #[./TimeStepper]
   #  type = PostprocessorDT
@@ -215,6 +217,7 @@
     variable = temp
     boundary = 'top'
     diffusivity = 1.0
+    outputs = 'csv console'
   [../]
 
   [./alive_time]
@@ -232,16 +235,19 @@
   [./L2_temp]
     type = ElementL2Norm
     variable = temp
+    outputs = 'csv'
   [../]
 
   [./L2_vel_x]
     type = ElementL2Norm
     variable = vel_x
+    outputs = 'csv'
   [../]
 
   [./L2_vel_y]
     type = ElementL2Norm
     variable = vel_y
+    outputs = 'csv'
   [../]
 []
 

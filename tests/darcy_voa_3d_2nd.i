@@ -87,13 +87,13 @@
 
 [Kernels]
   [./momentum_x]
-    type = VelocityDiffusion_half
+    type = VelocityDiffusion_second
     variable = vel_x
     temperature = temp
     component_1 = 1
     component_2 = 0
-    sign = 1
-    scale = 0.0 #0.0 scale intends to maximize the effect of T_y
+    sign = -1.0
+    scale = 0.5
   [../]
 
   [./momentum_y]
@@ -104,13 +104,13 @@
   [../]
 
   [./momentum_z]
-    type = VelocityDiffusion_half
+    type = VelocityDiffusion_second
     variable = vel_z
     temperature = temp
     component_1 = 1
     component_2 = 2
-    sign = 1
-    scale = 0.0
+    sign = -1.0
+    scale = 0.5
   [../]
 
   [./diff]
@@ -214,7 +214,7 @@
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-3
-    scale = 0.05
+    scale = 0.002
     factor = 0
   [../]
   #petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'

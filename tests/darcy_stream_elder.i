@@ -215,9 +215,11 @@
   scheme = 'crank-nicolson'
   l_max_its = 40
   nl_max_its = 20
+  nl_rel_tol = 1e-8
 
   trans_ss_check = true
   ss_check_tol = 1e-06
+  ss_tmin = 30
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
   #petsc_options_iname = '-pc_type -pc_hypre_type'
   #petsc_options_value = 'hypre boomeramg'

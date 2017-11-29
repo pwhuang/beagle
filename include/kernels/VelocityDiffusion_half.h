@@ -12,25 +12,25 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef VelocityDiffusion_H
-#define VelocityDiffusion_H
+#ifndef VelocityDiffusion_half_H
+#define VelocityDiffusion_half_H
 
 #include "Diffusion.h"
 
 //Forward Declarations
-class VelocityDiffusion;
+class VelocityDiffusion_half;
 
 /* This class extends the Diffusion kernel to multiply by a coefficient
  * read from the input file
  */
 template<>
-InputParameters validParams<VelocityDiffusion>();
+InputParameters validParams<VelocityDiffusion_half>();
 
-class VelocityDiffusion : public Diffusion
+class VelocityDiffusion_half : public Diffusion
 {
 public:
 
-  VelocityDiffusion(const InputParameters & parameters);
+  VelocityDiffusion_half(const InputParameters & parameters);
 
 protected:
   virtual Real computeQpResidual() override;
@@ -39,10 +39,10 @@ protected:
 
   const VariableValue & _temp;
   const VariableGradient & _grad_temp;
-  const VariableSecond & _second_temp;
-  const VariableSecond & _second_u;
-  const VariableTestSecond & _second_test;
-  const VariablePhiSecond & _second_phi;
+  //const VariableSecond & _second_temp;
+  //const VariableSecond & _second_u;
+  //const VariableTestSecond & _second_test;
+  //const VariablePhiSecond & _second_phi;
   unsigned _temp_var_num;
   const MaterialProperty<Real> & _Ra;
   //const MaterialProperty<RealGradient> & _grad_Ra;
@@ -51,4 +51,4 @@ protected:
   Real _sign;
   Real _scale;
 };
-#endif //VelocityDiffusion_H
+#endif //VelocityDiffusion_half_H

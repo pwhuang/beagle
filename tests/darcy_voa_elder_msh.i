@@ -1,66 +1,56 @@
 [Mesh]
   file = 'tests/mesh/elder.msh'
-
-  #parallel_type =
-  #partitioner = metis
+  second_order = true
 []
 
 [MeshModifiers]
+  active = ''
+  [./side]
+    type = BoundingBoxNodeSet
+    new_boundary = 'bottom_half'
+    bottom_left = '1 0 0'
+    top_right = '3 0 0'
+  [../]
   [./corner_node]
     type = AddExtraNodeset
     new_boundary = 'pinned_node'
     #nodes = '0'
-    coord = '0.0 1.0'
-  [../]
-
-  [./corner_node2]
-    type = AddExtraNodeset
-    new_boundary = 'pinned_node2'
-    #nodes = '0'
-    coord = '4.0 1.0'
+    coord = '0 0.8'
   [../]
 []
 
 [Variables]
-  [./pressure]
+  [./temp]
+    order = SECOND
+    family = LAGRANGE
+    initial_condition = 0
+  [../]
+
+  [./vel_x]
     order = SECOND
     family = LAGRANGE
   [../]
-  [./temp]
-    order = FIRST
+
+  [./vel_y]
+    order = SECOND
     family = LAGRANGE
-    initial_condition = 0.0
-  [../]
-[]
-
-[AuxVariables]
-  active = ''
-  [./velocity_x]
-    order = FIRST
-    family = MONOMIAL
-  [../]
-
-  [./velocity_y]
-    order = FIRST
-    family = MONOMIAL
   [../]
 []
 
 [Functions]
-  active = 'ic_func ra_func ic_func_temp'
+  active = 'ra_func'
   [./ic_func]
     type = ParsedFunction
-    value = '-(1.0-y)*(1.0-y)*100'
-  [../]
-
-  [./ic_func_temp]
-    type = ParsedFunction
     value = '(1.0-y)*1'
+    #vars = 'alpha'
+    #vals = '16'
   [../]
 
   [./ra_func]
     type = ParsedFunction
-    value = '400'
+    value = 400 #'x*50'
+    #vars = 'alpha'
+    #vals = '17'
   [../]
 []
 
@@ -68,28 +58,39 @@
   active = ''
   [./mat_1]
     type = FunctionIC
-    variable = pressure
+    variable = temp
     function = ic_func
   [../]
 
   [./mat_2]
     type = FunctionRandomIC
     variable = temp
-    function = ic_func_temp
-    min = -1e-2
-    max = 1e-2
+    function = '0' #ic_func
+    min = 0
+    max = 0.01
     seed = 524685
   [../]
 []
 
-
 [Kernels]
-  active = 'mass diff conv euler'
-  [./mass]
-    type = PressureDiffusion_test
-    variable = pressure
+  [./momentum_x]
+    type = VelocityDiffusion_second
+    variable = vel_x
     temperature = temp
-    component = 1
+    component_1 = 1
+    component_2 = 0
+    sign = -1.0
+    scale = 0.5
+  [../]
+
+  [./momentum_y]
+    type = VelocityDiffusion_secondu
+    variable = vel_y
+    temperature = temp
+    component_1 = 0
+    component_2 = 0
+    sign = 1.0
+    scale = 1.0
   [../]
 
   [./diff]
@@ -99,10 +100,11 @@
   [../]
 
   [./conv]
-    type = PressureConvection
+    type = ExampleConvection
     variable = temp
-    pressure = pressure
-    component = 1
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = 0
   [../]
 
   [./euler]
@@ -112,32 +114,22 @@
   [../]
 []
 
-[AuxKernels]
-  active = ''
-  [./velocity_x_aux]
-    type = DarcyVelocity
-    variable = velocity_x
-    pressure = pressure
-    temperature = 0
-    component = 0
-  [../]
-
-  [./velocity_y_aux]
-    type = DarcyVelocity
-    variable = velocity_y
-    pressure = pressure
-    temperature = temp
-    component = 1
-  [../]
-[]
-
 [BCs]
-  active = 'no_flux_bc top_temp bottom_temp'
-  [./no_flux_bc]
+  active = 'no_flux_bc_x no_flux_bc_y top_temp bottom_temp'
+  [./no_flux_bc_x]
     type = DirichletBC
-    variable = pressure
-    boundary = 'pinned_node pinned_node2'
-    value = 0.0
+    variable = vel_x
+    #boundary = 'top bottom left right'
+    boundary = 'left right'
+    value = 0
+  [../]
+
+  [./no_flux_bc_y]
+    type = DirichletBC
+    variable = vel_y
+    #boundary = 'top bottom left right'
+    boundary = 'top bottom_half bottom_out'
+    value = 0
   [../]
 
   [./top_temp]
@@ -169,6 +161,7 @@
 []
 
 [Preconditioning]
+  #active = ''
   [./SMP]
     type = SMP
     full = true
@@ -178,27 +171,27 @@
 
 [Executioner]
   type = Transient
-  solve_type = 'PJFNK'
-  #num_steps = 20
-  dt = 1e-5
+  #solve_type = PJFNK
+  num_steps = 1000
+  dt = 1e-3
   #dtmin = 0.001
   start_time = 0
-  #end_time = 8.0
+  #end_time = 300.0
   scheme = 'crank-nicolson'
-  l_max_its = 40
-  nl_max_its = 20
-  trans_ss_check = true
-  ss_check_tol = 1e-06
-
-
+  l_max_its = 80
+  nl_max_its = 40
+  #trans_ss_check = true
+  #ss_check_tol = 1e-06
+  #ss_tmin = 30
 
   #[./TimeStepper]
   #  type = PostprocessorDT
   #  postprocessor = CFL_time_step
-  #  dt = 1e-4
-  #  scale = 1e-3
+  #  dt = 1e-3
+  #  scale = 0.9/400.0
   #  factor = 0
   #[../]
+
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
   #petsc_options_iname = '-pc_type -pc_hypre_type'
   #petsc_options_value = 'hypre boomeramg'
@@ -210,22 +203,37 @@
     variable = temp
     boundary = 'top'
     diffusivity = 1.0
+    outputs = 'csv console'
   [../]
 
-  #[./CFL_time_step]
-  #  type = LevelSetCFLCondition
-  #  velocity_x = velocity_x
-  #  velocity_y = velocity_y
-  #[../]
+  [./alive_time]
+    type = PerformanceData
+    event = ALIVE
+    column = total_time_with_sub
+  [../]
+
+  [./CFL_time_step]
+    type = LevelSetCFLCondition
+    velocity_x = vel_x
+    velocity_y = vel_y
+  [../]
 
   [./L2_temp]
     type = ElementL2Norm
     variable = temp
+    outputs = 'csv'
   [../]
 
-  [./L2_pres]
+  [./L2_vel_x]
     type = ElementL2Norm
-    variable = pressure
+    variable = vel_x
+    outputs = 'csv'
+  [../]
+
+  [./L2_vel_y]
+    type = ElementL2Norm
+    variable = vel_y
+    outputs = 'csv'
   [../]
 []
 

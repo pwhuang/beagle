@@ -38,13 +38,13 @@ ExampleConvection::ExampleConvection(const InputParameters & parameters) :
 Real ExampleConvection::computeQpResidual()
 {
   RealVectorValue _advection_speed = RealVectorValue(_advection_speed_x[ _qp ], _advection_speed_y[ _qp ], _advection_speed_z[ _qp ]);
-  return _Ra[_qp]*_test[_i][_qp]*(_advection_speed*_grad_u[_qp]);
+  return _test[_i][_qp]*_Ra[_qp]*(_advection_speed*_grad_u[_qp]);
 }
 
 Real ExampleConvection::computeQpJacobian()
 {
   RealVectorValue _advection_speed = RealVectorValue(_advection_speed_x[ _qp ], _advection_speed_y[ _qp ], _advection_speed_z[ _qp ]);
-  return _Ra[_qp]*_test[_i][_qp]*(_advection_speed*_grad_phi[_j][_qp]);
+  return _test[_i][_qp]*_Ra[_qp]*(_advection_speed*_grad_phi[_j][_qp]);
 }
 
 Real ExampleConvection::computeQpOffDiagJacobian(unsigned jvar)

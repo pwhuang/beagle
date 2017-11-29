@@ -77,7 +77,7 @@
 
 [Kernels]
   [./momentum_x]
-    type = VelocityDiffusion
+    type = VelocityDiffusion_half
     variable = vel_x
     temperature = temp
     component_1 = 1
@@ -93,7 +93,7 @@
   [../]
 
   [./momentum_z]
-    type = VelocityDiffusion
+    type = VelocityDiffusion_half
     variable = vel_z
     temperature = temp
     component_1 = 1
@@ -125,7 +125,7 @@
 
 [BCs]
   [./no_flow_1]
-    type =  PresetBC
+    type =  DirichletBC
     variable = vel_x
     boundary = 'left right'
     #boundary = 'front back left right top bottom'
@@ -133,7 +133,7 @@
   [../]
 
   [./no_flow_2]
-    type = PresetBC
+    type = DirichletBC
     variable = vel_y
     boundary = 'top bottom'
     #boundary = 'front back left right top bottom'
@@ -141,7 +141,7 @@
   [../]
 
   [./no_flow_3]
-    type = PresetBC
+    type = DirichletBC
     variable = vel_z
     boundary = 'front back'
     #boundary = 'front back left right top bottom'
@@ -177,7 +177,7 @@
 []
 
 [Preconditioning]
-  active = ''
+  #active = ''
   [./SMP]
     type = SMP
     full = true
@@ -187,7 +187,7 @@
 
 [Executioner]
   type = Transient
-  solve_type = 'PJFNK'
+  #solve_type = 'PJFNK'
   num_steps = 1000
   #dt = 1e-3
   #dtmin = 0.001
@@ -202,8 +202,8 @@
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
-    dt = 1e-3
-    scale = 0.2
+    dt = 1e-4
+    scale = 0.05
     factor = 0
   [../]
   #petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
