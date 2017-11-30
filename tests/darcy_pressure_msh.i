@@ -41,12 +41,12 @@
 [AuxVariables]
   #active = ''
   [./velocity_x]
-    order = CONSTANT
+    order = FIRST
     family = MONOMIAL
   [../]
 
   [./velocity_y]
-    order = CONSTANT
+    order = FIRST
     family = MONOMIAL
   [../]
 []

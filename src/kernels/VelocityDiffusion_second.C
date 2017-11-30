@@ -51,7 +51,7 @@ VelocityDiffusion_second::computeQpResidual()
   return Diffusion::computeQpResidual()
          //+ _sign*_Ra[_qp]*(_scale * _grad_test[_i][_qp](_component_1)*_grad_temp[_qp](_component_2)
          //+  (1.0-_scale) * _grad_test[_i][_qp](_component_2)*_grad_temp[_qp](_component_1));
-         + _sign*_second_test[_i][_qp](_component_1, _component_2)*_temp[_qp];
+         + _sign*_Ra[_qp]*_second_test[_i][_qp](_component_1, _component_2)*_temp[_qp];
          //+ _sign*_Ra[_qp]*_test[_i][_qp]*_second_temp[_qp](_component_1, _component_2);
 }
 
@@ -68,7 +68,7 @@ VelocityDiffusion_second::computeQpOffDiagJacobian(unsigned jvar)
   if(jvar == _temp_var_num)
     return //_sign*_Ra[_qp]*(_scale * _grad_test[_i][_qp](_component_1)*_grad_phi[_j][_qp](_component_2)
            //+(1.0-_scale) * _grad_test[_i][_qp](_component_2)*_grad_phi[_j][_qp](_component_1));
-           _sign*_second_test[_i][_qp](_component_1, _component_2)*_phi[_j][_qp];
+           _sign*_Ra[_qp]*_second_test[_i][_qp](_component_1, _component_2)*_phi[_j][_qp];
            //_sign*_Ra[_qp]*_test[_i][_qp]*_second_phi[_j][_qp](_component_1, _component_2);
   else
     return 0;

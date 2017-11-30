@@ -48,7 +48,7 @@
 
   [./ra_func]
     type = ParsedFunction
-    value = 400 #'x*50'
+    value = 20 #'x*50'
     #vars = 'alpha'
     #vals = '17'
   [../]

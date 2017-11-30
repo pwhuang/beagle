@@ -178,7 +178,7 @@
 
 [Executioner]
   type = Transient
-  solve_type = 'PJFNK'
+  #solve_type = 'PJFNK'
   #num_steps = 20
   dt = 1e-5
   #dtmin = 0.001
@@ -187,8 +187,8 @@
   scheme = 'crank-nicolson'
   l_max_its = 40
   nl_max_its = 20
-  trans_ss_check = true
-  ss_check_tol = 1e-06
+  #trans_ss_check = true
+  #ss_check_tol = 1e-06
 
 
 

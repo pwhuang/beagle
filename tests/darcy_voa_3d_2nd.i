@@ -37,7 +37,7 @@
     family = LAGRANGE
   [../]
   [./vel_x]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
   [../]
   [./vel_y]
@@ -45,7 +45,7 @@
     family = LAGRANGE
   [../]
   [./vel_z]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
   [../]
 []
@@ -61,7 +61,7 @@
 
   [./ra_func]
     type = ParsedFunction
-    value = 200
+    value = 15
     #vars = 'alpha'
     #vals = '16'
   [../]

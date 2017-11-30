@@ -76,7 +76,7 @@
 
   [./ra_func]
     type = ParsedFunction
-    value = 200 #'(1.0-y)*100'
+    value = 10 #'(1.0-y)*100'
   [../]
 []
 
@@ -104,7 +104,7 @@
     type = MassBalance
     variable = temp
     velocity_x = psi_1
-    velocity_y = psi_2
+    velocity_z = psi_2
   [../]
 
   [./stream1]

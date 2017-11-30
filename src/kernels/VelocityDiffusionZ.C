@@ -41,7 +41,7 @@ Real
 VelocityDiffusionZ::computeQpResidual()
 {
   return Diffusion::computeQpResidual()
-  -(_grad_test[_i][_qp](0)*_grad_temp[_qp](0) + _grad_test[_i][_qp](2)*_grad_temp[_qp](2));
+  -_Ra[_qp]*(_grad_test[_i][_qp](0)*_grad_temp[_qp](0) + _grad_test[_i][_qp](2)*_grad_temp[_qp](2));
 }
 
 Real
@@ -55,7 +55,7 @@ Real
 VelocityDiffusionZ::computeQpOffDiagJacobian(unsigned jvar)
 {
   if(jvar == _temp_var_num)
-    return -(_grad_test[_i][_qp](0)*_grad_phi[_j][_qp](0) + _grad_test[_i][_qp](2)*_grad_phi[_j][_qp](2));
+    return -_Ra[_qp]*(_grad_test[_i][_qp](0)*_grad_phi[_j][_qp](0) + _grad_test[_i][_qp](2)*_grad_phi[_j][_qp](2));
   else
     return 0;
 }

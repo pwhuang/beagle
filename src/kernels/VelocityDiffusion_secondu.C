@@ -52,7 +52,7 @@ VelocityDiffusion_secondu::computeQpResidual()
          //+ _sign*_Ra[_qp]*(_scale * _grad_test[_i][_qp](_component_1)*_grad_temp[_qp](_component_2)
          //+  (1.0-_scale) * _grad_test[_i][_qp](_component_2)*_grad_temp[_qp](_component_1));
          //+ _sign*_Ra[_qp]*_second_test[_i][_qp](_component_1, _component_2)*_temp[_qp];
-         + _sign*_test[_i][_qp]*_second_temp[_qp](_component_1, _component_2);
+         + _sign*_Ra[_qp]*_test[_i][_qp]*_second_temp[_qp](_component_1, _component_2);
 }
 
 Real
@@ -69,7 +69,7 @@ VelocityDiffusion_secondu::computeQpOffDiagJacobian(unsigned jvar)
     return //_sign*_Ra[_qp]*(_scale * _grad_test[_i][_qp](_component_1)*_grad_phi[_j][_qp](_component_2)
            //+(1.0-_scale) * _grad_test[_i][_qp](_component_2)*_grad_phi[_j][_qp](_component_1));
            //_sign*_Ra[_qp]*_second_test[_i][_qp](_component_1, _component_2)*_phi[_j][_qp];
-           _sign*_test[_i][_qp]*_second_phi[_j][_qp](_component_1, _component_2);
+           _sign*_Ra[_qp]*_test[_i][_qp]*_second_phi[_j][_qp](_component_1, _component_2);
   else
     return 0;
 }

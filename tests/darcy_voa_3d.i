@@ -15,7 +15,7 @@
   zmin = 0.0
   zmax = 1.0
 
-  elem_type = HEX27
+  elem_type = HEX8
 
   #parallel_type = DISTRIBUTED
   #partitioner = default
@@ -33,7 +33,7 @@
 
 [Variables]
   [./temp]
-    order = SECOND
+    order = FIRST
     family = LAGRANGE
   [../]
   [./vel_x]
@@ -41,7 +41,7 @@
     family = LAGRANGE
   [../]
   [./vel_y]
-    order = SECOND
+    order = FIRST
     family = LAGRANGE
   [../]
   [./vel_z]
@@ -61,7 +61,7 @@
 
   [./ra_func]
     type = ParsedFunction
-    value = 200
+    value = 10
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -97,7 +97,7 @@
   [../]
 
   [./momentum_y]
-    type = VelocityDiffusionZ_secondu
+    type = VelocityDiffusionZ
     variable = vel_y
     temperature = temp
     sign = 1.0
@@ -138,24 +138,24 @@
   [./no_flow_1]
     type =  DirichletBC
     variable = vel_x
-    boundary = 'left right'
-    #boundary = 'front back left right top bottom'
+    #boundary = 'left right'
+    boundary = 'front back left right top bottom'
     value = 0
   [../]
 
   [./no_flow_2]
     type = DirichletBC
     variable = vel_y
-    boundary = 'top bottom'
-    #boundary = 'front back left right top bottom'
+    #boundary = 'top bottom'
+    boundary = 'front back left right top bottom'
     value = 0
   [../]
 
   [./no_flow_3]
     type = DirichletBC
     variable = vel_z
-    boundary = 'front back'
-    #boundary = 'front back left right top bottom'
+    #boundary = 'front back'
+    boundary = 'front back left right top bottom'
     value = 0
   [../]
 
@@ -207,14 +207,14 @@
   scheme = 'crank-nicolson'
   l_max_its = 100
   nl_max_its = 30
-  trans_ss_check = true
-  ss_check_tol = 1e-07
+  #trans_ss_check = true
+  #ss_check_tol = 1e-07
 
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-3
-    scale = 0.05
+    scale = 0.5
     factor = 0
   [../]
   #petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
