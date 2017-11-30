@@ -39,7 +39,7 @@ RayleighConvection3d::RayleighConvection3d(const InputParameters & parameters) :
 Real RayleighConvection3d::computeQpResidual()
 {
   RealVectorValue _advection_speed =
-                  RealVectorValue(_grad_stream2[_qp](2), _grad_stream1[_qp](2)-_grad_stream2[_qp](0), -_grad_stream1[_qp](1));
+                  RealVectorValue(_grad_stream2[_qp](1), _grad_stream1[_qp](2)-_grad_stream2[_qp](0), -_grad_stream1[_qp](1));
 
   return _test[_i][_qp]*_Ra[_qp]*(_advection_speed*_grad_u[_qp]);
 
@@ -48,7 +48,7 @@ Real RayleighConvection3d::computeQpResidual()
 Real RayleighConvection3d::computeQpJacobian()
 {
   RealVectorValue _advection_speed =
-                  RealVectorValue(_grad_stream2[_qp](2), _grad_stream1[_qp](2)-_grad_stream2[_qp](0), -_grad_stream1[_qp](1));
+                  RealVectorValue(_grad_stream2[_qp](1), _grad_stream1[_qp](2)-_grad_stream2[_qp](0), -_grad_stream1[_qp](1));
 
   return _test[_i][_qp]*_Ra[_qp]*(_advection_speed*_grad_phi[_j][_qp]);
 }
@@ -58,7 +58,7 @@ Real RayleighConvection3d::computeQpOffDiagJacobian(unsigned jvar)
   RealVectorValue _advection_speed_1 =
                   RealVectorValue(0, _grad_phi[_j][_qp](2), -_grad_phi[_j][_qp](1));
   RealVectorValue _advection_speed_2 =
-                  RealVectorValue(_grad_phi[_j][_qp](2), -_grad_phi[_j][_qp](0), 0);
+                  RealVectorValue(_grad_phi[_j][_qp](1), -_grad_phi[_j][_qp](0), 0);
 
   if(jvar==_grad_stream1_var_num)
     return _test[_i][_qp]*_Ra[_qp]*(_advection_speed_1*_grad_u[_qp]);

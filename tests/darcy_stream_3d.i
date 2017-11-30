@@ -171,14 +171,14 @@
 [BCs]
   active = 'no_flow_1 no_flow_2 top_temp bottom_temp'
   [./no_flow_1]
-    type = DirichletBC
+    type = PresetBC
     variable = psi_1
     boundary = 'front back bottom top left right'
     value = 0
   [../]
 
   [./no_flow_2]
-    type = DirichletBC
+    type = PresetBC
     variable = psi_2
     boundary = 'front back left right bottom top'
     value = 0
