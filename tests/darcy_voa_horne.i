@@ -157,7 +157,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 31.4 #'ra_func'
+    function = 40 #'ra_func'
     min = 0
     max = 0
     seed = 363192
@@ -194,7 +194,7 @@
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-3
-    scale = 0.3
+    scale = 0.15
     factor = 0
   [../]
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'

@@ -1,21 +1,15 @@
 [Mesh]
-type = GeneratedMesh
-dim = 2
-
-nx = 50
-ny = 50
-
-xmin = 0.0
-xmax = 1.0
-
-ymin = 0.0
-ymax = 1.0
-
-elem_type = QUAD4
+  file = 'tests/mesh/horne_full.msh'
 []
 
 [MeshModifiers]
   active = ''
+  [./side]
+    type = BoundingBoxNodeSet
+    new_boundary = 'bottom_half'
+    bottom_left = '0.5 0 0'
+    top_right = '1.5 0 0'
+  [../]
   [./corner_node]
     type = AddExtraNodeset
     new_boundary = 'pinned_node'
@@ -25,32 +19,23 @@ elem_type = QUAD4
 []
 
 [Variables]
-  [./stream]
-    order = FIRST
-    family = LAGRANGE
-  [../]
   [./temp]
     order = FIRST
     family = LAGRANGE
     #initial_condition = 0
   [../]
-[]
-
-[AuxVariables]
-  active = ''
-  [./velocity_x]
-    order = CONSTANT
-    family = MONOMIAL
+  [./vel_x]
+    order = FIRST
+    family = LAGRANGE
   [../]
-
-  [./velocity_y]
-    order = CONSTANT
-    family = MONOMIAL
+  [./vel_y]
+    order = FIRST
+    family = LAGRANGE
   [../]
 []
 
 [Functions]
-  active = 'ic_func ra_func'
+  active = ''
   [./ic_func]
     type = ParsedFunction
     value = '(1.0-y)*1'
@@ -60,7 +45,7 @@ elem_type = QUAD4
 
   [./ra_func]
     type = ParsedFunction
-    value = '31.42' #'x*50'
+    value = '50*x'
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -78,21 +63,32 @@ elem_type = QUAD4
     type = FunctionRandomIC
     variable = temp
     function = ic_func
-    min = -0.01
-    max = 0.01
+    min = 0
+    max = 1e-2
     seed = 524685
   [../]
 []
 
 
 [Kernels]
-  active = 'mass diff conv euler'
-  [./mass]
-    type = StreamDiffusion
-    variable = stream
+  [./momentum_x]
+    type = VelocityDiffusion_half
+    variable = vel_x
     temperature = temp
-    component = 0
-    sign = 1 #This is intended to be 1. Do not change this!
+    component_1 = 1
+    component_2 = 0
+    sign = 1.0
+    scale = 1.0
+  [../]
+
+  [./momentum_y]
+    type = VelocityDiffusion_half
+    variable = vel_y
+    temperature = temp
+    component_1 = 0
+    component_2 = 0
+    sign = -1.0
+    scale = 0.0
   [../]
 
   [./diff]
@@ -102,9 +98,11 @@ elem_type = QUAD4
   [../]
 
   [./conv]
-    type = RayleighConvection
+    type = ExampleConvection
     variable = temp
-    stream_function = stream
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = 0
   [../]
 
   [./euler]
@@ -112,50 +110,31 @@ elem_type = QUAD4
     variable = temp
     time_coefficient = 1.0
   [../]
-
-  [./supg_x]
-    type = Supg
-    variable = temp
-    advection_speed = velocity_x
-    h = 0.05
-    beta = 1.0
-    component = 0
-  [../]
-
-  [./supg_y]
-    type = Supg
-    variable = temp
-    advection_speed = velocity_y
-    h = 0.05
-    beta = 1.0
-    component = 1
-  [../]
-[]
-
-[AuxKernels]
-  active = ''
-  [./velocity_x_aux]
-    type = VariableGradientComponent
-    variable = velocity_x
-    gradient_variable = stream
-    component = 'y'
-  [../]
-
-  [./velocity_y_aux]
-    type = VariableGradientComponent
-    variable = velocity_y
-    gradient_variable = stream
-    component = 'x'
-  [../]
 []
 
 [BCs]
-  active = 'no_flux_bc top_temp bottom_temp'
-  [./no_flux_bc]
+  [./no_flux_bc_x]
     type = DirichletBC
-    variable = stream
-    boundary = 'top bottom left right'
-    value = 0.0
+    variable = vel_x
+    #boundary = 'top bottom_right bottom_left left right'
+    boundary = 'left right'
+    value = 0
+  [../]
+
+  [./no_flux_bc_y]
+    type = DirichletBC
+    variable = vel_y
+    #boundary = 'top bottom_right bottom_left left right'
+    boundary = 'bottom'
+    value = 0
+  [../]
+
+  [./flux_bc_y]
+    type = DirichletBC
+    variable = vel_y
+    #boundary = 'top bottom_right bottom_left left right'
+    boundary = 'top'
+    value = 0
   [../]
 
   [./top_temp]
@@ -166,7 +145,7 @@ elem_type = QUAD4
   [../]
 
   [./bottom_temp]
-    type = DirichletBC
+    type = NeumannBC
     variable = temp
     boundary = 'bottom'
     value = 1.0
@@ -177,8 +156,8 @@ elem_type = QUAD4
   active = 'ra_output'
   [./ra_output]
     type = RayleighMaterial
-    block = 0
-    function = 'ra_func'
+    block = 'layer1'
+    function = 31.62 #'ra_func'
     min = 0
     max = 0
     seed = 363192
@@ -188,23 +167,36 @@ elem_type = QUAD4
 
 [Preconditioning]
   [./SMP]
-    type = SMP
     full = true
+    type = SMP
     solve_type = 'NEWTON'
   [../]
 []
 
 [Executioner]
   type = Transient
-  solve_type = 'PJFNK'
-  #num_steps = 20
-  dt = 0.001
-  #dtmin = 0.001
+  #solve_type = 'PJFNK'
+  #abort_on_solve_fail = true
+  num_steps = 3000
+  #dt = 0.001
+  #dtmin = 0.0001
   start_time = 0
-  end_time = 300.0
+  #end_time = 1000.0
   scheme = 'crank-nicolson'
-  l_max_its = 40
+  l_max_its = 60
   nl_max_its = 20
+  trans_ss_check = false
+  ss_check_tol = 1e-06
+  #ss_tmin = 0.2
+  nl_rel_step_tol = 1e-8
+
+  [./TimeStepper]
+    type = PostprocessorDT
+    postprocessor = CFL_time_step
+    dt = 1e-3
+    scale = 0.3
+    factor = 0
+  [../]
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
   #petsc_options_iname = '-pc_type -pc_hypre_type'
   #petsc_options_value = 'hypre boomeramg'
@@ -223,9 +215,16 @@ elem_type = QUAD4
     event = ALIVE
     column = total_time_with_sub
   [../]
+
+  [./CFL_time_step]
+    type = LevelSetCFLCondition
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = 0
+  [../]
 []
 
 [Outputs]
-  execute_on = 'initial timestep_end'
+  execute_on = 'timestep_end'
   exodus = true
 []

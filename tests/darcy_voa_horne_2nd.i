@@ -2,8 +2,8 @@
   type = GeneratedMesh
   dim = 2
 
-  nx = 20
-  ny = 20
+  nx = 25
+  ny = 25
 
   xmin = 0.0
   xmax = 1.0
@@ -15,7 +15,7 @@
 []
 
 [MeshModifiers]
-  active = 'side1 side2'
+  active = ''
   [./side1]
     type = BoundingBoxNodeSet
     new_boundary = 'bottom_left'
@@ -43,7 +43,7 @@
     #initial_condition = 0
   [../]
   [./vel_x]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
   [../]
   [./vel_y]
@@ -53,7 +53,7 @@
 []
 
 [Functions]
-  active = ''
+  active = 'ic_func'
   [./ic_func]
     type = ParsedFunction
     value = '(1.0-y)*1'
@@ -70,7 +70,7 @@
 []
 
 [ICs]
-  active = ''
+  active = 'mat_2'
   [./mat_1]
     type = FunctionIC
     variable = temp
@@ -131,7 +131,7 @@
 []
 
 [BCs]
-  active = 'no_flux_bc_x no_flux_bc_y top_temp bottom_temp'
+  #active = 'no_flux_bc_x no_flux_bc_y top_temp bottom_temp'
   [./no_flux_bc_x]
     type = DirichletBC
     variable = vel_x
@@ -144,7 +144,7 @@
     type = DirichletBC
     variable = vel_y
     #boundary = 'top bottom left right'
-    boundary = 'bottom_left bottom_right'
+    boundary = 'bottom'
     value = 0
   [../]
 
@@ -166,7 +166,7 @@
   [./bottom_temp]
     type = DirichletBC
     variable = temp
-    boundary = 'bottom_left'
+    boundary = 'bottom'
     value = 1.0
   [../]
 []
@@ -197,22 +197,23 @@
   #solve_type = 'PJFNK'
   #abort_on_solve_fail = true
   num_steps = 3000
-  #dt = 0.001
+  #dt = 1e-5
   #dtmin = 0.0001
   start_time = 0
   #end_time = 1000.0
-  scheme = 'implicit-euler'
+  scheme = 'crank-nicolson'
   l_max_its = 60
   nl_max_its = 20
-  trans_ss_check = true
+  trans_ss_check = false
   ss_check_tol = 1e-06
   #ss_tmin = 0.2
+  nl_rel_tol = 1e-08
 
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-3
-    scale = 0.2
+    scale = 0.005
     factor = 0
   [../]
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
