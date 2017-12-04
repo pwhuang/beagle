@@ -34,6 +34,13 @@
   [../]
 []
 
+[AuxVariables]
+  [./Peclet]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+[]
+
 [Functions]
   active = ''
   [./ic_func]
@@ -112,6 +119,16 @@
   [../]
 []
 
+[AuxKernels]
+  [./cell_peclet]
+    type = CellPeclet
+    variable = Peclet
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = 0
+  [../]
+[]
+
 [BCs]
   [./no_flux_bc_x]
     type = DirichletBC
@@ -157,7 +174,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 40 #'ra_func'
+    function = 31.62 #'ra_func'
     min = 0
     max = 0
     seed = 363192
@@ -177,11 +194,11 @@
   type = Transient
   #solve_type = 'PJFNK'
   #abort_on_solve_fail = true
-  num_steps = 3000
+  #num_steps = 3000
   #dt = 0.001
   #dtmin = 0.0001
   start_time = 0
-  #end_time = 1000.0
+  end_time = 20.0
   scheme = 'crank-nicolson'
   l_max_its = 60
   nl_max_its = 20
@@ -194,7 +211,7 @@
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-3
-    scale = 0.15
+    scale = 0.025 #C=0.8
     factor = 0
   [../]
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
@@ -222,9 +239,16 @@
     velocity_y = vel_y
     velocity_z = 0
   [../]
+
+  [./max_Peclet]
+    type = ElementExtremeValue
+    variable = Peclet
+  [../]
 []
 
 [Outputs]
   execute_on = 'timestep_end'
+  interval = 5
   exodus = true
+  csv = true
 []

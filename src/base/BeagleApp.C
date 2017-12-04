@@ -42,6 +42,7 @@
 #include "VariableGradientSign.h"
 #include "DarcyVelocity.h"
 #include "StreamVelocityZ.h"
+#include "CellPeclet.h"
 
 //Materials
 #include "PorousMaterial.h"
@@ -119,6 +120,7 @@ BeagleApp::registerObjects(Factory & factory)
     registerAux(VariableGradientSign);
     registerAux(DarcyVelocity);
     registerAux(StreamVelocityZ);
+    registerAux(CellPeclet);
     registerMaterial(PorousMaterial);
     registerMaterial(RayleighMaterial);
     registerMaterial(RayleighMaterialFunc);
