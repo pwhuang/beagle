@@ -34,6 +34,17 @@
   [../]
 []
 
+[AuxVariables]
+  [./Peclet]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./CFL]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+[]
+
 [Functions]
   active = ''
   [./ic_func]
@@ -109,6 +120,23 @@
     type = ExampleTimeDerivative
     variable = temp
     time_coefficient = 1.0
+  [../]
+[]
+
+[AuxKernels]
+  [./cell_peclet]
+    type = CellPeclet
+    variable = Peclet
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = 0
+  [../]
+  [./cell_CFL]
+    type = CellCFL
+    variable = CFL
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = 0
   [../]
 []
 
@@ -194,7 +222,7 @@
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-3
-    scale = 0.3
+    scale = 0.025
     factor = 0
   [../]
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
@@ -221,6 +249,16 @@
     velocity_x = vel_x
     velocity_y = vel_y
     velocity_z = 0
+  [../]
+
+  [./max_Peclet]
+    type = ElementExtremeValue
+    variable = Peclet
+  [../]
+
+  [./max_CFL]
+    type = ElementExtremeValue
+    variable = CFL #This is the orginal CFL number (approximated with hmin)
   [../]
 []
 

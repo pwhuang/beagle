@@ -38,5 +38,5 @@ VariableGradientSign::VariableGradientSign(const InputParameters & parameters)
 Real
 VariableGradientSign::computeValue()
 {
-  return _sign*_scale[_qp]*_gradient[_qp](_component);
+  return _sign*_gradient[_qp](_component);
 }

@@ -34,7 +34,6 @@
 []
 
 [AuxVariables]
-  active = ''
   [./velocity_x]
     order = FIRST
     family = MONOMIAL
@@ -42,6 +41,15 @@
 
   [./velocity_y]
     order = FIRST
+    family = MONOMIAL
+  [../]
+
+  [./Peclet]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./CFL]
+    order = CONSTANT
     family = MONOMIAL
   [../]
 []
@@ -128,6 +136,21 @@
     pressure = pressure
     temperature = temp
     component = 1
+  [../]
+
+  [./cell_peclet]
+    type = CellPeclet
+    variable = Peclet
+    velocity_x = velocity_x
+    velocity_y = velocity_y
+    velocity_z = 0
+  [../]
+  [./cell_CFL]
+    type = CellCFL
+    variable = CFL
+    velocity_x = velocity_x
+    velocity_y = velocity_y
+    velocity_z = 0
   [../]
 []
 
@@ -226,6 +249,16 @@
   [./L2_pres]
     type = ElementL2Norm
     variable = pressure
+  [../]
+
+  [./max_Peclet]
+    type = ElementExtremeValue
+    variable = Peclet
+  [../]
+
+  [./max_CFL]
+    type = ElementExtremeValue
+    variable = CFL #This is the orginal CFL number (approximated with hmin)
   [../]
 []
 

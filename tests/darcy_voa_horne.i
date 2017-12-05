@@ -39,6 +39,10 @@
     order = CONSTANT
     family = MONOMIAL
   [../]
+  [./CFL]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
 []
 
 [Functions]
@@ -127,6 +131,13 @@
     velocity_y = vel_y
     velocity_z = 0
   [../]
+  [./cell_CFL]
+    type = CellCFL
+    variable = CFL
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = 0
+  [../]
 []
 
 [BCs]
@@ -210,7 +221,7 @@
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
-    dt = 1e-3
+    dt = 1e-4
     scale = 0.025 #C=0.8
     factor = 0
   [../]
@@ -235,20 +246,26 @@
 
   [./CFL_time_step]
     type = LevelSetCFLCondition
-    velocity_x = vel_x
+    velocity_x = vel_x #This uses the magnitude of velocity and hmin to approximate CFL number
     velocity_y = vel_y
     velocity_z = 0
+    #outputs = 'csv'
   [../]
 
   [./max_Peclet]
     type = ElementExtremeValue
     variable = Peclet
   [../]
+
+  [./max_CFL]
+    type = ElementExtremeValue
+    variable = CFL #This is the orginal CFL number (approximated with hmin)
+  [../]
 []
 
 [Outputs]
   execute_on = 'timestep_end'
-  interval = 5
+  interval = 1
   exodus = true
   csv = true
 []

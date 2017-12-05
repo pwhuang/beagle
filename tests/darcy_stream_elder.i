@@ -33,12 +33,20 @@
 
 [AuxVariables]
   [./velocity_x]
-    order = FIRST
+    order = CONSTANT
     family = MONOMIAL
   [../]
 
   [./velocity_y]
-    order = FIRST
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./Peclet]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./CFL]
+    order = CONSTANT
     family = MONOMIAL
   [../]
 []
@@ -144,6 +152,21 @@
     component = 'x'
     sign = -1.0
   [../]
+
+  [./cell_peclet]
+    type = CellPeclet
+    variable = Peclet
+    velocity_x = velocity_x
+    velocity_y = velocity_y
+    velocity_z = 0
+  [../]
+  [./cell_CFL]
+    type = CellCFL
+    variable = CFL
+    velocity_x = velocity_x
+    velocity_y = velocity_y
+    velocity_z = 0
+  [../]
 []
 
 [BCs]
@@ -238,6 +261,16 @@
     type = ElementL2Norm
     variable = stream
     outputs = 'csv'
+  [../]
+
+  [./max_Peclet]
+    type = ElementExtremeValue
+    variable = Peclet
+  [../]
+
+  [./max_CFL]
+    type = ElementExtremeValue
+    variable = CFL #This is the orginal CFL number (approximated with hmin)
   [../]
 []
 

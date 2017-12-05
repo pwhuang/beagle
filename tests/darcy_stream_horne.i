@@ -1,19 +1,6 @@
 [Mesh]
-  file = 'tests/mesh/elder.msh'
+  file = 'tests/mesh/horne.msh'
   #second_order = true
-  #type = GeneratedMesh
-  #dim = 2
-
-  #nx = 80
-  #ny = 20
-
-  #xmin = 0.0
-  #xmax = 4.0
-
-  #ymin = 0.0
-  #ymax = 1.0
-
-  #elem_type = QUAD9
 []
 
 [MeshModifiers]
@@ -33,24 +20,27 @@
 []
 
 [Variables]
+  [./stream]
+    order = FIRST
+    family = LAGRANGE
+  [../]
   [./temp]
     order = FIRST
     family = LAGRANGE
     initial_condition = 0
   [../]
-
-  [./vel_x]
-    order = FIRST
-    family = LAGRANGE
-  [../]
-
-  [./vel_y]
-    order = FIRST
-    family = LAGRANGE
-  [../]
 []
 
 [AuxVariables]
+  [./velocity_x]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+
+  [./velocity_y]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
   [./Peclet]
     order = CONSTANT
     family = MONOMIAL
@@ -72,9 +62,9 @@
 
   [./ra_func]
     type = ParsedFunction
-    value = 20 #'x*50'
+    value = '31.62' #'x*50'
     #vars = 'alpha'
-    #vals = '17'
+    #vals = '16'
   [../]
 []
 
@@ -89,32 +79,24 @@
   [./mat_2]
     type = FunctionRandomIC
     variable = temp
-    function = '0' #ic_func
-    min = 0
+    function = 0
+    min = -0.01
     max = 0.01
-    seed = 524685
+    #seed = 524685 #S1
+    #seed = 123456 #S2
+    seed = 9478
   [../]
 []
 
-[Kernels]
-  [./momentum_x]
-    type = VelocityDiffusion_half
-    variable = vel_x
-    temperature = temp
-    component_1 = 1
-    component_2 = 0
-    sign = 1.0
-    scale = 1.0
-  [../]
 
-  [./momentum_y]
-    type = VelocityDiffusion_half
-    variable = vel_y
+[Kernels]
+  active = 'mass diff conv euler'
+  [./mass]
+    type = StreamDiffusion
+    variable = stream
     temperature = temp
-    component_1 = 0
-    component_2 = 0
-    sign = -1.0
-    scale = 0.0
+    component = 0
+    sign = 1 #This is intended to be 1. Do not change this!
   [../]
 
   [./diff]
@@ -124,11 +106,9 @@
   [../]
 
   [./conv]
-    type = ExampleConvection
+    type = RayleighConvection
     variable = temp
-    velocity_x = vel_x
-    velocity_y = vel_y
-    velocity_z = 0
+    stream_function = stream
   [../]
 
   [./euler]
@@ -136,25 +116,67 @@
     variable = temp
     time_coefficient = 1.0
   [../]
+
+  [./supg_x]
+    type = Supg
+    variable = temp
+    advection_speed = velocity_x
+    h = 0.05
+    beta = 1.0
+    component = 0
+  [../]
+
+  [./supg_y]
+    type = Supg
+    variable = temp
+    advection_speed = velocity_y
+    h = 0.05
+    beta = 1.0
+    component = 1
+  [../]
+[]
+
+[AuxKernels]
+  [./velocity_x_aux]
+    type = VariableGradientSign
+    variable = velocity_x
+    gradient_variable = stream
+    component = 'y'
+    sign = 1.0
+  [../]
+
+  [./velocity_y_aux]
+    type = VariableGradientSign
+    variable = velocity_y
+    gradient_variable = stream
+    component = 'x'
+    sign = -1.0
+  [../]
+
+  [./cell_peclet]
+    type = CellPeclet
+    variable = Peclet
+    velocity_x = velocity_x
+    velocity_y = velocity_y
+    velocity_z = 0
+  [../]
+  [./cell_CFL]
+    type = CellCFL
+    variable = CFL
+    velocity_x = velocity_x
+    velocity_y = velocity_y
+    velocity_z = 0
+  [../]
 []
 
 [BCs]
-  active = 'no_flux_bc_x no_flux_bc_y top_temp bottom_temp'
-  [./no_flux_bc_x]
+  active = 'no_flux_bc top_temp bottom_temp'
+  [./no_flux_bc]
     type = DirichletBC
-    variable = vel_x
-    #boundary = 'top bottom_half bottom_out left right'
-    boundary = 'left right'
-    value = 0
-  [../]
-
-  [./no_flux_bc_y]
-    type = DirichletBC
-    variable = vel_y
-    #boundary = 'top bottom_half bottom_out left right'
-    boundary = 'top bottom_half bottom_out'
-    #boundary = 'top bottom'
-    value = 0
+    variable = stream
+    boundary = 'top bottom_left bottom_right left right'
+    #boundary = 'top bottom left right'
+    value = 0.0
   [../]
 
   [./top_temp]
@@ -167,25 +189,8 @@
   [./bottom_temp]
     type = DirichletBC
     variable = temp
-    boundary = 'bottom_half'
+    boundary = 'bottom_left'
     value = 1.0
-  [../]
-[]
-
-[AuxKernels]
-  [./cell_peclet]
-    type = CellPeclet
-    variable = Peclet
-    velocity_x = vel_x
-    velocity_y = vel_y
-    velocity_z = 0
-  [../]
-  [./cell_CFL]
-    type = CellCFL
-    variable = CFL
-    velocity_x = vel_x
-    velocity_y = vel_y
-    velocity_z = 0
   [../]
 []
 
@@ -198,12 +203,11 @@
     min = 0
     max = 0
     seed = 363192
-    #outputs = exodus
+    outputs = exodus
   [../]
 []
 
 [Preconditioning]
-  #active = ''
   [./SMP]
     type = SMP
     full = true
@@ -213,27 +217,28 @@
 
 [Executioner]
   type = Transient
-  #solve_type = PJFNK
-  num_steps = 1000
-  dt = 1e-3
+  #solve_type = 'PJFNK'
+  #num_steps = 20
+  #dt = 0.002
   #dtmin = 0.001
   start_time = 0
-  #end_time = 300.0
+  end_time = 10.0
   scheme = 'crank-nicolson'
-  l_max_its = 80
-  nl_max_its = 40
-  #trans_ss_check = true
-  #ss_check_tol = 1e-06
-  #ss_tmin = 30
+  l_max_its = 40
+  nl_max_its = 20
+  nl_rel_tol = 1e-8
 
-  #[./TimeStepper]
-  #  type = PostprocessorDT
-  #  postprocessor = CFL_time_step
-  #  dt = 1e-3
-  #  scale = 0.9/400.0
-  #  factor = 0
-  #[../]
+  [./TimeStepper]
+    type = PostprocessorDT
+    postprocessor = CFL_time_step
+    dt = 1e-4
+    scale = 0.025 #C=0.8
+    factor = 0
+  [../]
 
+  trans_ss_check = true
+  ss_check_tol = 1e-06
+  ss_tmin = 30
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
   #petsc_options_iname = '-pc_type -pc_hypre_type'
   #petsc_options_value = 'hypre boomeramg'
@@ -256,8 +261,10 @@
 
   [./CFL_time_step]
     type = LevelSetCFLCondition
-    velocity_x = vel_x
-    velocity_y = vel_y
+    velocity_x = velocity_x #This uses the magnitude of velocity and hmin to approximate CFL number
+    velocity_y = velocity_y
+    velocity_z = 0
+    #outputs = 'csv'
   [../]
 
   [./L2_temp]
@@ -266,15 +273,9 @@
     outputs = 'csv'
   [../]
 
-  [./L2_vel_x]
+  [./L2_stream]
     type = ElementL2Norm
-    variable = vel_x
-    outputs = 'csv'
-  [../]
-
-  [./L2_vel_y]
-    type = ElementL2Norm
-    variable = vel_y
+    variable = stream
     outputs = 'csv'
   [../]
 

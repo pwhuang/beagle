@@ -11,12 +11,11 @@
 /*                                                              */
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
-#include "CellPeclet.h"
-#include "FEProblem.h"
+#include "CellCFL.h"
 
 template <>
 InputParameters
-validParams<CellPeclet>()
+validParams<CellCFL>()
 {
   MooseEnum component("x=0 y=1 z=2");
   InputParameters params = validParams<AuxKernel>();
@@ -28,8 +27,9 @@ validParams<CellPeclet>()
   return params;
 }
 
-CellPeclet::CellPeclet(const InputParameters & parameters)
+CellCFL::CellCFL(const InputParameters & parameters)
   : AuxKernel(parameters),
+    _feproblem(dynamic_cast<FEProblemBase &>(_subproblem)),
     _velocity_x(coupledValue("velocity_x")),
     _velocity_y(coupledValue("velocity_y")),
     _velocity_z(coupledValue("velocity_z")),
@@ -40,7 +40,7 @@ CellPeclet::CellPeclet(const InputParameters & parameters)
 }
 
 Real
-CellPeclet::computeValue()
+CellCFL::computeValue()
 {
-  return _scale[_qp]*0.5*std::max(std::abs(_velocity_z[_qp]),std::max(std::abs(_velocity_x[_qp]), std::abs(_velocity_y[_qp])))*_current_elem->hmax();
+  return _scale[_qp]*(std::abs(_velocity_x[_qp]) + std::abs(_velocity_y[_qp]) + std::abs(_velocity_z[_qp]))*_feproblem.dt()/_current_elem->hmin();
 }
