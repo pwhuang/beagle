@@ -21,7 +21,7 @@
 
 [Variables]
   [./stream]
-    order = SECOND
+    order = FIRST
     family = LAGRANGE
   [../]
   [./temp]
@@ -212,25 +212,33 @@
     type = SMP
     full = true
     solve_type = 'NEWTON'
+    #petsc_options = '-snes_ksp_ew'
+    #petsc_options_iname = '-pc_type -pc_hypre_type -snes_linesearch_type -ksp_gmres_restart'
+    #petsc_options_value = 'hypre boomeramg cp 201'
+    #petsc_options_iname = '-ksp_type -pc_type -snes_atol -snes_rtol -snes_max_it -ksp_max_it -sub_pc_type -sub_pc_factor_shift_type'
+    #petsc_options_value = 'gmres asm 1E-10 1E-10 200 500 ilu NONZERO'
   [../]
 []
 
 [Executioner]
   type = Transient
-  #solve_type = 'PJFNK'
+  #solve_type = 'JFNK'
   #num_steps = 20
   dt = 0.002
   dtmin = 0.001
   start_time = 0
   #end_time = 300.0
-  scheme = 'crank-nicolson'
   l_max_its = 40
   nl_max_its = 20
   nl_rel_tol = 1e-8
 
   trans_ss_check = true
   ss_check_tol = 1e-06
-  ss_tmin = 30
+  ss_tmin = 100
+
+  [./TimeIntegrator]
+    type = CrankNicolson
+  [../]
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
   #petsc_options_iname = '-pc_type -pc_hypre_type'
   #petsc_options_value = 'hypre boomeramg'

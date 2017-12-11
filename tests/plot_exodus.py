@@ -34,7 +34,7 @@ vel_y = nc.variables['vals_nod_var4'][:]
 plt.figure(figsize=(20,5))
 plt.axes(aspect=1)
 #plt.scatter(x, y, c=temp[200], s=2, cmap='coolwarm')
-plt.tricontourf(x, y, temp[200], 11, cmap='coolwarm')
+    plt.tricontourf(x, y, temp[200], 11, cmap='coolwarm')
 #plt.tricontour(x, y, temp[200], 11, cmap='coolwarm')
 plt.colorbar()
 

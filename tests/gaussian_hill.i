@@ -99,12 +99,15 @@ xmax = 1.0
   type = Transient
   #solve_type = 'PJFNK'
   #num_steps = 20
-  dt = 0.0065
+  dt = 0.02#0.0065
   start_time = 0
   end_time = 0.6
-  scheme = 'crank-nicolson'
+  #scheme = 'crank-nicolson'
   l_max_its = 40
   nl_max_its = 20
+  [./TimeIntegrator]
+    type = LStableDirk4
+  [../]
 []
 
 [Outputs]

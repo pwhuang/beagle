@@ -194,6 +194,7 @@
 []
 
 [Preconditioning]
+  #active = ''
   [./SMP]
     full = true
     type = SMP
@@ -203,16 +204,15 @@
 
 [Executioner]
   type = Transient
-  #solve_type = 'PJFNK'
+  #solve_type = 'JFNK'
   #abort_on_solve_fail = true
   #num_steps = 3000
   #dt = 0.001
   #dtmin = 0.0001
   start_time = 0
   end_time = 20.0
-  scheme = 'crank-nicolson'
-  l_max_its = 60
-  nl_max_its = 20
+  l_max_its = 100
+  nl_max_its = 50
   trans_ss_check = false
   ss_check_tol = 1e-06
   #ss_tmin = 0.2
@@ -221,9 +221,13 @@
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
-    dt = 1e-4
-    scale = 0.025 #C=0.8
+    dt = 1e-5
+    scale = 0.025  #C=0.8 -> scale=0.025
     factor = 0
+  [../]
+
+  [./TimeIntegrator]
+    type = CrankNicolson
   [../]
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'
   #petsc_options_iname = '-pc_type -pc_hypre_type'
