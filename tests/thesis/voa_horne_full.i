@@ -1,21 +1,5 @@
 [Mesh]
-  file = 'tests/mesh/horne.msh'
-[]
-
-[MeshModifiers]
-  active = ''
-  [./side]
-    type = BoundingBoxNodeSet
-    new_boundary = 'bottom_half'
-    bottom_left = '0.5 0 0'
-    top_right = '1.5 0 0'
-  [../]
-  [./corner_node]
-    type = AddExtraNodeset
-    new_boundary = 'pinned_node'
-    #nodes = '0'
-    coord = '0 0.8'
-  [../]
+  file = 'tests/mesh/horne_full.msh'
 []
 
 [Variables]
@@ -153,7 +137,7 @@
     type = DirichletBC
     variable = vel_y
     #boundary = 'top bottom_right bottom_left left right'
-    boundary = 'bottom_left bottom_right'
+    boundary = 'bottom'
     value = 0
   [../]
 
@@ -168,14 +152,14 @@
   [./top_temp]
     type = DirichletBC
     variable = temp
-    boundary = 'top bottom_right'
+    boundary = 'top'
     value = 0.0
   [../]
 
   [./bottom_temp]
-    type = DirichletBC
+    type = NeumannBC
     variable = temp
-    boundary = 'bottom_left'
+    boundary = 'bottom'
     value = 1.0
   [../]
 []
@@ -194,44 +178,44 @@
 []
 
 [Preconditioning]
-  #active = ''
   [./SMP]
-    full = true
     type = SMP
+    full = true
     solve_type = 'NEWTON'
+    petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+    petsc_options_value = 'gamg hypre basic 251'
   [../]
 []
 
 [Executioner]
   type = Transient
-  #solve_type = 'JFNK'
+  #solve_type = 'PJFNK'
   #abort_on_solve_fail = true
-  #num_steps = 3000
+  num_steps = 3000
   #dt = 0.001
   #dtmin = 0.0001
   start_time = 0
-  end_time = 20.0
-  l_max_its = 100
-  nl_max_its = 50
+  #end_time = 1000.0
+  l_max_its = 60
+  nl_max_its = 20
   trans_ss_check = false
   ss_check_tol = 1e-06
   #ss_tmin = 0.2
-  nl_rel_step_tol = 1e-8
+  #nl_rel_step_tol = 1e-10
+  nl_rel_tol = 1e-10
+  nl_abs_tol = 1e-12
 
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
-    dt = 1e-5
-    scale = 0.025  #C=0.8 -> scale=0.025
+    dt = 1e-3
+    scale = 0.025
     factor = 0
   [../]
 
   [./TimeIntegrator]
     type = CrankNicolson
   [../]
-  #petsc_options = '-snes_mf_operator' #-ksp_monitor'
-  #petsc_options_iname = '-pc_type -pc_hypre_type'
-  #petsc_options_value = 'hypre boomeramg'
 []
 
 [Postprocessors]
@@ -250,10 +234,27 @@
 
   [./CFL_time_step]
     type = LevelSetCFLCondition
-    velocity_x = vel_x #This uses the magnitude of velocity and hmin to approximate CFL number
+    velocity_x = vel_x
     velocity_y = vel_y
     velocity_z = 0
-    #outputs = 'csv'
+  [../]
+
+  [./L2_temp]
+    type = ElementL2Norm
+    variable = temp
+    outputs = 'csv'
+  [../]
+
+  [./L2_vel_x]
+    type = ElementL2Norm
+    variable = vel_x
+    outputs = 'csv'
+  [../]
+
+  [./L2_vel_y]
+    type = ElementL2Norm
+    variable = vel_y
+    outputs = 'csv'
   [../]
 
   [./max_Peclet]
@@ -265,11 +266,15 @@
     type = ElementExtremeValue
     variable = CFL #This is the orginal CFL number (approximated with hmin)
   [../]
+
+  [./res]
+    type = Residual
+    execute_on = timestep_end
+    residual_type = FINAL
+  [../]
 []
 
 [Outputs]
   execute_on = 'timestep_end'
-  interval = 1
   exodus = true
-  csv = true
 []
