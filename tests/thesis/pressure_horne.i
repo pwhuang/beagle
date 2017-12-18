@@ -1,5 +1,5 @@
 [Mesh]
-  file = 'tests/mesh/elder.msh'
+  file = 'tests/mesh/horne.msh'
   second_order = true
 []
 
@@ -15,7 +15,7 @@
     type = AddExtraNodeset
     new_boundary = 'pinned_node2'
     #nodes = '0'
-    coord = '4.0 1.0'
+    coord = '1.0 1.0'
   [../]
 []
 
@@ -127,14 +127,14 @@
   [./top_temp]
     type = DirichletBC
     variable = temp
-    boundary = 'top'
+    boundary = 'top bottom_right'
     value = 0.0
   [../]
 
   [./bottom_temp]
     type = DirichletBC
     variable = temp
-    boundary = 'bottom_half'
+    boundary = 'bottom_left'
     value = 1.0
   [../]
 []
@@ -144,7 +144,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 22.832
+    function = 40
     min = 0
     max = 0
     seed = 363192
@@ -165,12 +165,12 @@
 [Executioner]
   type = Transient
   #solve_type = 'PJFNK'
-  num_steps = 10000
+  num_steps = 20000
   dt = 5e-6
   #dtmin = 0.001
   start_time = 0
   #end_time = 8.0
-  l_max_its = 40
+  l_max_its = 60
   nl_max_its = 20
   #trans_ss_check = true
   #ss_check_tol = 1e-06
@@ -178,13 +178,13 @@
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-12
 
-  #[./TimeStepper]
-  #  type = PostprocessorDT
-  #  postprocessor = CFL_time_step
-  #  dt = 1e-4
-  #  scale = 1e-3
-  #  factor = 0
-  #[../]
+  [./TimeStepper]
+    type = PostprocessorDT
+    postprocessor = CFL_time_step
+    dt = 1e-4
+    scale = 6e-3
+    factor = 0
+  [../]
 
   [./TimeIntegrator]
     type = CrankNicolson
@@ -214,11 +214,13 @@
   [./L2_temp]
     type = ElementL2Norm
     variable = temp
+    outputs = 'csv'
   [../]
 
   [./L2_pres]
     type = ElementL2Norm
     variable = pressure
+    outputs = 'csv'
   [../]
 
   [./max_Peclet]
@@ -239,6 +241,7 @@
 []
 
 [Outputs]
+  interval = 5
   execute_on = 'timestep_end'
   exodus = true
   csv = true

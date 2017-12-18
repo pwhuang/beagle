@@ -1,6 +1,6 @@
 [Mesh]
   file = 'tests/mesh/horne.msh'
-  second_order = true
+  #second_order = true
 []
 
 [Variables]
@@ -87,6 +87,7 @@
     velocity_y = velocity_y
     velocity_z = 0
   [../]
+
   [./cell_CFL]
     type = CellCFL
     variable = CFL
@@ -108,7 +109,7 @@
   [./top_temp]
     type = DirichletBC
     variable = temp
-    boundary = 'top'
+    boundary = 'top bottom_right'
     value = 0.0
   [../]
 
@@ -124,7 +125,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 31.62
+    function = 40.0 #31.62
     min = 0
     max = 0
     seed = 363192
@@ -138,33 +139,33 @@
     full = true
     solve_type = 'NEWTON'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-    petsc_options_value = 'gamg hypre basic 251'
+    petsc_options_value = 'gamg hypre cp 301'
   [../]
 []
 
 [Executioner]
   type = Transient
   #solve_type = 'PJFNK'
-  #num_steps = 20
+  num_steps = 20000
   #dt = 0.002
   #dtmin = 0.001
   start_time = 0
-  end_time = 10.0
+  #end_time = 10.0
   l_max_its = 40
   nl_max_its = 20
 
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-12
 
-  trans_ss_check = true
-  ss_check_tol = 1e-06
-  ss_tmin = 30
+  #trans_ss_check = true
+  #ss_check_tol = 1e-06
+  #ss_tmin = 30
 
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-4
-    scale = 0.025 #C=0.8
+    scale = 6e-3
     factor = 0
   [../]
 
@@ -226,6 +227,7 @@
 []
 
 [Outputs]
+  interval = 5
   execute_on = 'timestep_end'
   exodus = true
   csv = true

@@ -135,7 +135,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 31.62 #'ra_func'
+    function = 40 #'ra_func'
     min = 0
     max = 0
     seed = 363192
@@ -157,11 +157,11 @@
   type = Transient
   #solve_type = 'JFNK'
   #abort_on_solve_fail = true
-  #num_steps = 3000
+  num_steps = 20000
   #dt = 0.001
   #dtmin = 0.0001
   start_time = 0
-  end_time = 20.0
+  #end_time = 20.0
   l_max_its = 100
   nl_max_its = 50
   trans_ss_check = false
@@ -174,8 +174,8 @@
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
-    dt = 1e-5
-    scale = 0.005  #C=0.8 -> scale=0.025
+    dt = 1e-4
+    scale = 6e-3  #C=0.8 -> scale=0.025
     factor = 0
   [../]
 
@@ -243,7 +243,7 @@
 
 [Outputs]
   execute_on = 'timestep_end'
-  interval = 1
+  interval = 5
   exodus = true
   csv = true
 []
