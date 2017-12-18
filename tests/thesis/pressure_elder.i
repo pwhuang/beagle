@@ -21,11 +21,12 @@
 
 [Variables]
   [./pressure]
-    order = SECOND
+    order = FIRST
     family = LAGRANGE
+    initial_condition = 0.0
   [../]
   [./temp]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
     initial_condition = 0.0
   [../]
@@ -143,7 +144,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 20
+    function = 22.832
     min = 0
     max = 0
     seed = 363192
@@ -157,15 +158,15 @@
     full = true
     solve_type = 'NEWTON'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-    petsc_options_value = 'gamg hypre basic 251'
+    petsc_options_value = 'gamg hypre cp 301'
   [../]
 []
 
 [Executioner]
   type = Transient
   #solve_type = 'PJFNK'
-  #num_steps = 20
-  #dt = 1e-5
+  num_steps = 10000
+  dt = 5e-6
   #dtmin = 0.001
   start_time = 0
   #end_time = 8.0
@@ -174,13 +175,13 @@
   #trans_ss_check = true
   #ss_check_tol = 1e-06
 
-  [./TimeStepper]
-    type = PostprocessorDT
-    postprocessor = CFL_time_step
-    dt = 1e-4
-    scale = 1e-3
-    factor = 0
-  [../]
+  #[./TimeStepper]
+  #  type = PostprocessorDT
+  #  postprocessor = CFL_time_step
+  #  dt = 1e-4
+  #  scale = 1e-3
+  #  factor = 0
+  #[../]
 
   [./TimeIntegrator]
     type = CrankNicolson

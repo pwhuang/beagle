@@ -13,11 +13,13 @@
   [./vel_x]
     order = FIRST
     family = LAGRANGE
+    initial_condition = 0
   [../]
 
   [./vel_y]
     order = FIRST
     family = LAGRANGE
+    initial_condition = 0
   [../]
 []
 
@@ -128,7 +130,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 20
+    function = 22.832
     min = 0
     max = 0
     seed = 363192
@@ -149,8 +151,8 @@
 [Executioner]
   type = Transient
   #solve_type = PJFNK
-  num_steps = 1000
-  #dt = 1e-3
+  num_steps = 10000
+  dt = 5e-6
   #dtmin = 0.001
   start_time = 0
   #end_time = 300.0
@@ -162,13 +164,13 @@
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-12
 
-  [./TimeStepper]
-    type = PostprocessorDT
-    postprocessor = CFL_time_step
-    dt = 1e-4
-    scale = 0.06
-    factor = 0
-  [../]
+  #[./TimeStepper]
+  #  type = PostprocessorDT
+  #  postprocessor = CFL_time_step
+  #  dt = 1e-4
+  #  scale = 0.06
+  #  factor = 0
+  #[../]
 
   [./TimeIntegrator]
     type = CrankNicolson

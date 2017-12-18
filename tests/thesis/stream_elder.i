@@ -124,7 +124,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 20
+    function = 22.832
     min = 0
     max = 0
     seed = 363192
@@ -138,16 +138,16 @@
     full = true
     solve_type = 'NEWTON'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-    petsc_options_value = 'gamg hypre basic 251'
+    petsc_options_value = 'gamg hypre cp 301'
   [../]
 []
 
 [Executioner]
   type = Transient
   #solve_type = 'JFNK'
-  #num_steps = 20
-  dt = 0.002
-  dtmin = 0.001
+  num_steps = 10000
+  dt = 5e-6
+  #dtmin = 0.001
   start_time = 0
   #end_time = 300.0
   l_max_its = 40
@@ -156,9 +156,9 @@
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-12
 
-  trans_ss_check = true
-  ss_check_tol = 1e-06
-  ss_tmin = 100
+  #trans_ss_check = false
+  #ss_check_tol = 1e-06
+  #ss_tmin = 100
 
   [./TimeIntegrator]
     type = CrankNicolson
