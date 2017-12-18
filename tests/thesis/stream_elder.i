@@ -1,6 +1,6 @@
 [Mesh]
   file = 'tests/mesh/elder.msh'
-  #second_order = true
+  second_order = true
 []
 
 [Variables]
@@ -9,7 +9,7 @@
     family = LAGRANGE
   [../]
   [./temp]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
     initial_condition = 0
   [../]
@@ -145,11 +145,11 @@
 [Executioner]
   type = Transient
   #solve_type = 'JFNK'
-  num_steps = 10000
-  dt = 5e-6
+  #num_steps = 1000
+  dt = 2e-5
   #dtmin = 0.001
   start_time = 0
-  #end_time = 300.0
+  end_time = 5e-2
   l_max_its = 40
   nl_max_its = 20
 

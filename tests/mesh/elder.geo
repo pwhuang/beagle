@@ -1,4 +1,4 @@
-cl = 0.08;
+cl = 0.04;
 //+
 Point(1) = {0, 0, 0, cl};
 //+
@@ -40,4 +40,4 @@ Physical Line("top") = {6};
 //+
 Physical Surface("layer1") = {1};
 //+
-Characteristic Length {5, 6} = 0.03;
+Characteristic Length {5, 6} = 0.015;

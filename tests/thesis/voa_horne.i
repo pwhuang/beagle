@@ -175,7 +175,7 @@
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-4
-    scale = 6e-3  #C=0.8 -> scale=0.025
+    scale = 6e-3 
     factor = 0
   [../]
 
@@ -243,7 +243,7 @@
 
 [Outputs]
   execute_on = 'timestep_end'
-  interval = 5
+  interval = 4
   exodus = true
   csv = true
 []

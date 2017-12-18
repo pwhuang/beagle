@@ -165,13 +165,12 @@
 [Executioner]
   type = Transient
   #solve_type = 'PJFNK'
-  num_steps = 10000
-  dt = 5e-6
-  #dtmin = 0.001
+  #num_steps = 1000
+  dt = 2e-5
   start_time = 0
-  #end_time = 8.0
-  l_max_its = 40
-  nl_max_its = 20
+  end_time = 5e-2
+  l_max_its = 60
+  nl_max_its = 30
   #trans_ss_check = true
   #ss_check_tol = 1e-06
 
@@ -214,11 +213,13 @@
   [./L2_temp]
     type = ElementL2Norm
     variable = temp
+    outputs = 'csv'
   [../]
 
   [./L2_pres]
     type = ElementL2Norm
     variable = pressure
+    outputs = 'csv'
   [../]
 
   [./max_Peclet]

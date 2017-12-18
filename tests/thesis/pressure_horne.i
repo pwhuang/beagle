@@ -166,7 +166,7 @@
   type = Transient
   #solve_type = 'PJFNK'
   num_steps = 20000
-  dt = 5e-6
+  #dt = 5e-6
   #dtmin = 0.001
   start_time = 0
   #end_time = 8.0
@@ -241,7 +241,7 @@
 []
 
 [Outputs]
-  interval = 5
+  interval = 4
   execute_on = 'timestep_end'
   exodus = true
   csv = true

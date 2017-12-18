@@ -139,7 +139,7 @@
     full = true
     solve_type = 'NEWTON'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-    petsc_options_value = 'gamg hypre cp 301'
+    petsc_options_value = 'gamg hypre cp 251'
   [../]
 []
 
@@ -227,7 +227,7 @@
 []
 
 [Outputs]
-  interval = 5
+  interval = 4
   execute_on = 'timestep_end'
   exodus = true
   csv = true

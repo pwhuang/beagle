@@ -144,18 +144,18 @@
     full = true
     solve_type = 'NEWTON'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-    petsc_options_value = 'gamg hypre cp 301'
+    petsc_options_value = 'gamg hypre cp 351'
   [../]
 []
 
 [Executioner]
   type = Transient
   #solve_type = PJFNK
-  num_steps = 10000
-  dt = 5e-6
+  #num_steps = 10000
+  dt = 2e-5
   #dtmin = 0.001
   start_time = 0
-  #end_time = 300.0
+  end_time = 5e-2
   l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true
