@@ -1,48 +1,57 @@
 [Mesh]
-  file = 'tests/mesh/elder_coarse.msh'
-  second_order = true
+  type = GeneratedMesh
+  dim = 2
+
+  nx = 120
+  ny = 32
+
+  xmin = 0.0
+  xmax = 4.0
+
+  ymin = 0.0
+  ymax = 1.0
+
+  elem_type = QUAD4
 []
 
 [MeshModifiers]
+  active = 'side'
+  [./side]
+    type = BoundingBoxNodeSet
+    new_boundary = 'bottom_half'
+    bottom_left = '1 0 0'
+    top_right = '3 0 0'
+  [../]
   [./corner_node]
     type = AddExtraNodeset
     new_boundary = 'pinned_node'
     #nodes = '0'
-    coord = '0.0 1.0'
-  [../]
-
-  [./corner_node2]
-    type = AddExtraNodeset
-    new_boundary = 'pinned_node2'
-    #nodes = '0'
-    coord = '4.0 1.0'
+    coord = '0 0.8'
   [../]
 []
 
+
 [Variables]
-  [./pressure]
-    order = FIRST
-    family = LAGRANGE
-    initial_condition = 0.0
-  [../]
   [./temp]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.0
+    initial_condition = 0
+  [../]
+
+  [./vel_x]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0
+  [../]
+
+  [./vel_y]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0
   [../]
 []
 
 [AuxVariables]
-  [./velocity_x]
-    order = FIRST
-    family = MONOMIAL
-  [../]
-
-  [./velocity_y]
-    order = FIRST
-    family = MONOMIAL
-  [../]
-
   [./Peclet]
     order = CONSTANT
     family = MONOMIAL
@@ -53,13 +62,25 @@
   [../]
 []
 
-
 [Kernels]
-  [./mass]
-    type = PressureDiffusion_test
-    variable = pressure
+  [./momentum_x]
+    type = VelocityDiffusion_half
+    variable = vel_x
     temperature = temp
-    component = 1
+    component_1 = 1
+    component_2 = 0
+    sign = 1.0
+    scale = 1.0
+  [../]
+
+  [./momentum_y]
+    type = VelocityDiffusion_half
+    variable = vel_y
+    temperature = temp
+    component_1 = 0
+    component_2 = 0
+    sign = -1.0
+    scale = 0.0
   [../]
 
   [./diff]
@@ -69,10 +90,11 @@
   [../]
 
   [./conv]
-    type = PressureConvection
+    type = ExampleConvection
     variable = temp
-    pressure = pressure
-    component = 1
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = 0
   [../]
 
   [./euler]
@@ -82,46 +104,22 @@
   [../]
 []
 
-[AuxKernels]
-  [./velocity_x_aux]
-    type = DarcyVelocity
-    variable = velocity_x
-    pressure = pressure
-    temperature = 0
-    component = 0
-  [../]
-
-  [./velocity_y_aux]
-    type = DarcyVelocity
-    variable = velocity_y
-    pressure = pressure
-    temperature = temp
-    component = 1
-  [../]
-
-  [./cell_peclet]
-    type = CellPeclet
-    variable = Peclet
-    velocity_x = velocity_x
-    velocity_y = velocity_y
-    velocity_z = 0
-  [../]
-
-  [./cell_CFL]
-    type = CellCFL
-    variable = CFL
-    velocity_x = velocity_x
-    velocity_y = velocity_y
-    velocity_z = 0
-  [../]
-[]
-
 [BCs]
-  [./no_flux_bc]
+  [./no_flux_bc_x]
     type = DirichletBC
-    variable = pressure
-    boundary = 'pinned_node pinned_node2'
-    value = 0.0
+    variable = vel_x
+    #boundary = 'top bottom_half bottom_out left right'
+    boundary = 'left right'
+    value = 0
+  [../]
+
+  [./no_flux_bc_y]
+    type = DirichletBC
+    variable = vel_y
+    #boundary = 'top bottom_half bottom_out left right'
+    boundary = 'top bottom'
+    #boundary = 'top bottom'
+    value = 0
   [../]
 
   [./top_temp]
@@ -139,11 +137,27 @@
   [../]
 []
 
+[AuxKernels]
+  [./cell_peclet]
+    type = CellPeclet
+    variable = Peclet
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = 0
+  [../]
+  [./cell_CFL]
+    type = CellCFL
+    variable = CFL
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = 0
+  [../]
+[]
+
 [Materials]
-  active = 'ra_output'
   [./ra_output]
     type = RayleighMaterial
-    block = 'layer1'
+    block = 0 #'layer1'
     function = 22.832
     min = 0
     max = 0
@@ -157,23 +171,24 @@
     type = SMP
     full = true
     solve_type = 'NEWTON'
-    #petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-    #petsc_options_value = 'gamg hypre cp 301'
+    petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+    petsc_options_value = 'gamg hypre cp 351'
   [../]
 []
 
 [Executioner]
   type = Transient
-  #solve_type = 'PJFNK'
-  #num_steps = 1000
-  dt = 5e-4
+  #solve_type = PJFNK
+  #num_steps = 10000
+  dt = 2e-5
+  #dtmin = 0.001
   start_time = 0
   end_time = 5e-2
-  l_max_its = 60
+  l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true
   #ss_check_tol = 1e-06
-
+  #ss_tmin = 30
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-12
 
@@ -181,7 +196,7 @@
   #  type = PostprocessorDT
   #  postprocessor = CFL_time_step
   #  dt = 1e-4
-  #  scale = 1e-3
+  #  scale = 0.06
   #  factor = 0
   #[../]
 
@@ -196,6 +211,7 @@
     variable = temp
     boundary = 'top'
     diffusivity = 1.0
+    outputs = 'csv console'
   [../]
 
   [./alive_time]
@@ -206,8 +222,8 @@
 
   [./CFL_time_step]
     type = LevelSetCFLCondition
-    velocity_x = velocity_x
-    velocity_y = velocity_y
+    velocity_x = vel_x
+    velocity_y = vel_y
   [../]
 
   [./L2_temp]
@@ -216,9 +232,15 @@
     outputs = 'csv'
   [../]
 
-  [./L2_pres]
+  [./L2_vel_x]
     type = ElementL2Norm
-    variable = pressure
+    variable = vel_x
+    outputs = 'csv'
+  [../]
+
+  [./L2_vel_y]
+    type = ElementL2Norm
+    variable = vel_y
     outputs = 'csv'
   [../]
 

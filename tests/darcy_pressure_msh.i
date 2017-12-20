@@ -8,6 +8,7 @@
 
   #parallel_type =
   #partitioner = metis
+  second_order = true
 []
 
 [MeshModifiers]
@@ -32,7 +33,7 @@
     family = LAGRANGE
   [../]
   [./temp]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
     #initial_condition = 0.0
   [../]
@@ -178,6 +179,8 @@
     type = SMP
     full = true
     solve_type = 'NEWTON'
+    petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+    petsc_options_value = 'gamg hypre cp 301'
   [../]
 []
 
@@ -199,8 +202,8 @@
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
-    dt = 1e-3
-    scale = 0.95
+    dt = 1e-5
+    scale = 0.005
     factor = 0
   [../]
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'

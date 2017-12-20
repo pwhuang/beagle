@@ -9,7 +9,7 @@
     family = LAGRANGE
   [../]
   [./temp]
-    order = SECOND
+    order = FIRST
     family = LAGRANGE
     initial_condition = 0
   [../]

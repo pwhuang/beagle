@@ -42,7 +42,7 @@ Real PressureConvection::computeQpResidual()
 {
   //RealVectorValue _advection_speed = RealVectorValue(_vel_x[_qp], _vel_y[_qp]);
 
-  return _test[_i][_qp]*_Ra[_qp]*(-_grad_p[_qp]*_grad_u[_qp])
+  return _grad_test[_i][_qp]*_Ra[_qp]*(_grad_p[_qp]*_u[_qp])
           //_test[_i][_qp]*(_advection_speed*_grad_u[_qp]);
           + _test[_i][_qp]*_Ra[_qp]*_u[_qp]*_grad_u[_qp](_component);
 
@@ -54,7 +54,7 @@ Real PressureConvection::computeQpJacobian()
 {
   //RealVectorValue _advection_speed = RealVectorValue(_vel_x[_qp], _vel_y[_qp]);
 
-  return _test[_i][_qp]*_Ra[_qp]*(-_grad_p[_qp]*_grad_phi[_j][_qp])
+  return _grad_test[_i][_qp]*_Ra[_qp]*(_grad_p[_qp]*_phi[_j][_qp])
           //_test[_i][_qp]*(_advection_speed*_grad_phi[_j][_qp]);
           + _test[_i][_qp]*_Ra[_qp]*_phi[_j][_qp]*_grad_u[_qp](_component)
           + _test[_i][_qp]*_Ra[_qp]*_u[_qp]*_grad_phi[_j][_qp](_component);
@@ -67,7 +67,7 @@ Real PressureConvection::computeQpJacobian()
 Real PressureConvection::computeQpOffDiagJacobian(unsigned jvar)
 {
   if (jvar == _grad_p_var_num)
-    return _test[_i][_qp]*_Ra[_qp]*(-_grad_phi[_j][_qp]*_grad_u[_qp]);
+    return _grad_test[_i][_qp]*_Ra[_qp]*(_grad_phi[_j][_qp]*_u[_qp]);
     //return _grad_test[_i][_qp]*_grad_phi[_j][_qp]*_u[_qp];
   else
     return 0;

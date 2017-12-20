@@ -17,9 +17,9 @@ import sys
 #sys_arg = np.array(sys.argv)
 #nc = netCDF4.Dataset(sys_arg[1])
 
-nc = netCDF4.Dataset('darcy_stream_elder_out.e')
+nc = netCDF4.Dataset('stream_elder_gen_out.e')
 
-#print(nc.variables)
+print(nc.variables)
 
 x = nc.variables['coordx'][:]
 y = nc.variables['coordy'][:]
@@ -34,7 +34,7 @@ vel_y = nc.variables['vals_nod_var4'][:]
 plt.figure(figsize=(20,5))
 plt.axes(aspect=1)
 #plt.scatter(x, y, c=temp[200], s=2, cmap='coolwarm')
-    plt.tricontourf(x, y, temp[200], 11, cmap='coolwarm')
+plt.tricontourf(x, y, temp[200], 11, cmap='coolwarm')
 #plt.tricontour(x, y, temp[200], 11, cmap='coolwarm')
 plt.colorbar()
 
