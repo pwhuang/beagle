@@ -1,5 +1,5 @@
 [Mesh]
-  file = 'tests/mesh/elder_3d_coarse.msh'
+  file = '../mesh/elder_3d_coarse.msh'
   second_order = true
 []
 
@@ -162,8 +162,8 @@
     type = SMP
     full = true
     solve_type = 'NEWTON'
-    petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-    petsc_options_value = 'gamg hypre cp 351'
+    petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -pc_gamg_sym_graph'
+    petsc_options_value = 'gamg hypre cp 351 true'
   [../]
 []
 

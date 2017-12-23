@@ -1,11 +1,11 @@
 [Mesh]
-  file = 'tests/mesh/horne.msh'
-  second_order = true
+  file = '../mesh/horne.msh'
+  #second_order = true
 []
 
 [Variables]
   [./temp]
-    order = SECOND
+    order = FIRST 
     family = LAGRANGE
     initial_condition = 0
   [../]
@@ -149,7 +149,7 @@
     type = SMP
     solve_type = 'NEWTON'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-    petsc_options_value = 'gamg hypre cp 251'
+    petsc_options_value = 'ksp hypre cp 301'
   [../]
 []
 
@@ -157,7 +157,7 @@
   type = Transient
   #solve_type = 'JFNK'
   #abort_on_solve_fail = true
-  num_steps = 20000
+  num_steps = 80000
   #dt = 0.001
   #dtmin = 0.0001
   start_time = 0
@@ -174,8 +174,8 @@
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
-    dt = 1e-4
-    scale = 6e-3 
+    dt = 1e-5
+    scale = 2e-3 
     factor = 0
   [../]
 
@@ -243,7 +243,7 @@
 
 [Outputs]
   execute_on = 'timestep_end'
-  interval = 4
+  interval = 20
   exodus = true
   csv = true
 []
