@@ -65,7 +65,7 @@
 
   [./ra_func]
     type = ParsedFunction
-    value = 150
+    value = 14
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -212,6 +212,8 @@
     type = SMP
     full = true
     solve_type = 'NEWTON'
+    petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+    petsc_options_value = 'gamg hypre cp 301'
   [../]
 []
 
@@ -226,14 +228,14 @@
   scheme = 'crank-nicolson'
   l_max_its = 40
   nl_max_its = 20
-  trans_ss_check = true
+  trans_ss_check = false
   ss_check_tol = 1e-07
 
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-2
-    scale = 0.9
+    scale = 0.05
     factor = 0
   [../]
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'

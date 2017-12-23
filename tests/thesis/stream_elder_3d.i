@@ -31,7 +31,7 @@
   [../]
 
   [./velocity_z]
-    order = FIRST
+    order = CONSTANT
     family = MONOMIAL
   [../]
   [./Peclet]
@@ -49,14 +49,13 @@
     type = MassBalance
     variable = temp
     velocity_x = psi_1
-    velocity_y = psi_2
-    velocity_z = 0
+    velocity_z = psi_2
   [../]
 
   [./stream1]
     type = StreamDiffusion
     variable = psi_1
-    component = 1
+    component = 2
     sign = -1.0
     temperature = temp
   [../]
@@ -118,30 +117,29 @@
     variable = Peclet
     velocity_x = velocity_x
     velocity_y = velocity_y
-    velocity_z = 0
+    velocity_z = velocity_z
   [../]
   [./cell_CFL]
     type = CellCFL
     variable = CFL
     velocity_x = velocity_x
     velocity_y = velocity_y
-    velocity_z = 0
+    velocity_z = velocity_z
   [../]
 []
 
 [BCs]
   [./no_flow_1]
-    type =  PresetBC
+    type = DirichletBC
     variable = psi_1
-    boundary = 'bottom_in bottom_out top left right'
-    #boundary = 'bottom top left right front back'
+    boundary = 'bottom_in bottom_out top front back'
     value = 0
   [../]
 
   [./no_flow_2]
-    type = PresetBC
+    type = DirichletBC
     variable = psi_2
-    boundary = 'bottom_in bottom_out top front back'
+    boundary = 'bottom_in bottom_out top left right'
     #boundary = 'bottom top left right front back'
     value = 0
   [../]
@@ -178,8 +176,8 @@
     type = SMP
     full = true
     solve_type = 'NEWTON'
-    petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-    petsc_options_value = 'gamg hypre cp 301'
+    petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -pc_gamg_sym_graph'
+    petsc_options_value = 'gamg hypre cp 301 true'
   [../]
 []
 
@@ -187,7 +185,7 @@
   type = Transient
   #solve_type = 'JFNK'
   #num_steps = 1000
-  dt = 1e-5
+  dt = 1e-4
   #dtmin = 0.001
   start_time = 0
   end_time = 1e-2
