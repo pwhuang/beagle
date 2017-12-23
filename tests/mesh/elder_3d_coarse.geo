@@ -1,5 +1,5 @@
-cl__1 = 0.1;
-cl__2 = 0.05;
+cl__1 = 0.2;
+cl__2 = 0.1;
 //+
 Point(1) = {0, 0, 0, cl__1};
 //+
@@ -85,22 +85,22 @@ Plane Surface(7) = {6, 7};
 //+
 Plane Surface(8) = {7};
 //+
-Physical Surface("top") = {1};
-//+
-Physical Surface("right") = {3};
-//+
-Physical Surface("left") = {5};
-//+
-Physical Surface("back") = {4};
-//+
-Physical Surface("front") = {2};
-//+
-Physical Surface("bottom_in") = {8};
-//+
-Physical Surface("bottom_out") = {7};
-//+
 Surface Loop(1) = {1, 2, 3, 7, 5, 4, 8};
 //+
 Volume(1) = {1};
 //+
 Physical Volume("layer1") = {1};
+//+
+Physical Surface("top") = {1};
+//+
+Physical Surface("bottom_in") = {8};
+//+
+Physical Surface("bottom_out") = {7};
+//+
+Physical Surface("front") = {3};
+//+
+Physical Surface("back") = {5};
+//+
+Physical Surface("right") = {2};
+//+
+Physical Surface("left") = {4};

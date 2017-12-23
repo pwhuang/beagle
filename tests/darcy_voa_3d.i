@@ -93,14 +93,14 @@
     component_1 = 1
     component_2 = 0
     sign = 1
-    scale = 0.0 #0.0 scale intends to maximize the effect of T_y
+    scale = 1.0  #0.0 scale intends to maximize the effect of T_y
   [../]
 
   [./momentum_y]
     type = VelocityDiffusionZ
     variable = vel_y
     temperature = temp
-    sign = 1.0
+    #sign = 1.0
   [../]
 
   [./momentum_z]
@@ -110,7 +110,7 @@
     component_1 = 1
     component_2 = 2
     sign = 1
-    scale = 0.0
+    scale = 1.0
   [../]
 
   [./diff]
@@ -138,24 +138,24 @@
   [./no_flow_1]
     type =  DirichletBC
     variable = vel_x
-    #boundary = 'left right'
-    boundary = 'front back left right top bottom'
+    boundary = 'left right'
+    #boundary = 'front back left right top bottom'
     value = 0
   [../]
 
   [./no_flow_2]
     type = DirichletBC
     variable = vel_y
-    #boundary = 'top bottom'
-    boundary = 'front back left right top bottom'
+    boundary = 'top bottom'
+    #boundary = 'front back left right top bottom'
     value = 0
   [../]
 
   [./no_flow_3]
     type = DirichletBC
     variable = vel_z
-    #boundary = 'front back'
-    boundary = 'front back left right top bottom'
+    boundary = 'front back'
+    #boundary = 'front back left right top bottom'
     value = 0
   [../]
 
@@ -193,6 +193,8 @@
     type = SMP
     full = true
     solve_type = 'NEWTON'
+    petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -pc_gamg_sym_graph'
+    petsc_options_value = 'gamg hypre cp 351 true'
   [../]
 []
 
@@ -214,7 +216,7 @@
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-3
-    scale = 0.5
+    scale = 0.01
     factor = 0
   [../]
   #petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'

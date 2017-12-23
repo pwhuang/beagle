@@ -8,7 +8,7 @@
 
   #parallel_type = DISTRIBUTED
   #partitioner = parmetis
-  second_order = true
+  #second_order = true
 []
 
 [MeshModifiers]
@@ -51,7 +51,7 @@
 
   [./ra_func]
     type = ParsedFunction
-    value = 200
+    value = 14
     #vars = 'alpha'
     #vals = '16'
   [../]
@@ -182,6 +182,8 @@
     type = SMP
     full = true
     solve_type = 'NEWTON'
+    petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -pc_gamg_sym_graph'
+    petsc_options_value = 'gamg hypre cp 351 true'
   [../]
 []
 

@@ -48,7 +48,7 @@
     component_1 = 1
     component_2 = 0
     sign = 1
-    scale = 0.5
+    scale = 1.0
   [../]
 
   [./momentum_y]
@@ -64,7 +64,7 @@
     component_1 = 1
     component_2 = 2
     sign = 1
-    scale = 0.5
+    scale = 1.0
   [../]
 
   [./diff]
