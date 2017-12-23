@@ -1,39 +1,11 @@
 [Mesh]
-  type = GeneratedMesh
-  dim = 2
-
-  nx = 120
-  ny = 32
-
-  xmin = 0.0
-  xmax = 4.0
-
-  ymin = 0.0
-  ymax = 1.0
-
-  elem_type = QUAD4
+  file = 'tests/mesh/elder_3d_coarse.msh'
+  second_order = true
 []
-
-[MeshModifiers]
-  active = 'side'
-  [./side]
-    type = BoundingBoxNodeSet
-    new_boundary = 'bottom_half'
-    bottom_left = '1 0 0'
-    top_right = '3 0 0'
-  [../]
-  [./corner_node]
-    type = AddExtraNodeset
-    new_boundary = 'pinned_node'
-    #nodes = '0'
-    coord = '0 0.8'
-  [../]
-[]
-
 
 [Variables]
   [./temp]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
     initial_condition = 0
   [../]
@@ -45,6 +17,12 @@
   [../]
 
   [./vel_y]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0
+  [../]
+
+  [./vel_z]
     order = FIRST
     family = LAGRANGE
     initial_condition = 0
@@ -69,18 +47,24 @@
     temperature = temp
     component_1 = 1
     component_2 = 0
-    sign = 1.0
-    scale = 1.0
+    sign = 1
+    scale = 0.5
   [../]
 
   [./momentum_y]
-    type = VelocityDiffusion_half
+    type = VelocityDiffusionZ
     variable = vel_y
     temperature = temp
-    component_1 = 0
-    component_2 = 0
-    sign = -1.0
-    scale = 0.0
+  [../]
+
+  [./momentum_z]
+    type = VelocityDiffusion_half
+    variable = vel_z
+    temperature = temp
+    component_1 = 1
+    component_2 = 2
+    sign = 1
+    scale = 0.5
   [../]
 
   [./diff]
@@ -94,7 +78,7 @@
     variable = temp
     velocity_x = vel_x
     velocity_y = vel_y
-    velocity_z = 0
+    velocity_z = vel_z
   [../]
 
   [./euler]
@@ -105,20 +89,27 @@
 []
 
 [BCs]
-  [./no_flux_bc_x]
-    type = DirichletBC
+  [./no_flow_1]
+    type =  DirichletBC
     variable = vel_x
-    #boundary = 'top bottom_half bottom_out left right'
     boundary = 'left right'
+    #boundary = 'front back left right top bottom'
     value = 0
   [../]
 
-  [./no_flux_bc_y]
+  [./no_flow_2]
     type = DirichletBC
     variable = vel_y
-    #boundary = 'top bottom_half bottom_out left right'
-    boundary = 'top bottom'
-    #boundary = 'top bottom'
+    boundary = 'top bottom_in bottom_out'
+    #boundary = 'front back left right top bottom'
+    value = 0
+  [../]
+
+  [./no_flow_3]
+    type = DirichletBC
+    variable = vel_z
+    boundary = 'front back'
+    #boundary = 'front back left right top bottom'
     value = 0
   [../]
 
@@ -132,7 +123,7 @@
   [./bottom_temp]
     type = DirichletBC
     variable = temp
-    boundary = 'bottom_half'
+    boundary = 'bottom_in'
     value = 1.0
   [../]
 []
@@ -143,22 +134,22 @@
     variable = Peclet
     velocity_x = vel_x
     velocity_y = vel_y
-    velocity_z = 0
+    velocity_z = vel_z
   [../]
   [./cell_CFL]
     type = CellCFL
     variable = CFL
     velocity_x = vel_x
     velocity_y = vel_y
-    velocity_z = 0
+    velocity_z = vel_z
   [../]
 []
 
 [Materials]
   [./ra_output]
     type = RayleighMaterial
-    block = 0 #'layer1'
-    function = 22.832
+    block = 'layer1'
+    function = 20.0
     min = 0
     max = 0
     seed = 363192
@@ -171,10 +162,8 @@
     type = SMP
     full = true
     solve_type = 'NEWTON'
-    #petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-    #petsc_options_value = 'gamg hypre cp 351'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-    petsc_options_value = 'ksp boomerang cp 301'
+    petsc_options_value = 'gamg hypre cp 351'
   [../]
 []
 
@@ -182,10 +171,10 @@
   type = Transient
   #solve_type = PJFNK
   #num_steps = 10000
-  dt = 2e-5
+  dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 5e-2
+  end_time = 1e-2
   l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true
@@ -226,6 +215,7 @@
     type = LevelSetCFLCondition
     velocity_x = vel_x
     velocity_y = vel_y
+    velocity_z = vel_z
   [../]
 
   [./L2_temp]
@@ -243,6 +233,12 @@
   [./L2_vel_y]
     type = ElementL2Norm
     variable = vel_y
+    outputs = 'csv'
+  [../]
+
+  [./L2_vel_z]
+    type = ElementL2Norm
+    variable = vel_z
     outputs = 'csv'
   [../]
 
@@ -264,6 +260,7 @@
 []
 
 [Outputs]
+  interval = 1
   execute_on = 'timestep_end'
   exodus = true
   csv = true

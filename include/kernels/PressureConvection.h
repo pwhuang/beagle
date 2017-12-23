@@ -40,6 +40,10 @@ private:
   //Real _Ra;
   const VariableGradient & _grad_p;
   const VariableValue & _p;
+  const VariableSecond & _second_temp;
+  const VariableSecond & _second_u;
+  const VariableTestSecond & _second_test;
+  const VariablePhiSecond & _second_phi;
   unsigned _grad_p_var_num;
   //const VariableValue & _vel_x;
   //const VariableValue & _vel_y;
