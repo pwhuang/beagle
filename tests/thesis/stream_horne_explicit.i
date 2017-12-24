@@ -42,18 +42,21 @@
     temperature = temp
     component = 0
     sign = 1 #This is intended to be 1. Do not change this!
+    implicit = false
   [../]
 
   [./diff]
     type = ExampleDiffusion
     variable = temp
     diffusivity = 1.0
+    implicit = false
   [../]
 
   [./conv]
     type = RayleighConvection
     variable = temp
     stream_function = stream
+    implicit = false
   [../]
 
   [./euler]
@@ -139,14 +142,14 @@
     full = true
     solve_type = 'NEWTON'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-    petsc_options_value = 'ksp hypre cp 251'
+    petsc_options_value = 'ksp hypre cp 301'
   [../]
 []
 
 [Executioner]
   type = Transient
   #solve_type = 'PJFNK'
-  num_steps = 80000
+  num_steps = 16000
   #dt = 0.002
   #dtmin = 0.001
   start_time = 0
@@ -165,7 +168,7 @@
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-5
-    scale = 2e-3
+    scale = 1e-2
     factor = 0
   [../]
 
@@ -227,7 +230,7 @@
 []
 
 [Outputs]
-  interval = 20
+  interval = 40
   execute_on = 'timestep_end'
   exodus = true
   csv = true

@@ -171,10 +171,10 @@
   type = Transient
   #solve_type = PJFNK
   #num_steps = 10000
-  dt = 1e-5
+  dt = 2e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 1e-2
+  end_time = 1e-1
   l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true
@@ -260,7 +260,7 @@
 []
 
 [Outputs]
-  interval = 1
+  interval = 25
   execute_on = 'timestep_end'
   exodus = true
   csv = true

@@ -1,5 +1,5 @@
 [Mesh]
-  file = 'tests/mesh/elder_3d_coarse.msh'
+  file = '../mesh/elder_3d_coarse.msh'
   #second_order = true
 []
 
@@ -185,10 +185,10 @@
   type = Transient
   #solve_type = 'JFNK'
   #num_steps = 1000
-  dt = 1e-4
+  dt = 2e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 1e-2
+  end_time = 1.2e-1
   l_max_its = 40
   nl_max_its = 20
 
@@ -255,7 +255,7 @@
 []
 
 [Outputs]
-  interval = 1
+  interval = 25
   execute_on = 'timestep_end'
   exodus = true
   csv = true

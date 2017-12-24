@@ -40,6 +40,7 @@
     component_2 = 0
     sign = 1.0
     scale = 1.0
+    implicit = false
   [../]
 
   [./momentum_y]
@@ -50,12 +51,14 @@
     component_2 = 0
     sign = -1.0
     scale = 0.0
+    implicit = false
   [../]
 
   [./diff]
     type = ExampleDiffusion
     variable = temp
     diffusivity = 1.0
+    implicit = false
   [../]
 
   [./conv]
@@ -64,6 +67,7 @@
     velocity_x = vel_x
     velocity_y = vel_y
     velocity_z = 0
+    implicit = false
   [../]
 
   [./euler]
@@ -148,8 +152,8 @@
     full = true
     type = SMP
     solve_type = 'NEWTON'
-    petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-    petsc_options_value = 'ksp hypre cp 301'
+    #petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -pc_gamg_sym_graph'
+    #petsc_options_value = 'gamg hypre cp 301 true'
   [../]
 []
 
@@ -157,7 +161,7 @@
   type = Transient
   #solve_type = 'JFNK'
   #abort_on_solve_fail = true
-  num_steps = 80000
+  num_steps = 16000
   #dt = 0.001
   #dtmin = 0.0001
   start_time = 0
@@ -175,7 +179,7 @@
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-5
-    scale = 2e-3 
+    scale = 1e-2 
     factor = 0
   [../]
 
@@ -243,7 +247,7 @@
 
 [Outputs]
   execute_on = 'timestep_end'
-  interval = 20 
+  interval = 40 
   exodus = true
   csv = true
 []
