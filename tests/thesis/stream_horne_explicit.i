@@ -42,21 +42,21 @@
     temperature = temp
     component = 0
     sign = 1 #This is intended to be 1. Do not change this!
-    implicit = false
+    #implicit = false
   [../]
 
   [./diff]
     type = ExampleDiffusion
     variable = temp
     diffusivity = 1.0
-    implicit = false
+    #implicit = false
   [../]
 
   [./conv]
     type = RayleighConvection
     variable = temp
     stream_function = stream
-    implicit = false
+    #implicit = false
   [../]
 
   [./euler]

@@ -40,7 +40,7 @@
     component_2 = 0
     sign = 1.0
     scale = 1.0
-    implicit = false
+    #implicit = false
   [../]
 
   [./momentum_y]
@@ -51,14 +51,14 @@
     component_2 = 0
     sign = -1.0
     scale = 0.0
-    implicit = false
+    #implicit = false
   [../]
 
   [./diff]
     type = ExampleDiffusion
     variable = temp
     diffusivity = 1.0
-    implicit = false
+    #implicit = false
   [../]
 
   [./conv]
@@ -67,7 +67,7 @@
     velocity_x = vel_x
     velocity_y = vel_y
     velocity_z = 0
-    implicit = false
+    #implicit = false
   [../]
 
   [./euler]
@@ -152,8 +152,8 @@
     full = true
     type = SMP
     solve_type = 'NEWTON'
-    #petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -pc_gamg_sym_graph'
-    #petsc_options_value = 'gamg hypre cp 301 true'
+    petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+    petsc_options_value = 'ksp hypre cp 351'
   [../]
 []
 
@@ -179,7 +179,7 @@
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-5
-    scale = 1e-2 
+    scale = 1.5e-2 
     factor = 0
   [../]
 
