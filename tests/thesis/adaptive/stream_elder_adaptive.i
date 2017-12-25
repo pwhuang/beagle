@@ -1,6 +1,5 @@
 [Mesh]
-  file = 'tests/mesh/elder.msh'
-  #second_order = true
+  file = '../../mesh/elder_coarse.msh'
 []
 
 [Variables]
@@ -137,8 +136,8 @@
     type = SMP
     full = true
     solve_type = 'NEWTON'
-    petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-    petsc_options_value = 'gamg hypre cp 301'
+    petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -pc_gamg_sym_graph'
+    petsc_options_value = 'ksp hypre cp 301 true'
   [../]
 []
 
@@ -146,7 +145,7 @@
   type = Transient
   #solve_type = 'JFNK'
   #num_steps = 1000
-  dt = 2e-5
+  dt = 5e-6
   #dtmin = 0.001
   start_time = 0
   end_time = 5e-2
@@ -160,10 +159,40 @@
   #ss_check_tol = 1e-06
   #ss_tmin = 100
 
+  #[./TimeStepper]
+  #  type = PostprocessorDT
+  #  postprocessor = CFL_time_step
+  #  dt = 1e-5
+  #  scale = 3e-2
+  #  factor = 0
+  #[../]
+
   [./TimeIntegrator]
     type = CrankNicolson
   [../]
 []
+
+
+[Adaptivity]
+  marker = errorfrac
+  [./Indicators]
+    [./error]
+      type = PecletIndicator
+      variable = Peclet
+      #function = 0
+    [../]
+  [../]
+
+  [./Markers]
+    [./errorfrac]
+      type = ErrorToleranceMarker
+      refine = 0.9
+      coarsen = 0.4
+      indicator = error
+    [../]
+  [../]
+[]
+
 
 [Postprocessors]
   [./Nusselt]
@@ -178,6 +207,14 @@
     type = PerformanceData
     event = ALIVE
     column = total_time_with_sub
+  [../]
+
+  [./CFL_time_step]
+    type = LevelSetCFLCondition
+    velocity_x = velocity_x #This uses the magnitude of velocity and hmin to approximate CFL number
+    velocity_y = velocity_y
+    velocity_z = 0
+    #outputs = 'csv'
   [../]
 
   [./L2_temp]
@@ -210,6 +247,7 @@
 []
 
 [Outputs]
+  interval = 500
   execute_on = 'timestep_end'
   exodus = true
   csv = true

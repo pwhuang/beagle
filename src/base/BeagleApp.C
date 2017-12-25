@@ -53,6 +53,9 @@
 //TimeSteppers
 #include "CFLDT.h"
 
+//Indicators
+#include "PecletIndicator.h"
+
 template<>
 InputParameters validParams<BeagleApp>()
 {
@@ -127,6 +130,7 @@ BeagleApp::registerObjects(Factory & factory)
     registerMaterial(RayleighMaterial);
     registerMaterial(RayleighMaterialFunc);
     registerTimeStepper(CFLDT);
+    registerIndicator(PecletIndicator);
 }
 
 // External entry point for dynamic syntax association
