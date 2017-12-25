@@ -246,6 +246,13 @@
     column = total_time_with_sub
   [../]
 
+  [./CFL_time_step]
+    type = LevelSetCFLCondition
+    velocity_x = velocity_x
+    velocity_y = velocity_y
+    velocity_z = velocity_z
+  [../]
+
   [./L2_temp]
     type = ElementL2Norm
     variable = temp
