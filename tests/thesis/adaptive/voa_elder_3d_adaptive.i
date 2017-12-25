@@ -196,6 +196,25 @@
   [../]
 []
 
+[Adaptivity]
+  marker = errorfrac
+  [./Indicators]
+    [./error]
+      type = PecletIndicator
+      variable = Peclet
+    [../]
+  [../]
+
+  [./Markers]
+    [./errorfrac]
+      type = ErrorToleranceMarker
+      refine = 0.9
+      coarsen = 0.4
+      indicator = error
+    [../]
+  [../]
+[]
+
 [Postprocessors]
   [./Nusselt]
     type = SideFluxAverage
