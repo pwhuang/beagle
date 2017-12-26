@@ -235,6 +235,7 @@
     velocity_x = vel_x
     velocity_y = vel_y
     velocity_z = vel_z
+    outputs = 'csv'
   [../]
 
   [./L2_temp]
@@ -275,6 +276,13 @@
     type = Residual
     execute_on = timestep_end
     residual_type = FINAL
+  [../]
+
+  [./mem]
+    type = MemoryUsage
+    execute_on = timestep_end
+    mem_type = physical_memory
+    value_type = max_process
   [../]
 []
 
