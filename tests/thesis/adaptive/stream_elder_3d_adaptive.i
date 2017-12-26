@@ -1,5 +1,5 @@
 [Mesh]
-  file = '../../mesh/elder_3d_coarse.msh'
+  file = '../../mesh/elder_3d.msh'
   second_order = true
 []
 
@@ -202,9 +202,9 @@
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
-    dt = 1e-6
+    dt = 1e-5
     scale = 2e-2
-    factor = 0
+    factor = 2e-6
   [../]
 
   [./TimeIntegrator]
@@ -224,7 +224,7 @@
   [./Markers]
     [./errorfrac]
       type = ErrorToleranceMarker
-      refine = 0.9
+      refine = 0.85
       coarsen = 0.4
       indicator = error
     [../]
@@ -285,6 +285,13 @@
     type = Residual
     execute_on = timestep_end
     residual_type = FINAL
+  [../]
+
+  [./mem]
+    type = MemoryUsage
+    execute_on = timestep_end
+    mem_type = physical_memory
+    value_type = max_process
   [../]
 []
 
