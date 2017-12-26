@@ -287,7 +287,7 @@
 []
 
 [Outputs]
-  interval = 1
+  interval = 200
   execute_on = 'timestep_end'
   exodus = true
   csv = true
