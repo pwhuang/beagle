@@ -187,12 +187,12 @@
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-5
-    scale = 3e-2
+    scale = 2e-2
     factor = 0
   [../]
 
   [./TimeIntegrator]
-    type = ExplicitTVDRK2 #CrankNicolson
+    type = CrankNicolson
   [../]
 []
 

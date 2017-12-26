@@ -1,6 +1,6 @@
 [Mesh]
   file = '../../mesh/elder_3d_coarse.msh'
-  #second_order = true
+  second_order = true
 []
 
 [Variables]
@@ -13,7 +13,7 @@
     family = LAGRANGE
   [../]
   [./temp]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
     initial_condition = 0
   [../]
@@ -202,13 +202,13 @@
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
-    dt = 1e-5
-    scale = 4e-2
+    dt = 1e-6
+    scale = 2e-2
     factor = 0
   [../]
 
   [./TimeIntegrator]
-    type = ExplicitTVDRK2 #CrankNicolson
+    type = CrankNicolson
   [../]
 []
 
