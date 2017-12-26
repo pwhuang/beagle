@@ -173,7 +173,7 @@
   #[../]
 
   [./TimeIntegrator]
-    type = ExplicitTVDRK2 #CrankNicolson
+    type = CrankNicolson
   [../]
 []
 

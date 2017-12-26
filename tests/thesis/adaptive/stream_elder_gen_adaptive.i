@@ -11,7 +11,7 @@
   ymin = 0.0
   ymax = 1.0
 
-  elem_type = QUAD4
+  elem_type = QUAD9
 []
 
 [MeshModifiers]
@@ -36,7 +36,7 @@
     family = LAGRANGE
   [../]
   [./temp]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
     initial_condition = 0
   [../]
@@ -150,7 +150,7 @@
 [Materials]
   [./ra_output]
     type = RayleighMaterial
-    block = 'layer1'
+    block = 0 
     function = 22.832
     min = 0
     max = 0

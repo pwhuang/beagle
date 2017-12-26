@@ -188,7 +188,7 @@
     postprocessor = CFL_time_step
     dt = 1e-5
     scale = 2e-2
-    factor = 0
+    factor = 2e-6
   [../]
 
   [./TimeIntegrator]
@@ -208,7 +208,7 @@
   [./Markers]
     [./errorfrac]
       type = ErrorToleranceMarker
-      refine = 0.9
+      refine = 0.85
       coarsen = 0.4
       indicator = error
     [../]
@@ -279,7 +279,7 @@
 []
 
 [Outputs]
-  interval = 500
+  interval = 1
   execute_on = 'timestep_end'
   exodus = true
   csv = true
