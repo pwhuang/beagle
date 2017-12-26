@@ -156,7 +156,7 @@
 [Materials]
   [./ra_output]
     type = RayleighMaterial
-    block = 0 
+    block = 0
     function = 22.832
     min = 0
     max = 0
@@ -243,6 +243,7 @@
     type = LevelSetCFLCondition
     velocity_x = vel_x
     velocity_y = vel_y
+    outputs = 'csv'
   [../]
 
   [./L2_temp]
@@ -277,6 +278,13 @@
     type = Residual
     execute_on = timestep_end
     residual_type = FINAL
+  [../]
+
+  [./mem]
+    type = MemoryUsage
+    execute_on = timestep_end
+    mem_type = physical_memory
+    value_type = max_process
   [../]
 []
 
