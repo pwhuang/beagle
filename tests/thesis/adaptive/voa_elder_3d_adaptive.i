@@ -2,6 +2,7 @@
   file = '../../mesh/elder_3d_coarse.msh'
   second_order = true
   skip_partitioning = true
+  uniform_refine = 2 
 []
 
 [Variables]
@@ -164,7 +165,7 @@
     full = true
     solve_type = 'NEWTON'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -pc_gamg_sym_graph'
-    petsc_options_value = 'gamg hypre cp 351 true'
+    petsc_options_value = 'gamg hypre cp 151 true'
   [../]
 []
 
@@ -199,7 +200,7 @@
 
 [Adaptivity]
   marker = errorfrac
-  max_h_level = 3
+  max_h_level = 0
   [./Indicators]
     [./error]
       type = PecletIndicator
@@ -289,7 +290,7 @@
 []
 
 [Outputs]
-  interval = 1
+  interval = 100
   execute_on = 'timestep_end'
   exodus = true
   csv = true
