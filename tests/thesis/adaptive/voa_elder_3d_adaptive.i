@@ -2,6 +2,7 @@
   file = '../../mesh/elder_3d_coarse.msh'
   second_order = true
   skip_partitioning = true
+  uniform_refine = 1
 []
 
 [Variables]

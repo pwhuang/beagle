@@ -1,39 +1,29 @@
 [Mesh]
-  file = '../mesh/elder_3d.msh'
+  file = '../../mesh/elder_symmetric_coarse.msh'
   second_order = true
 []
 
 [Variables]
-  [./psi_1]
-    order = FIRST
-    family = LAGRANGE
-  [../]
-  [./psi_2]
-    order = FIRST
-    family = LAGRANGE
-  [../]
   [./temp]
     order = SECOND
+    family = LAGRANGE
+    initial_condition = 0
+  [../]
+
+  [./vel_x]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0
+  [../]
+
+  [./vel_y]
+    order = FIRST
     family = LAGRANGE
     initial_condition = 0
   [../]
 []
 
 [AuxVariables]
-  [./velocity_x]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
-
-  [./velocity_y]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
-
-  [./velocity_z]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
   [./Peclet]
     order = CONSTANT
     family = MONOMIAL
@@ -45,27 +35,24 @@
 []
 
 [Kernels]
-  [./mass]
-    type = MassBalance
-    variable = temp
-    velocity_x = psi_1
-    velocity_z = psi_2
-  [../]
-
-  [./stream1]
-    type = StreamDiffusion
-    variable = psi_1
-    component = 2
-    sign = -1.0
+  [./momentum_x]
+    type = VelocityDiffusion_half
+    variable = vel_x
     temperature = temp
-  [../]
-
-  [./stream2]
-    type = StreamDiffusion
-    variable = psi_2
-    component = 0
+    component_1 = 1
+    component_2 = 0
     sign = 1.0
+    scale = 1.0
+  [../]
+
+  [./momentum_y]
+    type = VelocityDiffusion_half
+    variable = vel_y
     temperature = temp
+    component_1 = 0
+    component_2 = 0
+    sign = -1.0
+    scale = 0.0
   [../]
 
   [./diff]
@@ -75,10 +62,11 @@
   [../]
 
   [./conv]
-    type = RayleighConvection3d
+    type = ExampleConvection
     variable = temp
-    stream_function1 = psi_1
-    stream_function2 = psi_2
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = 0
   [../]
 
   [./euler]
@@ -88,59 +76,21 @@
   [../]
 []
 
-[AuxKernels]
-  [./velocity_x_aux]
-    type = VariableGradientSign
-    variable = velocity_x
-    gradient_variable = psi_2
-    component = 'y'
-    sign = 1.0
-  [../]
-
-  [./velocity_y_aux]
-    type = StreamVelocityZ
-    variable = velocity_y
-    stream_function1 = psi_1
-    stream_function2 = psi_2
-  [../]
-
-  [./velocity_z_aux]
-    type = VariableGradientSign
-    variable = velocity_z
-    gradient_variable = psi_1
-    component = 'y'
-    sign = -1.0
-  [../]
-
-  [./cell_peclet]
-    type = CellPeclet
-    variable = Peclet
-    velocity_x = velocity_x
-    velocity_y = velocity_y
-    velocity_z = velocity_z
-  [../]
-  [./cell_CFL]
-    type = CellCFL
-    variable = CFL
-    velocity_x = velocity_x
-    velocity_y = velocity_y
-    velocity_z = velocity_z
-  [../]
-[]
-
 [BCs]
-  [./no_flow_1]
+  [./no_flux_bc_x]
     type = DirichletBC
-    variable = psi_1
-    boundary = 'bottom_in bottom_out top front back'
+    variable = vel_x
+    #boundary = 'top bottom_half bottom_out left right'
+    boundary = 'left right'
     value = 0
   [../]
 
-  [./no_flow_2]
+  [./no_flux_bc_y]
     type = DirichletBC
-    variable = psi_2
-    boundary = 'bottom_in bottom_out top left right'
-    #boundary = 'bottom top left right front back'
+    variable = vel_y
+    #boundary = 'top bottom_half bottom_out left right'
+    boundary = 'top bottom_half bottom_out'
+    #boundary = 'top bottom'
     value = 0
   [../]
 
@@ -154,8 +104,25 @@
   [./bottom_temp]
     type = DirichletBC
     variable = temp
-    boundary = 'bottom_in'
+    boundary = 'bottom_half'
     value = 1.0
+  [../]
+[]
+
+[AuxKernels]
+  [./cell_peclet]
+    type = CellPeclet
+    variable = Peclet
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = 0
+  [../]
+  [./cell_CFL]
+    type = CellCFL
+    variable = CFL
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = 0
   [../]
 []
 
@@ -167,7 +134,7 @@
     min = 0
     max = 0
     seed = 363192
-    outputs = exodus
+    #outputs = exodus
   [../]
 []
 
@@ -176,31 +143,57 @@
     type = SMP
     full = true
     solve_type = 'NEWTON'
-    petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -pc_gamg_sym_graph'
-    petsc_options_value = 'gamg hypre cp 301 true'
+    petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+    petsc_options_value = 'ksp hypre cp 351'
   [../]
 []
 
 [Executioner]
   type = Transient
-  #solve_type = 'JFNK'
-  #num_steps = 1000
-  dt = 1e-5
+  #solve_type = PJFNK
+  #num_steps = 10000
+  dt = 5e-6
   #dtmin = 0.001
   start_time = 0
-  end_time = 1.1e-1
-  l_max_its = 40
-  nl_max_its = 20
-
+  end_time = 5e-2
+  l_max_its = 50
+  nl_max_its = 30
+  #trans_ss_check = true
+  #ss_check_tol = 1e-06
+  #ss_tmin = 30
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-12
 
-  #trans_ss_check = false
-  #ss_check_tol = 1e-06
-  #ss_tmin = 100
+  #[./TimeStepper]
+  #  type = PostprocessorDT
+  #  postprocessor = CFL_time_step
+  #  dt = 1e-5
+  #  scale = 4e-2
+  #  factor = 0
+  #[../]
 
   [./TimeIntegrator]
     type = CrankNicolson
+  [../]
+[]
+
+[Adaptivity]
+  marker = errorfrac
+  [./Indicators]
+    [./error]
+      type = PecletIndicator
+      variable = Peclet
+      #function = 0
+    [../]
+  [../]
+
+  [./Markers]
+    [./errorfrac]
+      type = ErrorToleranceMarker
+      refine = 0.9
+      coarsen = 0.4
+      indicator = error
+    [../]
   [../]
 []
 
@@ -219,21 +212,27 @@
     column = total_time_with_sub
   [../]
 
+  [./CFL_time_step]
+    type = LevelSetCFLCondition
+    velocity_x = vel_x
+    velocity_y = vel_y
+  [../]
+
   [./L2_temp]
     type = ElementL2Norm
     variable = temp
     outputs = 'csv'
   [../]
 
-  [./L2_psi_1]
+  [./L2_vel_x]
     type = ElementL2Norm
-    variable = psi_1
+    variable = vel_x
     outputs = 'csv'
   [../]
 
-  [./L2_psi_2]
+  [./L2_vel_y]
     type = ElementL2Norm
-    variable = psi_2
+    variable = vel_y
     outputs = 'csv'
   [../]
 
@@ -255,7 +254,7 @@
 []
 
 [Outputs]
-  interval =
+  interval = 500
   execute_on = 'timestep_end'
   exodus = true
   csv = true
