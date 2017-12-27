@@ -1,5 +1,7 @@
 [Mesh]
   file = '../../mesh/elder_symmetric_coarse.msh'
+  skip_partitioning = true
+  uniform_refine = 2
 []
 
 [Variables]
