@@ -1,6 +1,6 @@
 [Mesh]
   file = '../mesh/elder_3d.msh'
-  #second_order = true
+  second_order = true
 []
 
 [Variables]
@@ -13,7 +13,7 @@
     family = LAGRANGE
   [../]
   [./temp]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
     initial_condition = 0
   [../]
@@ -163,7 +163,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 20
+    function = 22.832
     min = 0
     max = 0
     seed = 363192
@@ -185,10 +185,10 @@
   type = Transient
   #solve_type = 'JFNK'
   #num_steps = 1000
-  dt = 2e-5
+  dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 1.2e-1
+  end_time = 1.1e-1
   l_max_its = 40
   nl_max_its = 20
 

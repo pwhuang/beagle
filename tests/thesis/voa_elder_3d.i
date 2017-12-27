@@ -149,7 +149,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 20.0
+    function = 22.832
     min = 0
     max = 0
     seed = 363192
@@ -171,10 +171,10 @@
   type = Transient
   #solve_type = PJFNK
   #num_steps = 10000
-  dt = 2e-5
+  dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 1e-1
+  end_time = 1.1e-1
   l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true

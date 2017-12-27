@@ -1,6 +1,7 @@
 [Mesh]
-  file = '../../mesh/elder_3d.msh'
+  file = '../../mesh/elder_3d_coarse.msh'
   second_order = true
+  skip_partitioning = true
 []
 
 [Variables]
@@ -163,7 +164,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 20
+    function = 22.832
     min = 0
     max = 0
     seed = 363192
@@ -204,7 +205,7 @@
     postprocessor = CFL_time_step
     dt = 1e-5
     scale = 2e-2
-    factor = 2e-6
+    factor = 0
   [../]
 
   [./TimeIntegrator]
@@ -214,6 +215,7 @@
 
 [Adaptivity]
   marker = errorfrac
+  max_h_level = 3
   [./Indicators]
     [./error]
       type = PecletIndicator
@@ -224,8 +226,8 @@
   [./Markers]
     [./errorfrac]
       type = ErrorToleranceMarker
-      refine = 0.85
-      coarsen = 0.4
+      refine = 10.0
+      coarsen = 4.0
       indicator = error
     [../]
   [../]
