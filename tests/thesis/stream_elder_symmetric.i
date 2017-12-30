@@ -133,6 +133,37 @@
 []
 
 [Preconditioning]
+  active = 'FSP'
+  [./PBP]
+    type = PBP
+    #solve_type = 'NEWTON'
+    solve_order = 'stream temp'
+    preconditioner = 'amg asm'
+    off_diag_row = 'stream temp'
+    off_diag_column = 'temp stream'
+    line_search = 'basic'
+  [../]
+
+  [./FSP]
+    type = FSP
+    full = true
+    solve_type = 'NEWTON'
+    topsplit = 'st'
+    [./st]
+      splitting = 'stream temp'
+    [../]
+    [./stream]
+      vars = 'stream'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gamg hypre cp 151'
+    [../]
+    [./temp]
+      vars = 'temp'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gasm hypre cp 151'
+    [../]
+  [../]
+
   [./SMP]
     type = SMP
     full = true

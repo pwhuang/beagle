@@ -1,9 +1,26 @@
 [Mesh]
-  file = '../mesh/elder_coarse.msh'
-  second_order = true
+  type = GeneratedMesh
+  dim = 2
+
+  nx = 120
+  ny = 32
+
+  xmin = 0.0
+  xmax = 4.0
+
+  ymin = 0.0
+  ymax = 1.0
+
+  elem_type = QUAD9
 []
 
 [MeshModifiers]
+  [./side]
+    type = BoundingBoxNodeSet
+    new_boundary = 'bottom_half'
+    bottom_left = '1 0 0'
+    top_right = '3 0 0'
+  [../]
   [./corner_node]
     type = AddExtraNodeset
     new_boundary = 'pinned_node'
@@ -143,7 +160,7 @@
   active = 'ra_output'
   [./ra_output]
     type = RayleighMaterial
-    block = 'layer1'
+    block = 0
     function = 22.832
     min = 0
     max = 0
@@ -159,8 +176,6 @@
     solve_type = 'NEWTON'
     #petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -pc_gamg_sym_graph'
     #petsc_options_value = 'gamg hypre cp 301 true'
-    #petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-    #petsc_options_value = 'ksp boomerang cp 301'
   [../]
 []
 
@@ -243,6 +258,9 @@
 
 [Outputs]
   execute_on = 'timestep_end'
-  exodus = true
   csv = true
+  [./out]
+    type = Exodus
+    interval = 1
+  [../]
 []
