@@ -1,5 +1,5 @@
 [Mesh]
-  file = 'tests/mesh/elder.msh'
+  file = '../mesh/elder.msh'
   #second_order = true
 []
 
@@ -133,12 +133,33 @@
 []
 
 [Preconditioning]
+  active = 'FSP'
   [./SMP]
     type = SMP
     full = true
     solve_type = 'NEWTON'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
     petsc_options_value = 'gamg hypre cp 301'
+  [../]
+
+  [./FSP]
+    type = FSP
+    full = true
+    solve_type = 'NEWTON'
+    topsplit = 'st'
+    [./st]
+      splitting = 'stream temp'
+    [../]
+    [./stream]
+      vars = 'stream'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gamg hypre cp 151'
+    [../]
+    [./temp]
+      vars = 'temp'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gasm hypre cp 151'
+    [../]
   [../]
 []
 
@@ -211,6 +232,9 @@
 
 [Outputs]
   execute_on = 'timestep_end'
-  exodus = true
   csv = true
+  [./out]
+    type = Exodus
+    interval = 1
+  [../]
 []

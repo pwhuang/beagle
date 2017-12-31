@@ -150,7 +150,7 @@
 [Materials]
   [./ra_output]
     type = RayleighMaterial
-    block = 0 
+    block = 0
     function = 22.832
     min = 0
     max = 0
@@ -275,8 +275,10 @@
 []
 
 [Outputs]
-  interval = 500
   execute_on = 'timestep_end'
-  exodus = true
   csv = true
+  [./out]
+    type = Exodus
+    interval = 500
+  [../]
 []

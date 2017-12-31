@@ -235,6 +235,9 @@
 
 [Outputs]
   execute_on = 'timestep_end'
-  exodus = true
   csv = true
+  [./out]
+    type = Exodus
+    interval = 1
+  [../]
 []

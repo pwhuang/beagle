@@ -173,7 +173,7 @@
   [../]
 
   [./TimeIntegrator]
-    type = ExplicitTVDRK2 
+    type = ExplicitTVDRK2
   [../]
 []
 
@@ -230,8 +230,10 @@
 []
 
 [Outputs]
-  interval = 40
   execute_on = 'timestep_end'
-  exodus = true
   csv = true
+  [./out]
+    type = Exodus
+    interval = 40
+  [../]
 []

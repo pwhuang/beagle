@@ -2,7 +2,7 @@
   file = '../../mesh/elder_3d_coarse.msh'
   second_order = true
   skip_partitioning = true
-  uniform_refine = 2 
+  uniform_refine = 2
 []
 
 [Variables]
@@ -299,8 +299,10 @@
 []
 
 [Outputs]
-  interval = 100
   execute_on = 'timestep_end'
-  exodus = true
   csv = true
+  [./out]
+    type = Exodus
+    interval = 100
+  [../]
 []

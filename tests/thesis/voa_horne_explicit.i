@@ -5,7 +5,7 @@
 
 [Variables]
   [./temp]
-    order = FIRST 
+    order = FIRST
     family = LAGRANGE
     initial_condition = 0
   [../]
@@ -179,12 +179,12 @@
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-5
-    scale = 1.5e-2 
+    scale = 1.5e-2
     factor = 0
   [../]
 
   [./TimeIntegrator]
-    type = ExplicitTVDRK2 
+    type = ExplicitTVDRK2
   [../]
 []
 
@@ -247,7 +247,9 @@
 
 [Outputs]
   execute_on = 'timestep_end'
-  interval = 40 
-  exodus = true
   csv = true
+  [./out]
+    type = Exodus
+    interval = 40
+  [../]
 []

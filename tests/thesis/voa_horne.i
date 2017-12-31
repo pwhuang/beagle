@@ -5,7 +5,7 @@
 
 [Variables]
   [./temp]
-    order = FIRST 
+    order = FIRST
     family = LAGRANGE
     initial_condition = 0
   [../]
@@ -175,7 +175,7 @@
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-5
-    scale = 2e-3 
+    scale = 2e-3
     factor = 0
   [../]
 
@@ -243,7 +243,9 @@
 
 [Outputs]
   execute_on = 'timestep_end'
-  interval = 20
-  exodus = true
   csv = true
+  [./out]
+    type = Exodus
+    interval = 20
+  [../]
 []
