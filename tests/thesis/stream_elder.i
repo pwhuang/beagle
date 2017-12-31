@@ -133,7 +133,7 @@
 []
 
 [Preconditioning]
-  active = 'FSP'
+  active = 'SMP'
   [./SMP]
     type = SMP
     full = true

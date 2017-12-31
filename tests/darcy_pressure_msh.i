@@ -1,5 +1,5 @@
 [Mesh]
-  file = 'tests/single_layer.msh'
+  file = 'single_layer.msh'
   block_id = '11'
   block_name = 'layer1'
 
@@ -8,7 +8,7 @@
 
   #parallel_type =
   #partitioner = metis
-  second_order = true
+  #second_order = true
 []
 
 [MeshModifiers]
@@ -23,7 +23,7 @@
     type = AddExtraNodeset
     new_boundary = 'pinned_node2'
     #nodes = '0'
-    coord = '2.0 1.0'
+    coord = '4.0 1.0'
   [../]
 []
 
@@ -33,7 +33,7 @@
     family = LAGRANGE
   [../]
   [./temp]
-    order = SECOND
+    order = FIRST
     family = LAGRANGE
     #initial_condition = 0.0
   [../]
@@ -56,7 +56,7 @@
   active = 'ic_func ra_func ic_func_temp'
   [./ic_func]
     type = ParsedFunction
-    value = '-(1.0-y)*(1.0-y)*100'
+    value = '-(1.0-y)*(1.0-y)*5'
   [../]
 
   [./ic_func_temp]
@@ -66,7 +66,7 @@
 
   [./ra_func]
     type = ParsedFunction
-    value = '200'
+    value = '10'
   [../]
 []
 
@@ -180,13 +180,13 @@
     full = true
     solve_type = 'NEWTON'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-    petsc_options_value = 'gamg hypre cp 301'
+    petsc_options_value = 'gasm hypre cp 301'
   [../]
 []
 
 [Executioner]
   type = Transient
-  solve_type = 'PJFNK'
+  #solve_type = 'PJFNK'
   #num_steps = 20
   #dt = 0.02
   #dtmin = 0.001
@@ -195,7 +195,7 @@
   scheme = 'crank-nicolson'
   l_max_its = 40
   nl_max_its = 60
-  trans_ss_check = true
+  trans_ss_check = false
   ss_check_tol = 1e-06
 
 
@@ -203,7 +203,7 @@
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-5
-    scale = 0.005
+    scale = 0.1
     factor = 0
   [../]
   #petsc_options = '-snes_mf_operator' #-ksp_monitor'

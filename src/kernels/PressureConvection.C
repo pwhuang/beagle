@@ -46,12 +46,12 @@ Real PressureConvection::computeQpResidual()
 {
   //RealVectorValue _advection_speed = RealVectorValue(_vel_x[_qp], _vel_y[_qp]);
 
-  return //_grad_test[_i][_qp]*_Ra[_qp]*(_p[_qp]*_grad_u[_qp])
-          - _Ra[_qp]*(_second_test[_i][_qp](0,0)+_second_test[_i][_qp](1,1)+_second_test[_i][_qp](2,2))*_p[_qp]*_u[_qp]
-          + _Ra[_qp]*_grad_test[_i][_qp]*_grad_u[_qp]*_p[_qp]
-          + _Ra[_qp]*0.5*(_second_u[_qp](0,0)+_second_u[_qp](1,1)+_second_u[_qp](2,2))*_test[_i][_qp]*_p[_qp]
-          //+ _test[_i][_qp]*_Ra[_qp]*_u[_qp]*_grad_u[_qp](_component);
-          - _grad_test[_i][_qp](_component)*_Ra[_qp]*_u[_qp]*_u[_qp];
+  return -_test[_i][_qp]*_Ra[_qp]*(_grad_p[_qp]*_grad_u[_qp])
+          //- _Ra[_qp]*(_second_test[_i][_qp](0,0)+_second_test[_i][_qp](1,1)+_second_test[_i][_qp](2,2))*_p[_qp]*_u[_qp]
+          //+ _Ra[_qp]*_grad_test[_i][_qp]*_grad_u[_qp]*_p[_qp]
+          //+ _Ra[_qp]*0.5*(_second_u[_qp](0,0)+_second_u[_qp](1,1)+_second_u[_qp](2,2))*_test[_i][_qp]*_p[_qp]
+          + _test[_i][_qp]*_Ra[_qp]*_Ra[_qp]*_u[_qp]*_grad_u[_qp](_component);
+          //- _grad_test[_i][_qp](_component)*_Ra[_qp]*_Ra[_qp]*_u[_qp]*_u[_qp];
 
   //return _grad_test[_i][_qp]*_grad_p[_qp]*_u[_qp] - _grad_test[_i][_qp](_component)*_Ra[_qp]*_u[_qp]*_u[_qp];
 
@@ -61,13 +61,13 @@ Real PressureConvection::computeQpJacobian()
 {
   //RealVectorValue _advection_speed = RealVectorValue(_vel_x[_qp], _vel_y[_qp]);
 
-  return //_grad_test[_i][_qp]*_Ra[_qp]*(_p[_qp]*_grad_phi[_j][_qp])
-        - _Ra[_qp]*(_second_test[_i][_qp](0,0)+_second_test[_i][_qp](1,1)+_second_test[_i][_qp](2,2))*_p[_qp]*_phi[_j][_qp]
-        + _Ra[_qp]*_grad_test[_i][_qp]*_grad_phi[_j][_qp]*_p[_qp]
-        + _Ra[_qp]*0.5*(_second_phi[_j][_qp](0,0)+_second_phi[_j][_qp](1,1)+_second_phi[_j][_qp](2,2))*_test[_i][_qp]*_p[_qp]
-          //+ _test[_i][_qp]*_Ra[_qp]*_phi[_j][_qp]*_grad_u[_qp](_component)
-          //+ _test[_i][_qp]*_Ra[_qp]*_u[_qp]*_grad_phi[_j][_qp](_component);
-          - 2*_grad_test[_i][_qp](_component)*_Ra[_qp]*_phi[_j][_qp]*_u[_qp];
+  return -_test[_i][_qp]*_Ra[_qp]*(_grad_p[_qp]*_grad_phi[_j][_qp])
+        //- _Ra[_qp]*(_second_test[_i][_qp](0,0)+_second_test[_i][_qp](1,1)+_second_test[_i][_qp](2,2))*_p[_qp]*_phi[_j][_qp]
+        //+ _Ra[_qp]*_grad_test[_i][_qp]*_grad_phi[_j][_qp]*_p[_qp]
+        //+ _Ra[_qp]*0.5*(_second_phi[_j][_qp](0,0)+_second_phi[_j][_qp](1,1)+_second_phi[_j][_qp](2,2))*_test[_i][_qp]*_p[_qp]
+          + _test[_i][_qp]*_Ra[_qp]*_Ra[_qp]*_phi[_j][_qp]*_grad_u[_qp](_component)
+          + _test[_i][_qp]*_Ra[_qp]*_Ra[_qp]*_u[_qp]*_grad_phi[_j][_qp](_component);
+          //- 2*_grad_test[_i][_qp](_component)*_Ra[_qp]*_Ra[_qp]*_phi[_j][_qp]*_u[_qp];
 
 
   //return _grad_test[_i][_qp]*_grad_p[_qp]*_phi[_j][_qp] - 2*_grad_test[_i][_qp](_component)*_Ra[_qp]*_u[_qp]*_phi[_j][_qp];
@@ -77,10 +77,10 @@ Real PressureConvection::computeQpJacobian()
 Real PressureConvection::computeQpOffDiagJacobian(unsigned jvar)
 {
   if (jvar == _grad_p_var_num)
-    return - _Ra[_qp]*(_second_test[_i][_qp](0,0)+_second_test[_i][_qp](1,1)+_second_test[_i][_qp](2,2))*_phi[_j][_qp]*_u[_qp]
-    + _Ra[_qp]*_grad_test[_i][_qp]*_grad_u[_qp]*_phi[_j][_qp]
-    + _Ra[_qp]*0.5*(_second_u[_qp](0,0)+_second_u[_qp](1,1)+_second_u[_qp](2,2))*_test[_i][_qp]*_phi[_j][_qp];
-    //_grad_test[_i][_qp]*_Ra[_qp]*(_phi[_j][_qp]*_grad_u[_qp]);
+    //return - _Ra[_qp]*(_second_test[_i][_qp](0,0)+_second_test[_i][_qp](1,1)+_second_test[_i][_qp](2,2))*_phi[_j][_qp]*_u[_qp]
+    //+ _Ra[_qp]*_grad_test[_i][_qp]*_grad_u[_qp]*_phi[_j][_qp]
+    //+ _Ra[_qp]*0.5*(_second_u[_qp](0,0)+_second_u[_qp](1,1)+_second_u[_qp](2,2))*_test[_i][_qp]*_phi[_j][_qp];
+    return -_test[_i][_qp]*_Ra[_qp]*(_grad_phi[_j][_qp]*_grad_u[_qp]);
 
     //return _grad_test[_i][_qp]*_grad_phi[_j][_qp]*_u[_qp];
   else

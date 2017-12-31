@@ -11,7 +11,7 @@
   ymin = 0.0
   ymax = 1.0
 
-  elem_type = QUAD9
+  elem_type = QUAD4
 []
 
 [MeshModifiers]
@@ -43,7 +43,7 @@
     initial_condition = 0.0
   [../]
   [./temp]
-    order = SECOND
+    order = FIRST
     family = LAGRANGE
     initial_condition = 0.0
   [../]
@@ -51,12 +51,12 @@
 
 [AuxVariables]
   [./velocity_x]
-    order = FIRST
+    order = CONSTANT
     family = MONOMIAL
   [../]
 
   [./velocity_y]
-    order = FIRST
+    order = CONSTANT
     family = MONOMIAL
   [../]
 
@@ -170,12 +170,33 @@
 []
 
 [Preconditioning]
+  active = 'FSP'
   [./SMP]
     type = SMP
     full = true
     solve_type = 'NEWTON'
-    #petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -pc_gamg_sym_graph'
-    #petsc_options_value = 'gamg hypre cp 301 true'
+    petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -pc_gamg_sym_graph'
+    petsc_options_value = 'gasm hypre cp 301 true'
+  [../]
+
+  [./FSP]
+    type = FSP
+    full = true
+    solve_type = 'NEWTON'
+    topsplit = 'pt'
+    [./pt]
+      splitting = 'pressure temp'
+    [../]
+    [./pressure]
+      vars = 'pressure'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gamg hypre cp 151'
+    [../]
+    [./temp]
+      vars = 'temp'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gasm hypre cp 151'
+    [../]
   [../]
 []
 
