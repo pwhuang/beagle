@@ -12,6 +12,7 @@
   ymax = 1.0
 
   elem_type = QUAD4
+  #uniform_refine = 1
 []
 
 [MeshModifiers]
@@ -72,6 +73,7 @@
 
 
 [Kernels]
+  active = 'mass diff conv euler supg'
   [./mass]
     type = PressureDiffusion_test
     variable = pressure
@@ -90,6 +92,16 @@
     variable = temp
     pressure = pressure
     component = 1
+  [../]
+
+  [./supg]
+    type = PressureConvection_SUPG
+    variable = temp
+    pressure = pressure
+    component = 1
+    velocity_x = velocity_x
+    velocity_y = velocity_y
+    Peclet = Peclet
   [../]
 
   [./euler]

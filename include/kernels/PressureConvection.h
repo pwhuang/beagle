@@ -27,6 +27,7 @@ class PressureConvection : public Kernel
 public:
 
   PressureConvection(const InputParameters & parameters);
+  virtual ~PressureConvection() {}
 
 protected:
 
@@ -34,7 +35,7 @@ protected:
   virtual Real computeQpJacobian() override;
   virtual Real computeQpOffDiagJacobian(unsigned jvar) override;
 
-private:
+//private:
 
   //const MaterialProperty<Real> & _heat_capacity;
   //Real _Ra;

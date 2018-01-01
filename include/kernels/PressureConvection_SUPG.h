@@ -15,16 +15,14 @@
 #ifndef PressureConvection_SUPG_H
 #define PressureConvection_SUPG_H
 
-#include "Kernel.h"
 #include "PressureConvection.h"
-#include "PressureDiffusion_test.h"
 
 class PressureConvection_SUPG;
 
 template<>
 InputParameters validParams<PressureConvection_SUPG>();
 
-class PressureConvection_SUPG : public Kernel
+class PressureConvection_SUPG : public PressureConvection
 {
 public:
 
@@ -36,23 +34,12 @@ protected:
   virtual Real computeQpJacobian() override;
   virtual Real computeQpOffDiagJacobian(unsigned jvar) override;
 
-private:
+  virtual Real tao();
 
-  //const MaterialProperty<Real> & _heat_capacity;
-  //Real _Ra;
-  const VariableGradient & _grad_p;
-  const VariableValue & _p;
-  const VariableSecond & _second_temp;
-  const VariableSecond & _second_u;
-  const VariableTestSecond & _second_test;
-  const VariablePhiSecond & _second_phi;
-  unsigned _grad_p_var_num;
+private:
   const VariableValue & _vel_x;
   const VariableValue & _vel_y;
-  const MaterialProperty<Real> & _Ra;
-  const unsigned _component;
   const VariableValue & _Pe;
-  //RealVectorValue _advection_speed;
 };
 
 #endif //PressureConvection_SUPG_H

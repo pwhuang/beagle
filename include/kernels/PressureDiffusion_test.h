@@ -31,7 +31,7 @@ class PressureDiffusion_test : public Diffusion
 public:
 
   PressureDiffusion_test(const InputParameters & parameters);
-  //virtual ~PressureDiffusion_test() {}
+  virtual ~PressureDiffusion_test() {}
 
 protected:
   virtual Real computeQpResidual() override;
