@@ -11,7 +11,7 @@
   ymin = 0.0
   ymax = 1.0
 
-  elem_type = QUAD4
+  elem_type = QUAD9
   #uniform_refine = 1
 []
 
@@ -39,7 +39,7 @@
 
 [Variables]
   [./pressure]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
     initial_condition = 0.0
   [../]
@@ -64,6 +64,7 @@
   [./Peclet]
     order = CONSTANT
     family = MONOMIAL
+    initial_condition = 0
   [../]
   [./CFL]
     order = CONSTANT
@@ -73,7 +74,7 @@
 
 
 [Kernels]
-  active = 'mass diff conv euler supg'
+  active = 'mass diff conv euler supg_x supg_y'
   [./mass]
     type = PressureDiffusion_test
     variable = pressure
@@ -94,11 +95,23 @@
     component = 1
   [../]
 
-  [./supg]
+  [./supg_x]
+    type = PressureConvection_SUPG
+    variable = temp
+    pressure = pressure
+    component = 0
+    body_force = 0
+    velocity_x = velocity_x
+    velocity_y = velocity_y
+    Peclet = Peclet
+  [../]
+
+  [./supg_y]
     type = PressureConvection_SUPG
     variable = temp
     pressure = pressure
     component = 1
+    body_force = 1
     velocity_x = velocity_x
     velocity_y = velocity_y
     Peclet = Peclet

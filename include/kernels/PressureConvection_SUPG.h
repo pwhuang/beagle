@@ -40,6 +40,7 @@ private:
   const VariableValue & _vel_x;
   const VariableValue & _vel_y;
   const VariableValue & _Pe;
+  bool _body_force;
 };
 
 #endif //PressureConvection_SUPG_H

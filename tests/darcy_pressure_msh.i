@@ -23,7 +23,7 @@
     type = AddExtraNodeset
     new_boundary = 'pinned_node2'
     #nodes = '0'
-    coord = '4.0 1.0'
+    coord = '2.0 1.0'
   [../]
 []
 
