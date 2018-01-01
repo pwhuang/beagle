@@ -1,5 +1,5 @@
 [Mesh]
-  file = 'tests/mesh/horne.msh'
+  file = '../mesh/horne.msh'
   second_order = true
 []
 
@@ -21,12 +21,12 @@
 
 [Variables]
   [./pressure]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
     initial_condition = 0.0
   [../]
   [./temp]
-    order = SECOND
+    order = FIRST
     family = LAGRANGE
     initial_condition = 0.0
   [../]
@@ -153,12 +153,33 @@
 []
 
 [Preconditioning]
+  active = 'FSP'
   [./SMP]
     type = SMP
     full = true
     solve_type = 'NEWTON'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
     petsc_options_value = 'gamg hypre cp 301'
+  [../]
+
+  [./FSP]
+    type = FSP
+    full = true
+    solve_type = 'NEWTON'
+    topsplit = 'pt'
+    [./pt]
+      splitting = 'pressure temp'
+    [../]
+    [./pressure]
+      vars = 'pressure'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gamg hypre cp 151'
+    [../]
+    [./temp]
+      vars = 'temp'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gasm hypre cp 151'
+    [../]
   [../]
 []
 
@@ -245,6 +266,6 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 1
+    interval = 200
   [../]
 []

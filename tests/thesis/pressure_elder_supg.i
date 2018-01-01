@@ -75,6 +75,29 @@
     component = 1
   [../]
 
+  [./supg_x]
+    type = PressureConvection_SUPG
+    variable = temp
+    pressure = pressure
+    component = 0
+    body_force = 0
+    velocity_x = velocity_x
+    velocity_y = velocity_y
+    Peclet = Peclet
+  [../]
+
+  [./supg_y]
+    type = PressureConvection_SUPG
+    variable = temp
+    pressure = pressure
+    component = 1
+    body_force = 1
+    velocity_x = velocity_x
+    velocity_y = velocity_y
+    Peclet = Peclet
+  [../]
+  
+
   [./euler]
     type = ExampleTimeDerivative
     variable = temp
@@ -267,6 +290,6 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 250
+    interval = 1
   [../]
 []
