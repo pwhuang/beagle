@@ -55,6 +55,7 @@
 
 
 [Kernels]
+  active = 'mass diff conv supg_x supg_y'
   [./mass]
     type = PressureDiffusion_test
     variable = pressure
@@ -96,7 +97,6 @@
     velocity_y = velocity_y
     Peclet = Peclet
   [../]
-  
 
   [./euler]
     type = ExampleTimeDerivative
