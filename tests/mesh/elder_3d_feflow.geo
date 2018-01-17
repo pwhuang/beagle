@@ -257,8 +257,20 @@ Plane Surface(28) = {28};
 //+
 Physical Surface("back") = {27, 28};
 //+
-Surface Loop(1) = {27, 1, 23, 12, 8, 28, 2, 22, 10, 7, 3, 21, 26, 9, 6, 4, 24, 11, 25, 5};
+Surface Loop(1) = {24, 4, 25, 11, 5, 17, 20};
 //+
 Volume(1) = {1};
 //+
-Physical Volume("layer1") = {1};
+Surface Loop(2) = {26, 3, 21, 9, 6, 18, 20};
+//+
+Volume(2) = {2};
+//+
+Surface Loop(3) = {2, 28, 22, 10, 7, 18, 19};
+//+
+Volume(3) = {3};
+//+
+Surface Loop(4) = {23, 1, 27, 12, 8, 17, 19};
+//+
+Volume(4) = {4};
+//+
+Physical Volume("layer1") = {4, 1, 2, 3};

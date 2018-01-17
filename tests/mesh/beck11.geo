@@ -72,12 +72,12 @@ Physical Surface("right") = {3};
 //+
 Physical Surface("left") = {5};
 //+
-Physical Surface("front") = {1};
+Physical Surface("top") = {1};
 //+
-Physical Surface("back") = {6};
+Physical Surface("bottom") = {6};
 //+
-Physical Surface("top") = {4};
+Physical Surface("front") = {4};
 //+
-Physical Surface("bottom") = {2};
+Physical Surface("back") = {2};
 //+
 Physical Volume("layer1") = {1};

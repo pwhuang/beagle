@@ -139,7 +139,7 @@
   [./no_flow_2]
     type = DirichletBC
     variable = psi_2
-    boundary = 'bottom_in bottom_out top left right inner_surface_z'
+    boundary = 'bottom_in bottom_out top left right inner_surface_x'
     #boundary = 'bottom top left right front back'
     value = 0
   [../]
