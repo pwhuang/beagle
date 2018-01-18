@@ -207,13 +207,13 @@
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-12
 
-  #[./TimeStepper]
-  #  type = PostprocessorDT
-  #  postprocessor = CFL_time_step
-  #  dt = 1e-4
-  #  scale = 0.06
-  #  factor = 0
-  #[../]
+  [./TimeStepper]
+    type = PostprocessorDT
+    postprocessor = CFL_time_step
+    dt = 1e-3
+    scale = 0.02
+    factor = 0
+  [../]
 
   [./TimeIntegrator]
     type = CrankNicolson

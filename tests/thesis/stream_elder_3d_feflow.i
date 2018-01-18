@@ -130,14 +130,14 @@
 
 [BCs]
   [./no_flow_1]
-    type = DirichletBC
+    type = PresetBC
     variable = psi_1
     boundary = 'bottom_in bottom_out top front back inner_surface_z'
     value = 0
   [../]
 
   [./no_flow_2]
-    type = DirichletBC
+    type = PresetBC
     variable = psi_2
     boundary = 'bottom_in bottom_out top left right inner_surface_x'
     #boundary = 'bottom top left right front back'
@@ -172,12 +172,38 @@
 []
 
 [Preconditioning]
+  active = 'FSP'
   [./SMP]
     type = SMP
     full = true
     solve_type = 'NEWTON'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -pc_gamg_sym_graph'
     petsc_options_value = 'gamg hypre cp 301 true'
+  [../]
+
+  [./FSP]
+    type = FSP
+    full = true
+    solve_type = 'NEWTON'
+    topsplit = 'pt'
+    [./pt]
+      splitting = 'psi_1 psi_2 temp'
+    [../]
+    [./psi_1]
+      vars = 'psi_1'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gamg hypre cp 151'
+    [../]
+    [./psi_2]
+      vars = 'psi_2'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gamg hypre cp 151'
+    [../]
+    [./temp]
+      vars = 'temp'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gasm hypre cp 151'
+    [../]
   [../]
 []
 

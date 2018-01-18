@@ -226,6 +226,14 @@
   [./TimeIntegrator]
     type = CrankNicolson
   [../]
+  
+  [./TimeStepper]
+    type = PostprocessorDT
+    postprocessor = CFL_time_step
+    dt = 1e-3
+    scale = 0.02
+    factor = 0
+  [../]
 []
 
 [Postprocessors]
