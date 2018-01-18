@@ -191,11 +191,11 @@
 [Executioner]
   type = Transient
   #solve_type = PJFNK
-  #num_steps = 10000
+  num_steps = 5000
   dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 1.1e-1
+  #end_time = 1.1e-1
   l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true
@@ -285,6 +285,6 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 250
+    interval = 10
   [../]
 []

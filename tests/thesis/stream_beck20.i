@@ -208,11 +208,11 @@
 [Executioner]
   type = Transient
   #solve_type = 'JFNK'
-  #num_steps = 1000
+  num_steps = 5000
   dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 1.1e-1
+  #end_time = 1.1e-1
   l_max_its = 40
   nl_max_its = 20
 
@@ -226,7 +226,7 @@
   [./TimeIntegrator]
     type = CrankNicolson
   [../]
-  
+
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
@@ -279,6 +279,13 @@
     variable = CFL #This is the orginal CFL number (approximated with hmin)
   [../]
 
+  [./CFL_time_step]
+    type = LevelSetCFLCondition
+    velocity_x = velocity_x
+    velocity_y = velocity_y
+    velocity_z = velocity_z
+  [../]
+
   [./res]
     type = Residual
     execute_on = timestep_end
@@ -291,6 +298,6 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 250
+    interval = 10
   [../]
 []
