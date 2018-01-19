@@ -19,37 +19,41 @@ InputParameters validParams<EntropyProduction>()
 {
   InputParameters params = validParams<AuxKernel>();
 
-  //params.addRequiredParam<Real>("temp", "Temperature variable from input file");
-  // Add a "coupling paramater" to get a variable from the input file.
-  //params.addRequiredParam<Real>("temp", "Temperature for entropy calculation");
-  params.addRequiredCoupledVar("temp", "Temperature for entropy calculation");
+  params.addParam<Real>("T_bar", "Average temperature between top and bottom (K)");
+  params.addParam<Real>("deltaT", "Temperature difference between top and bottom (K)");
+  params.addParam<Real>("alpha", "Thermal expansion coefficient (T^-1)");
+  params.addParam<Real>("d", "Length between top and bottom boundaries (m)");
+  params.addParam<Real>("cf", "Heat capacity of the fluid");
+  params.addRequiredCoupledVar("temp", "Entropy Production AuxKernel requires temperature");
+  params.addRequiredCoupledVar("velocity_x", "Entropy Production AuxKernel requires velocity_x");
+  params.addCoupledVar("velocity_y", "Entropy Production AuxKernel: velocity_y");
+  params.addCoupledVar("velocity_z", "Entropy Production AuxKernel: velocity_z");
   return params;
 }
 
 EntropyProduction::EntropyProduction(const InputParameters & parameters) :
     AuxKernel(parameters),
-
-
     // Get the gradient of the temperature
-    _temperature_gradient(coupledGradient("temp")),
-
-    _temperature(coupledValue("temp")),
+    _T_bar(getParam<Real>("T_bar")),
+    _delta_T(getParam<Real>("deltaT")),
+    _alpha(getParam<Real>("alpha")),
+    _d(getParam<Real>("d")),
+    _cf(getParam<Real>("cf")),
+    _grad_temp(coupledGradient("temp")),
+    _temp(coupledValue("temp")),
+    _vel_x(coupledValue("velocity_x")),
+    _vel_y(coupledValue("velocity_y")),
+    _vel_z(coupledValue("velocity_z"))
 
     // Snag thermal conductivity from the Material system.
     // Only AuxKernels operating on Elemental Auxiliary Variables can do this
-    _thermal_conductivity(getMaterialProperty<Real>("thermal_conductivity"))
+    //_thermal_conductivity(getMaterialProperty<Real>("thermal_conductivity"))
 
 {}
 
 Real
 EntropyProduction::computeValue()
 {
-  // Access the gradient of the pressure at this quadrature point
-  // Then pull out the "component" of it we are looking for (x, y or z)
-  // Note that getting a particular component of a gradient is done using the
-  // parenthesis operator
-
-  //RealVectorValue entropy_production= (_thermal_conductivity[_qp] )
-  return (_thermal_conductivity[_qp] /(_temperature[_qp] * _temperature[_qp])) * _temperature_gradient[_qp] * _temperature_gradient[_qp];
-
+  return _grad_temp[_qp]*_grad_temp[_qp]
+         + _alpha*_d*_T_bar*9.81/(_delta_T*_cf)*(_vel_x[_qp]*_vel_x[_qp] + _vel_y[_qp]*_vel_y[_qp] + _vel_z[_qp]*_vel_z[_qp]);
 }

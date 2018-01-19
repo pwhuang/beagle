@@ -45,6 +45,7 @@
 #include "StreamVelocityZ.h"
 #include "CellPeclet.h"
 #include "CellCFL.h"
+#include "EntropyProduction.h"
 
 //Materials
 #include "PorousMaterial.h"
@@ -128,6 +129,7 @@ BeagleApp::registerObjects(Factory & factory)
     registerAux(StreamVelocityZ);
     registerAux(CellPeclet);
     registerAux(CellCFL);
+    registerAux(EntropyProduction);
     registerMaterial(PorousMaterial);
     registerMaterial(RayleighMaterial);
     registerMaterial(RayleighMaterialFunc);

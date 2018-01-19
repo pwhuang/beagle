@@ -1,5 +1,5 @@
 [Mesh]
-  file = 'tests/single_layer.msh'
+  file = 'single_layer.msh'
   block_id = '11'
   block_name = 'layer1'
 

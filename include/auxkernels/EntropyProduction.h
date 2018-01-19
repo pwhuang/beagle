@@ -42,15 +42,23 @@ protected:
    */
   virtual Real computeValue() override;
 
- 
-  /// The gradient of a coupled variable
-  const VariableGradient & _temperature_gradient;
 
-  const VariableValue & _temperature;
+  Real _T_bar;
+  Real _delta_T;
+  Real _alpha;
+  Real _d;
+  Real _cf;
+
+  /// The gradient of a coupled variable
+  const VariableGradient & _grad_temp;
+  const VariableValue & _temp;
+  const VariableValue & _vel_x;
+  const VariableValue & _vel_y;
+  const VariableValue & _vel_z;
 
   /// Holds thermalconductivity from the material system
-  const MaterialProperty<Real> & _thermal_conductivity;
-  
+  //const MaterialProperty<Real> & _thermal_conductivity;
+
 
 
 };
