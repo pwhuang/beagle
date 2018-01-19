@@ -34,6 +34,10 @@
     order = CONSTANT
     family = MONOMIAL
   [../]
+  [./entropy]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
 []
 
 [Functions]
@@ -164,6 +168,19 @@
     velocity_y = vel_y
     velocity_z = vel_z
   [../]
+  [./entropy]
+    type = EntropyProduction
+    variable = entropy
+    temp = temp
+    velocity_x = velocity_x
+    velocity_y = velocity_y
+    velocity_z = velocity_z
+    T_bar = 16
+    deltaT = 8
+    alpha = 1.6163e-4
+    cf = 4184
+    d = 150
+  [../]
 []
 
 [Materials]
@@ -191,8 +208,8 @@
 [Executioner]
   type = Transient
   #solve_type = PJFNK
-  num_steps = 5000
-  dt = 1e-5
+  num_steps = 10000
+  #dt = 1e-5
   #dtmin = 0.001
   start_time = 0
   #end_time = 1.1e-1
@@ -273,6 +290,11 @@
     variable = CFL #This is the orginal CFL number (approximated with hmin)
   [../]
 
+  [./N_S]
+    type = ElementAverageValue
+    variable = entropy
+  [../]
+
   [./res]
     type = Residual
     execute_on = timestep_end
@@ -285,6 +307,6 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 10
+    interval = 100
   [../]
 []
