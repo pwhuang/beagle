@@ -172,9 +172,9 @@
     type = EntropyProduction
     variable = entropy
     temp = temp
-    velocity_x = velocity_x
-    velocity_y = velocity_y
-    velocity_z = velocity_z
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = vel_z
     T_bar = 16
     deltaT = 8
     alpha = 1.6163e-4
@@ -201,7 +201,7 @@
     full = true
     solve_type = 'NEWTON'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -pc_gamg_sym_graph'
-    petsc_options_value = 'gasm hypre cp 351 true'
+    petsc_options_value = 'gamg hypre cp 351 true'
   [../]
 []
 
