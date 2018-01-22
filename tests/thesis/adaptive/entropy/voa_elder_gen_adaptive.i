@@ -12,6 +12,7 @@
   ymax = 1.0
 
   elem_type = QUAD9
+  uniform_refine = 2
 []
 
 [MeshModifiers]

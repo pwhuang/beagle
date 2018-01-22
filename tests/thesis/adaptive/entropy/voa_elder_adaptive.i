@@ -1,6 +1,7 @@
 [Mesh]
   file = '../../../mesh/elder_coarse.msh'
   second_order = true
+  uniform_refine = 2
 []
 
 [Variables]

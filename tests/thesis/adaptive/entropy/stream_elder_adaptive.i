@@ -1,5 +1,6 @@
 [Mesh]
   file = '../../../mesh/elder_coarse.msh'
+  uniform_refine = 2
 []
 
 [Variables]
