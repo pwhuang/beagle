@@ -1,5 +1,5 @@
 [Mesh]
-  file = '../../mesh/elder_coarse.msh'
+  file = '../../../mesh/elder_coarse.msh'
 []
 
 [Variables]

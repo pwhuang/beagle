@@ -1,5 +1,5 @@
 [Mesh]
-  file = '../../mesh/elder_symmetric_coarse.msh'
+  file = '../../../mesh/elder_symmetric_coarse.msh'
   second_order = true
   skip_partitioning = true
   uniform_refine = 2
