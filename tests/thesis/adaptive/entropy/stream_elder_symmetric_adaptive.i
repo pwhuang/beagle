@@ -146,7 +146,7 @@
     min = 0
     max = 0
     seed = 363192
-    outputs = exodus
+    outputs = out
   [../]
 []
 

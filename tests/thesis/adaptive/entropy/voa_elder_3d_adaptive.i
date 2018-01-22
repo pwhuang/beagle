@@ -221,7 +221,7 @@
   [./Indicators]
     [./error]
       type = PecletIndicator
-      variable = Peclet
+      variable = entropy
     [../]
   [../]
 

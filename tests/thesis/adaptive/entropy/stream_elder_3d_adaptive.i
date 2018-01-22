@@ -186,7 +186,7 @@
     min = 0
     max = 0
     seed = 363192
-    outputs = exodus
+    outputs = out
   [../]
 []
 
@@ -237,7 +237,7 @@
   [./Indicators]
     [./error]
       type = PecletIndicator
-      variable = Peclet
+      variable = entropy
     [../]
   [../]
 

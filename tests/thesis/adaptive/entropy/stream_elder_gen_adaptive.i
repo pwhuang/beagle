@@ -172,7 +172,7 @@
     min = 0
     max = 0
     seed = 363192
-    outputs = exodus
+    outputs = out
   [../]
 []
 
@@ -182,7 +182,7 @@
     full = true
     solve_type = 'NEWTON'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -pc_gamg_sym_graph'
-    petsc_options_value = 'ksp hypre cp 301 true'
+    petsc_options_value = 'gasm hypre cp 301 true'
   [../]
 []
 
@@ -223,7 +223,7 @@
   [./Indicators]
     [./error]
       type = PecletIndicator
-      variable = Peclet
+      variable = entropy
       #function = 0
     [../]
   [../]
