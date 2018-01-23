@@ -1,5 +1,7 @@
 [Mesh]
   file = '../../mesh/elder_coarse.msh'
+  second_order = true
+  uniform_refine = 2
 []
 
 [Variables]
@@ -8,7 +10,7 @@
     family = LAGRANGE
   [../]
   [./temp]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
     initial_condition = 0
   [../]
@@ -29,6 +31,10 @@
     family = MONOMIAL
   [../]
   [./CFL]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./entropy]
     order = CONSTANT
     family = MONOMIAL
   [../]
@@ -93,6 +99,19 @@
     velocity_y = velocity_y
     velocity_z = 0
   [../]
+  [./entropy]
+    type = EntropyProduction
+    variable = entropy
+    temp = temp
+    velocity_x = velocity_x
+    velocity_y = velocity_y
+    velocity_z = 0
+    T_bar = 16
+    deltaT = 8
+    alpha = 1.6163e-4
+    cf = 4184
+    d = 150
+  [../]
 []
 
 [BCs]
@@ -132,6 +151,26 @@
 []
 
 [Preconditioning]
+  active = 'FSP'
+  [./FSP]
+    type = FSP
+    full = true
+    solve_type = 'NEWTON'
+    topsplit = 'st'
+    [./st]
+      splitting = 'stream temp'
+    [../]
+    [./stream]
+      vars = 'stream'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gamg hypre cp 151'
+    [../]
+    [./temp]
+      vars = 'temp'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gasm hypre cp 151'
+    [../]
+  [../]
   [./SMP]
     type = SMP
     full = true
@@ -148,7 +187,7 @@
   dt = 5e-6
   #dtmin = 0.001
   start_time = 0
-  end_time = 5e-2
+  end_time = 1e-1 #5e-2
   l_max_its = 40
   nl_max_its = 20
 
@@ -237,6 +276,11 @@
   [./max_CFL]
     type = ElementExtremeValue
     variable = CFL #This is the orginal CFL number (approximated with hmin)
+  [../]
+
+  [./N_S]
+    type = ElementAverageValue
+    variable = entropy
   [../]
 
   [./res]

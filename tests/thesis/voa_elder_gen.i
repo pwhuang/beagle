@@ -191,7 +191,7 @@
     #petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
     #petsc_options_value = 'gamg hypre cp 351'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-    petsc_options_value = 'ksp boomerang cp 301'
+    petsc_options_value = 'gamg boomerang cp 301'
   [../]
 []
 
