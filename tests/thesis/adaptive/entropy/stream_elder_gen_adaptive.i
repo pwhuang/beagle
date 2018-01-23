@@ -12,7 +12,7 @@
   ymax = 1.0
 
   elem_type = QUAD9
-  uniform_refine = 2
+  uniform_refine = 0
 []
 
 [MeshModifiers]
@@ -183,7 +183,7 @@
     full = true
     solve_type = 'NEWTON'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -pc_gamg_sym_graph'
-    petsc_options_value = 'gasm hypre cp 301 true'
+    petsc_options_value = 'gamg hypre cp 301 true'
   [../]
 []
 
@@ -218,9 +218,10 @@
   [../]
 []
 
-
 [Adaptivity]
   marker = errorfrac
+  max_h_level = 2
+  start_time = 5e-5
   [./Indicators]
     [./error]
       type = PecletIndicator
@@ -231,14 +232,19 @@
 
   [./Markers]
     [./errorfrac]
-      type = ErrorToleranceMarker
-      refine = 3.0
-      coarsen = 1.0
+      type = ErrorFractionMarker
+      refine = 0.8
+      coarsen = 0.2
       indicator = error
+    [../]
+    [./range]
+      type = ValueRangeMarker
+      variable = entropy
+      upper_bound = 1000
+      lower_bound = 500
     [../]
   [../]
 []
-
 
 [Postprocessors]
   [./Nusselt]
@@ -302,6 +308,6 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 500
+    interval = 1
   [../]
 []

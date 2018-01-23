@@ -32,6 +32,10 @@
     order = CONSTANT
     family = MONOMIAL
   [../]
+  [./entropy]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
 []
 
 [Kernels]
@@ -123,6 +127,19 @@
     velocity_x = vel_x
     velocity_y = vel_y
     velocity_z = 0
+  [../]
+  [./entropy]
+    type = EntropyProduction
+    variable = entropy
+    temp = temp
+    velocity_x = vel_x
+    velocity_y = vel_y
+    velocity_z = 0
+    T_bar = 16
+    deltaT = 8
+    alpha = 1.6163e-4
+    cf = 4184
+    d = 150
   [../]
 []
 
@@ -224,6 +241,11 @@
   [./max_CFL]
     type = ElementExtremeValue
     variable = CFL #This is the orginal CFL number (approximated with hmin)
+  [../]
+
+  [./N_S]
+    type = ElementAverageValue
+    variable = entropy
   [../]
 
   [./res]

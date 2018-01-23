@@ -178,12 +178,33 @@
 []
 
 [Preconditioning]
+  active = 'FSP'
   [./SMP]
     type = SMP
     full = true
     solve_type = 'NEWTON'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
     petsc_options_value = 'gamg hypre cp 301'
+  [../]
+
+  [./FSP]
+    type = FSP
+    full = true
+    solve_type = 'NEWTON'
+    topsplit = 'st'
+    [./st]
+      splitting = 'stream temp'
+    [../]
+    [./stream]
+      vars = 'stream'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gamg hypre cp 151'
+    [../]
+    [./temp]
+      vars = 'temp'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gasm hypre cp 151'
+    [../]
   [../]
 []
 
@@ -194,7 +215,7 @@
   dt = 2e-4
   #dtmin = 0.001
   start_time = 0
-  end_time = 5e-2
+  end_time = 1e-1 #5e-2
   l_max_its = 40
   nl_max_its = 20
 

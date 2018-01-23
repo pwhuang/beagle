@@ -1,6 +1,6 @@
 [Mesh]
   file = '../mesh/elder_symmetric.msh'
-  #second_order = true
+  second_order = true
 []
 
 [Variables]
@@ -9,7 +9,7 @@
     family = LAGRANGE
   [../]
   [./temp]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
     initial_condition = 0
   [../]
@@ -30,6 +30,10 @@
     family = MONOMIAL
   [../]
   [./CFL]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./entropy]
     order = CONSTANT
     family = MONOMIAL
   [../]
@@ -93,6 +97,19 @@
     velocity_x = velocity_x
     velocity_y = velocity_y
     velocity_z = 0
+  [../]
+  [./entropy]
+    type = EntropyProduction
+    variable = entropy
+    temp = temp
+    velocity_x = velocity_x
+    velocity_y = velocity_y
+    velocity_z = 0
+    T_bar = 16
+    deltaT = 8
+    alpha = 1.6163e-4
+    cf = 4184
+    d = 150
   [../]
 []
 
@@ -180,7 +197,7 @@
   dt = 2e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 5e-2
+  end_time = 1e-1 #5e-2
   l_max_its = 40
   nl_max_its = 20
 
@@ -231,6 +248,11 @@
   [./max_CFL]
     type = ElementExtremeValue
     variable = CFL #This is the orginal CFL number (approximated with hmin)
+  [../]
+
+  [./N_S]
+    type = ElementAverageValue
+    variable = entropy
   [../]
 
   [./res]
