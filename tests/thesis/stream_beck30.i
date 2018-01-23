@@ -66,8 +66,8 @@
     type = FunctionRandomIC
     variable = temp
     function = ic_func
-    min = -1e-5
-    max = 1e-5
+    min = -1e-2
+    max = 1e-2
     seed = 52468
   [../]
 []
@@ -320,6 +320,6 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 100
+    interval = 200
   [../]
 []
