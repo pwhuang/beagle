@@ -59,8 +59,8 @@
     type = FunctionRandomIC
     variable = temp
     function = ic_func
-    min = -1e-2
-    max = 1e-2
+    min = -1e-5
+    max = 1e-5
     seed = 52468
   [../]
 []
@@ -208,11 +208,11 @@
 [Executioner]
   type = Transient
   #solve_type = PJFNK
-  num_steps = 10000
+  #num_steps = 10000
   #dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  #end_time = 1.1e-1
+  end_time = 3.0
   l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true
