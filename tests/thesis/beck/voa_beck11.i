@@ -1,5 +1,5 @@
 [Mesh]
-  file = '../mesh/beck11.msh'
+  file = '../../mesh/beck11.msh'
   second_order = true
 []
 
