@@ -53,31 +53,6 @@
   [../]
 []
 
-[Functions]
-  [./ic_func]
-    type = ParsedFunction
-    value = '1.0-y'
-  [../]
-[]
-
-[ICs]
-  active = 'mat_2'
-  [./mat_1]
-    type = FunctionIC
-    variable = temp
-    function = ic_func
-  [../]
-
-  [./mat_2]
-    type = FunctionRandomIC
-    variable = temp
-    function = ic_func
-    min = -1e-2
-    max = 1e-2
-    seed = 52468
-  [../]
-[]
-
 [Kernels]
   [./mass]
     type = MassBalance
