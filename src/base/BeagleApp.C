@@ -14,6 +14,7 @@
 
 //ics
 #include "FunctionRandomIC.h"
+#include "PerturbationRandomIC.h"
 
 //bcs
 #include "CoupledNeumannBC.h"
@@ -46,6 +47,7 @@
 #include "CellPeclet.h"
 #include "CellCFL.h"
 #include "EntropyProduction.h"
+#include "AuxPerturb.h"
 
 //Materials
 #include "PorousMaterial.h"
@@ -121,6 +123,7 @@ BeagleApp::registerObjects(Factory & factory)
     registerKernel(VelocityDiffusionZ_secondu);
     registerKernel(PressureConvection_SUPG);
     registerInitialCondition(FunctionRandomIC);
+    registerInitialCondition(PerturbationRandomIC);
     registerBoundaryCondition(CoupledNeumannBC);
     registerAux(AuxDensity);
     registerAux(AuxVelocity);
@@ -130,6 +133,7 @@ BeagleApp::registerObjects(Factory & factory)
     registerAux(CellPeclet);
     registerAux(CellCFL);
     registerAux(EntropyProduction);
+    registerAux(AuxPerturb);
     registerMaterial(PorousMaterial);
     registerMaterial(RayleighMaterial);
     registerMaterial(RayleighMaterialFunc);

@@ -23,6 +23,7 @@ include $(FRAMEWORK_DIR)/moose.mk
 ALL_MODULES := no
 NAVIER_STOKES := no
 LEVEL_SET := yes
+PHASE_FIELD := no
 include $(MOOSE_DIR)/modules/modules.mk
 ###############################################################################
 
