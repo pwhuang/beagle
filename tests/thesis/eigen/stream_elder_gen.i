@@ -11,7 +11,7 @@
   ymin = 0.0
   ymax = 1.0
 
-  elem_type = QUAD4
+  elem_type = QUAD9
 []
 
 [MeshModifiers]
@@ -36,9 +36,15 @@
     family = LAGRANGE
   [../]
   [./temp]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
-    initial_condition = 0
+    [./InitialCondition]
+      type = FunctionRandomIC
+      function = 0
+      max = 0
+      min = 0
+      seed = 1234
+    []
   [../]
 []
 
@@ -51,7 +57,7 @@
 []
 
 [Kernels]
-  active = 'mass diff conv rhs_psi rhs_T euler'
+  active = 'mass diff conv rhs_psi rhs_T'
   [./mass]
     type = StreamDiffusion
     variable = stream
@@ -96,7 +102,7 @@
     variable = sum
     execute_on = LINEAR
     args = 'temp stream'
-    function = 'temp + stream'
+    function = 'abs(temp) + abs(stream)'
   [../]
 []
 
@@ -127,8 +133,8 @@
 [Materials]
   [./ra_output]
     type = RayleighMaterial
-    block = 0 #'layer1'
-    function = 22.832
+    block = 0 #layer1'
+    function = 8#22.832
     min = 0
     max = 0
     seed = 363192
@@ -142,14 +148,14 @@
     type = SMP
     full = true
     solve_type = 'NEWTON'
-    #petsc_options_iname = '-pc_type -snes_linesearch_type -ksp_gmres_restart'
-    #petsc_options_value = 'icc cp 301'
+    petsc_options_iname = '-pc_type -snes_linesearch_type -ksp_gmres_restart'
+    petsc_options_value = 'gasm l2 301'
   [../]
 
   [./FSP]
     type = FSP
     full = true
-    solve_type = 'PJFNK' #'NEWTON'
+    solve_type = 'NEWTON'
     topsplit = 'st'
     [./st]
       splitting = 'stream temp'
@@ -157,32 +163,32 @@
     [./stream]
       vars = 'stream'
       petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-      petsc_options_value = 'gamg hypre cp 201'
+      petsc_options_value = 'gamg hypre basic 201'
     [../]
     [./temp]
       vars = 'temp'
       petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-      petsc_options_value = 'gasm hypre cp 201'
+      petsc_options_value = 'gasm hypre basic 201'
     [../]
   [../]
 []
 
 [Executioner]
-  type = InversePowerMethod
+  type = NonlinearEigen #InversePowerMethod
   bx_norm = 'unorm'
   Chebyshev_acceleration_on = false
-  auto_initialization = true
+  #auto_initialization = true
   #line_search = cp
 
-  free_power_iterations = 4
+  free_power_iterations = 10
 
   source_abs_tol = 1e-12
   source_rel_tol = 1e-50
-  k0 = 1.0
-  output_after_power_iterations = false
+  k0 = 1.5
+  output_after_power_iterations = true
 
   l_max_its = 50
-  nl_max_its = 200
+  nl_max_its = 5000
 
   [./TimeIntegrator]
     type = CrankNicolson
@@ -191,18 +197,25 @@
 
 
 [Postprocessors]
-  active = 'unorm udiff'
+  active = 'unorm'
   [./unorm]
-    type = ElementIntegralVariablePostprocessor
+    type = ElementH1Error #ElementIntegralVariablePostprocessor
+    function = 0
     variable = sum
     # execute on residual is important for nonlinear eigen solver!
     execute_on = linear
+    outputs = 'csv'
   [../]
 []
 
 [Outputs]
   execute_on = 'timestep_end'
   csv = true
+  [./console]
+    type = Console
+    execute_postprocessors_on = 'INITIAL TIMESTEP_END'
+    #output_postprocessors = false
+  [../]
   [./out]
     type = Exodus
     interval = 1
