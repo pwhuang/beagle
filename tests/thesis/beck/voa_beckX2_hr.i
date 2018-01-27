@@ -187,7 +187,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 7 #Ra = 49
+    function = 14 #Ra = 49
     min = 0
     max = 0
     seed = 363192

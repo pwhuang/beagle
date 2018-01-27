@@ -2,8 +2,8 @@
   type = GeneratedMesh
   dim = 2
 
-  nx = 15
-  ny = 4
+  nx = 60
+  ny = 16
 
   xmin = 0.0
   xmax = 4.0
@@ -11,7 +11,7 @@
   ymin = 0.0
   ymax = 1.0
 
-  elem_type = QUAD4
+  elem_type = QUAD9
   allow_renumbering = false
   skip_partitioning = true
 []
@@ -38,7 +38,7 @@
     family = LAGRANGE
   [../]
   [./temp]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
     initial_condition = 0
   [../]
@@ -185,10 +185,8 @@
     type = SMP
     full = true
     solve_type = 'NEWTON'
-    petsc_options_iname = '-ksp_view_pmat'
-    petsc_options_value = '::ascii_matlab'
-    #petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-    #petsc_options_value = 'gamg hypre cp 301'
+    petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -ksp_view_pmat'
+    petsc_options_value = 'gamg hypre cp 301 ::ascii_matlab'
   [../]
 
   [./FSP]
@@ -202,12 +200,12 @@
     [./stream]
       vars = 'stream'
       petsc_options_iname = '-pc_type -snes_linesearch_type -ksp_gmres_restart'
-      petsc_options_value = 'jacobi cp 151'
+      petsc_options_value = 'gamg cp 151'
     [../]
     [./temp]
       vars = 'temp'
       petsc_options_iname = '-pc_type -snes_linesearch_type -ksp_gmres_restart'
-      petsc_options_value = 'jacobi cp 151'
+      petsc_options_value = 'gasm cp 151'
     [../]
     petsc_options_iname = '-ksp_view_pmat'
     petsc_options_value = '::ascii_matlab'
