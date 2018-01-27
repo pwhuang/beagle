@@ -115,7 +115,7 @@
 
 [BCs]
   [./no_flow_1]
-    type =  DirichletBC
+    type =  PresetBC
     variable = vel_x
     boundary = 'left right'
     #boundary = 'front back left right top bottom'
@@ -123,7 +123,7 @@
   [../]
 
   [./no_flow_2]
-    type = DirichletBC
+    type = PresetBC
     variable = vel_y
     boundary = 'top bottom'
     #boundary = 'front back left right top bottom'
@@ -131,7 +131,7 @@
   [../]
 
   [./no_flow_3]
-    type = DirichletBC
+    type = PresetBC
     variable = vel_z
     boundary = 'front back'
     #boundary = 'front back left right top bottom'
@@ -196,12 +196,43 @@
 []
 
 [Preconditioning]
+  active = 'FSP'
   [./SMP]
     type = SMP
     full = true
     solve_type = 'NEWTON'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -pc_gamg_sym_graph'
     petsc_options_value = 'gamg hypre cp 351 true'
+  [../]
+
+  [./FSP]
+    type = FSP
+    full = true
+    solve_type = 'NEWTON'
+    topsplit = 'pt'
+    [./pt]
+      splitting = 'vel_x vel_y vel_z temp'
+    [../]
+    [./vel_x]
+      vars = 'vel_x'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gamg hypre cp 151'
+    [../]
+    [./vel_y]
+      vars = 'vel_y'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gamg hypre cp 151'
+    [../]
+    [./vel_z]
+      vars = 'vel_z'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gamg hypre cp 151'
+    [../]
+    [./temp]
+      vars = 'temp'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gasm hypre cp 151'
+    [../]
   [../]
 []
 
@@ -212,7 +243,7 @@
   #dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 2.0
+  end_time = 3.0
   l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true
@@ -224,8 +255,8 @@
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
-    dt = 1e-3
-    scale = 0.02
+    dt = 1e-4
+    scale = 0.005
     factor = 0
   [../]
 

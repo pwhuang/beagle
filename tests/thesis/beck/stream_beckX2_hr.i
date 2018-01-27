@@ -1,6 +1,6 @@
 [Mesh]
   file = '../../mesh/beckX2.msh'
-  #second_order = true
+  second_order = true
 []
 
 [Variables]
@@ -13,7 +13,7 @@
     family = LAGRANGE
   [../]
   [./temp]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
   [../]
 []
@@ -172,14 +172,14 @@
 
 [BCs]
   [./no_flow_1]
-    type = DirichletBC
+    type = PresetBC
     variable = psi_1
     boundary = 'bottom top front back'
     value = 0
   [../]
 
   [./no_flow_2]
-    type = DirichletBC
+    type = PresetBC
     variable = psi_2
     boundary = 'bottom top left right'
     #boundary = 'bottom top left right front back'
@@ -255,7 +255,7 @@
   #dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 2.0
+  end_time = 3.0
   l_max_its = 40
   nl_max_its = 20
 
@@ -273,8 +273,8 @@
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = CFL_time_step
-    dt = 1e-3
-    scale = 0.02
+    dt = 1e-4
+    scale = 0.005
     factor = 0
   [../]
 []
@@ -346,6 +346,6 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 50
+    interval = 200
   [../]
 []

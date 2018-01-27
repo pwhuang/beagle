@@ -1,6 +1,6 @@
 [Mesh]
   file = '../../mesh/beckX2.msh'
-  #second_order = true
+  second_order = true
 []
 
 [Variables]
@@ -13,7 +13,7 @@
     family = LAGRANGE
   [../]
   [./temp]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
   [../]
 []
@@ -172,14 +172,14 @@
 
 [BCs]
   [./no_flow_1]
-    type = DirichletBC
+    type = PresetBC
     variable = psi_1
     boundary = 'bottom top front back'
     value = 0
   [../]
 
   [./no_flow_2]
-    type = DirichletBC
+    type = PresetBC
     variable = psi_2
     boundary = 'bottom top left right'
     #boundary = 'bottom top left right front back'
@@ -214,7 +214,7 @@
 []
 
 [Preconditioning]
-  active = 'SMP'
+  active = 'FSP'
   [./SMP]
     type = SMP
     full = true
@@ -274,7 +274,7 @@
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-3
-    scale = 0.02
+    scale = 0.05
     factor = 0
   [../]
 []
@@ -346,6 +346,6 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 50
+    interval = 200
   [../]
 []
