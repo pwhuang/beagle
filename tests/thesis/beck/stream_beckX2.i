@@ -214,7 +214,7 @@
 []
 
 [Preconditioning]
-  active = 'FSP'
+  active = 'SMP'
   [./SMP]
     type = SMP
     full = true
@@ -255,7 +255,7 @@
   #dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 2.0
+  end_time = 3.0
   l_max_its = 40
   nl_max_its = 20
 
