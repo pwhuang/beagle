@@ -154,12 +154,12 @@
     d = 150
   [../]
 
-  [./perturbation]
+  [./perturbation] #Trying to decrease its energy
     type = AuxPerturb
     variable = perturbed_temp
     temp = temp
-    max = 1e-2
-    min = -1e-2
+    max = 0
+    min = -1e-1
     seed = 52468
     execute_on = INITIAL
   [../]

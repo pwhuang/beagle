@@ -256,7 +256,7 @@
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-4
-    scale = 0.005
+    scale = 0.05
     factor = 0
   [../]
 
@@ -338,6 +338,6 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 50
+    interval = 200
   [../]
 []

@@ -7,14 +7,14 @@
   [./psi_1]
     order = FIRST
     family = LAGRANGE
-    initial_from_file_timestep = LATEST
-    initial_from_file_var = 'psi_1'
+    #initial_from_file_timestep = LATEST
+    #initial_from_file_var = 'psi_1'
   [../]
   [./psi_2]
     order = FIRST
     family = LAGRANGE
-    initial_from_file_timestep = LATEST
-    initial_from_file_var = 'psi_2'
+    #initial_from_file_timestep = LATEST
+    #initial_from_file_var = 'psi_2'
   [../]
   [./temp]
     order = SECOND

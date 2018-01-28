@@ -14,22 +14,22 @@
   [./vel_x]
     order = FIRST
     family = LAGRANGE
-    initial_from_file_timestep = LATEST
-    initial_from_file_var = 'vel_x'
+    #initial_from_file_timestep = LATEST
+    #initial_from_file_var = 'vel_x'
   [../]
 
   [./vel_y]
     order = FIRST
     family = LAGRANGE
-    initial_from_file_timestep = LATEST
-    initial_from_file_var = 'vel_x'
+    #initial_from_file_timestep = LATEST
+    #initial_from_file_var = 'vel_x'
   [../]
 
   [./vel_z]
     order = FIRST
     family = LAGRANGE
-    initial_from_file_timestep = LATEST
-    initial_from_file_var = 'vel_x'
+    #initial_from_file_timestep = LATEST
+    #initial_from_file_var = 'vel_x'
   [../]
 []
 
@@ -208,7 +208,7 @@
     type = PostprocessorDT
     postprocessor = CFL_time_step
     dt = 1e-4
-    scale = 0.02
+    scale = 0.1
     factor = 0
   [../]
 
