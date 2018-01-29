@@ -187,7 +187,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 6.4 #Ra = 49
+    function = 7 #Ra = 49
     min = 0
     max = 0
     seed = 363192
@@ -243,7 +243,7 @@
   #dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 4.0
+  end_time = 10.0
   l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true
@@ -339,5 +339,6 @@
   [./out]
     type = Exodus
     interval = 50
+    additional_execute_on = TIMESTEP_END
   [../]
 []

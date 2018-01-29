@@ -34,7 +34,7 @@ StreamTempEigenKernel::StreamTempEigenKernel(const InputParameters & parameters)
 Real
 StreamTempEigenKernel::computeQpResidual()
 {
-  return //(_Ra[_qp]*_test[_i][_qp] + _grad_test[_i][_qp]) * (_Ra[_qp]*_u[_qp] + std::sqrt(2*_grad_stream[_qp]*_grad_stream[_qp])*_grad_u[_qp]);
+  return //(_Ra[_qp]*_test[_i][_qp] + _grad_test[_i][_qp]) * (_Ra[_qp]*_u[_qp] + 2*_grad_stream[_qp]*_grad_stream[_qp]*_grad_u[_qp]);
           _Ra[_qp]*_test[_i][_qp] * _Ra[_qp]*_u[_qp] + _grad_test[_i][_qp] * 2.0*_grad_stream[_qp]*_grad_stream[_qp]*_grad_u[_qp];
 }
 
@@ -42,7 +42,7 @@ Real
 StreamTempEigenKernel::computeQpJacobian()
 {
   return //(_Ra[_qp]*_test[_i][_qp] + _grad_test[_i][_qp]) *
-        //  (_Ra[_qp]*_phi[_j][_qp] + std::sqrt(2*_grad_stream[_qp]*_grad_stream[_qp])*_grad_phi[_j][_qp]);
+        //  (_Ra[_qp]*_phi[_j][_qp] + 2*_grad_stream[_qp]*_grad_stream[_qp]*_grad_phi[_j][_qp]);
         _Ra[_qp]*_test[_i][_qp] * _Ra[_qp]*_phi[_j][_qp] + _grad_test[_i][_qp] * 2.0*_grad_stream[_qp]*_grad_stream[_qp]*_grad_phi[_j][_qp];
 }
 
@@ -50,7 +50,7 @@ Real StreamTempEigenKernel::computeQpOffDiagJacobian(unsigned jvar)
 {
   if(jvar==_grad_stream_var_num)
     return //(_Ra[_qp]*_test[_i][_qp] + _grad_test[_i][_qp]) *
-            //(2.0/std::sqrt(2*_grad_stream[_qp]*_grad_stream[_qp])*_grad_phi[_j][_qp]*_grad_phi[_j][_qp]*_grad_u[_qp]);
+            //(4.0*_grad_stream[_qp]*_grad_phi[_j][_qp]*_grad_u[_qp]);
             _grad_test[_i][_qp] * 4.0*_grad_stream[_qp]*_grad_phi[_j][_qp]*_grad_u[_qp];
   else
     return 0;
