@@ -2,11 +2,11 @@
   type = GeneratedMesh
   dim = 2
 
-  nx = 400
-  ny = 100
+  nx = 400 #20
+  ny = 200 #10
 
   xmin = 0.0
-  xmax = 4.0
+  xmax = 2.0
 
   ymin = 0.0
   ymax = 1.0
@@ -15,7 +15,7 @@
 []
 
 [MeshModifiers]
-  active = 'side'
+  active = ''
   [./side]
     type = BoundingBoxNodeSet
     new_boundary = 'bottom_half'
@@ -32,7 +32,7 @@
 
 [Variables]
   [./stream]
-    order = SECOND
+    order = FIRST
     family = LAGRANGE
   [../]
   [./temp]
@@ -40,7 +40,7 @@
     family = LAGRANGE
     [./InitialCondition]
       type = FunctionRandomIC
-      function = 0
+      function = '1-y'
       max = 0
       min = 0
       seed = 1234
@@ -120,7 +120,7 @@
   [./bottom_temp]
     type = DirichletBC
     variable = temp
-    boundary = 'bottom_half'
+    boundary = 'bottom'
     value = 1.0
   [../]
 []
@@ -129,7 +129,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 0 #layer1'
-    function = 22.832
+    function = 20 #22.832
     min = 0
     max = 0
     seed = 363192
@@ -184,7 +184,7 @@
 
   l_max_its = 50
   nl_max_its = 5000
-  solve_type = PJFNK
+  solve_type = NEWTON #PJFNK
 []
 
 
