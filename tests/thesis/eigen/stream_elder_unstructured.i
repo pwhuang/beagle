@@ -181,7 +181,6 @@
   active = 'unorm'
   [./unorm]
     type = ElementL2Norm #ElementIntegralVariablePostprocessor
-    function = 0
     variable = sum
     # execute on residual is important for nonlinear eigen solver!
     execute_on = linear
