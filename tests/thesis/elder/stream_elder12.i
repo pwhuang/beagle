@@ -1,33 +1,6 @@
 [Mesh]
-  type = GeneratedMesh
-  dim = 2
-
-  nx = 120
-  ny = 32
-
-  xmin = 0.0
-  xmax = 4.0
-
-  ymin = 0.0
-  ymax = 1.0
-
-  elem_type = QUAD9
-[]
-
-[MeshModifiers]
-  active = 'side'
-  [./side]
-    type = BoundingBoxNodeSet
-    new_boundary = 'bottom_half'
-    bottom_left = '1 0 0'
-    top_right = '3 0 0'
-  [../]
-  [./corner_node]
-    type = AddExtraNodeset
-    new_boundary = 'pinned_node'
-    #nodes = '0'
-    coord = '0 0.8'
-  [../]
+  file = '../../mesh/elder.msh'
+  second_order = true
 []
 
 [Variables]
@@ -36,7 +9,7 @@
     family = LAGRANGE
   [../]
   [./temp]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
     initial_condition = 0
   [../]
@@ -125,7 +98,6 @@
     velocity_y = velocity_y
     velocity_z = 0
   [../]
-
   [./entropy]
     type = EntropyProduction
     variable = entropy
@@ -145,7 +117,7 @@
   [./no_flux_bc]
     type = DirichletBC
     variable = stream
-    boundary = 'top bottom left right'
+    boundary = 'top bottom_half bottom_out left right'
     #boundary = 'top bottom left right'
     value = 0.0
   [../]
@@ -168,7 +140,7 @@
 [Materials]
   [./ra_output]
     type = RayleighMaterial
-    block = 0 #'layer1'
+    block = 'layer1'
     function = 22.832
     min = 0
     max = 0
@@ -212,10 +184,10 @@
   type = Transient
   #solve_type = 'JFNK'
   #num_steps = 1000
-  dt = 2e-4
+  #dt = 2e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 1e-1 #5e-2
+  end_time = 2e-1 #5e-2
   l_max_its = 40
   nl_max_its = 20
 
@@ -229,8 +201,15 @@
   [./TimeIntegrator]
     type = CrankNicolson
   [../]
+  [./TimeStepper]
+    type = CFLDT
+    postprocessor = CFL_time_step
+    dt = 2e-5
+    max_Ra = 22.832
+    cfl = 0.5
+    factor = 0
+  [../]
 []
-
 
 [Postprocessors]
   [./Nusselt]
@@ -245,6 +224,13 @@
     type = PerformanceData
     event = ALIVE
     column = total_time_with_sub
+  [../]
+
+  [./CFL_time_step]
+    type = LevelSetCFLCondition
+    velocity_x = velocity_x #This uses the magnitude of velocity and hmin to approximate CFL number
+    velocity_y = velocity_y
+    velocity_z = 0
   [../]
 
   [./L2_temp]

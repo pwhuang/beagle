@@ -11,7 +11,7 @@
   ymin = 0.0
   ymax = 1.0
 
-  elem_type = QUAD9
+  elem_type = QUAD4
 []
 
 [MeshModifiers]
@@ -212,10 +212,10 @@
   type = Transient
   #solve_type = 'JFNK'
   #num_steps = 1000
-  dt = 2e-4
+  #dt = 2e-4
   #dtmin = 0.001
   start_time = 0
-  end_time = 1e-1 #5e-2
+  end_time = 2e-1 #5e-2
   l_max_its = 40
   nl_max_its = 20
 
@@ -228,6 +228,15 @@
 
   [./TimeIntegrator]
     type = CrankNicolson
+  [../]
+
+  [./TimeStepper]
+    type = CFLDT
+    postprocessor = CFL_time_step
+    dt = 2e-4
+    max_Ra = 22.832
+    cfl = 0.5
+    factor = 0
   [../]
 []
 
@@ -245,6 +254,13 @@
     type = PerformanceData
     event = ALIVE
     column = total_time_with_sub
+  [../]
+
+  [./CFL_time_step]
+    type = LevelSetCFLCondition
+    velocity_x = velocity_x #This uses the magnitude of velocity and hmin to approximate CFL number
+    velocity_y = velocity_y
+    velocity_z = 0
   [../]
 
   [./L2_temp]

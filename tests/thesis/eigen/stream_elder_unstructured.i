@@ -1,5 +1,5 @@
 [Mesh]
-  file = '../../mesh/elder_cl1e-2.msh'
+  file = '../../mesh/elder_cl5e-2.msh'
   second_order = true
 []
 
@@ -25,7 +25,7 @@
     family = LAGRANGE
   [../]
   [./temp]
-    order = FIRST
+    order = SECOND
     family = LAGRANGE
     [./InitialCondition]
       type = FunctionRandomIC

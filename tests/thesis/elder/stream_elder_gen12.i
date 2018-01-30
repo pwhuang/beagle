@@ -2,8 +2,8 @@
   type = GeneratedMesh
   dim = 2
 
-  nx = 60
-  ny = 16
+  nx = 120
+  ny = 32
 
   xmin = 0.0
   xmax = 4.0
@@ -12,8 +12,6 @@
   ymax = 1.0
 
   elem_type = QUAD9
-  allow_renumbering = false
-  skip_partitioning = true
 []
 
 [MeshModifiers]
@@ -185,8 +183,8 @@
     type = SMP
     full = true
     solve_type = 'NEWTON'
-    petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -ksp_view_pmat'
-    petsc_options_value = 'gamg hypre cp 301 ::ascii_matlab'
+    petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+    petsc_options_value = 'gamg hypre cp 301'
   [../]
 
   [./FSP]
@@ -199,28 +197,25 @@
     [../]
     [./stream]
       vars = 'stream'
-      petsc_options_iname = '-pc_type -snes_linesearch_type -ksp_gmres_restart'
-      petsc_options_value = 'gamg cp 151'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gamg hypre cp 151'
     [../]
     [./temp]
       vars = 'temp'
-      petsc_options_iname = '-pc_type -snes_linesearch_type -ksp_gmres_restart'
-      petsc_options_value = 'gasm cp 151'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gasm hypre cp 151'
     [../]
-    petsc_options_iname = '-ksp_view_pmat'
-    petsc_options_value = '::ascii_matlab'
   [../]
 []
 
 [Executioner]
   type = Transient
   #solve_type = 'JFNK'
-  num_steps = 2
-  dt = 2e-4
+  #num_steps = 1000
   #dtmin = 0.001
   start_time = 0
-  #end_time = 1e-1 #5e-2
-  l_max_its = 500#40
+  end_time = 2e-1 #5e-2
+  l_max_its = 40
   nl_max_its = 20
 
   nl_rel_tol = 1e-10
@@ -232,6 +227,15 @@
 
   [./TimeIntegrator]
     type = CrankNicolson
+  [../]
+
+  [./TimeStepper]
+    type = CFLDT
+    postprocessor = CFL_time_step
+    dt = 2e-4
+    max_Ra = 22.832
+    cfl = 0.5
+    factor = 0
   [../]
 []
 
@@ -249,6 +253,13 @@
     type = PerformanceData
     event = ALIVE
     column = total_time_with_sub
+  [../]
+
+  [./CFL_time_step]
+    type = LevelSetCFLCondition
+    velocity_x = velocity_x #This uses the magnitude of velocity and hmin to approximate CFL number
+    velocity_y = velocity_y
+    velocity_z = 0
   [../]
 
   [./L2_temp]

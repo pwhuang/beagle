@@ -36,11 +36,13 @@ protected:
   virtual Real computeDT() override;
 
   const PostprocessorValue & _pps_value;
+  const Real & _max_Ra;
+
   bool _has_initial_dt;
   Real _initial_dt;
 
   /// Multiplier applied to the postprocessor value
-  const Real & _scale;
+  const Real & _cfl_num;
 
   /// Factor added to the postprocessor value
   const Real & _factor;
