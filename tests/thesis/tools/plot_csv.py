@@ -11,9 +11,10 @@ f = []
 lg = []
 plt.figure()
 
-for i, file in enumerate(sys_arg[1:]): 
+for i, file in enumerate(sys_arg[1:]):
     f.append(pd.read_csv(file))
     lg.append(file)
+    plt.subplot(221)
     plt.plot(f[i]['time'], f[i]['N_S'])
 
 
@@ -21,16 +22,17 @@ plt.title('Entropy Production')
 plt.legend(lg)
 plt.show()
 
-plt.figure()
-for i in len(sys_arg[1:]):
+for i in range(len(sys_arg[1:])):
+    plt.subplot(222)
     plt.plot(f[i]['time'], f[i]['max_CFL'])
-    
+
 plt.title('Max CFL Number')
 plt.legend(lg)
 plt.show()
 
 plt.figure()
-for i in len(sys_arg[1:]):
+for i in range(len(sys_arg[1:])):
+    plt.subplot(223)
     plt.plot(f[i]['time'], f[i]['max_Peclet'])
 
 plt.title('Max Peclet Number')
