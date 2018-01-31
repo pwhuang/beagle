@@ -170,7 +170,7 @@
     solve_type = 'NEWTON'
     topsplit = 'pt'
     [./pt]
-      splitting = 'vel_x vel_y vel_z temp'
+      splitting = 'vel_x vel_y temp'
     [../]
     [./vel_x]
       vars = 'vel_x'
