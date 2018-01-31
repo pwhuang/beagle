@@ -20,7 +20,7 @@
 class PecletIndicator;
 
 template <>
-InputParameters validParams<ElementIntegralIndicator>();
+InputParameters validParams<PecletIndicator>();
 
 class PecletIndicator : public ElementIntegralIndicator
 {
