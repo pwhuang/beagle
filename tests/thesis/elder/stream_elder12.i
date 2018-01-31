@@ -272,6 +272,6 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 1
+    interval = 10
   [../]
 []
