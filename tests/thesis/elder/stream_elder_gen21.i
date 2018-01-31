@@ -2,7 +2,7 @@
   type = GeneratedMesh
   dim = 2
 
-  nx = 120
+  nx = 128
   ny = 32
 
   xmin = 0.0
@@ -301,6 +301,6 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 1
+    interval = 10
   [../]
 []

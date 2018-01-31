@@ -1,5 +1,5 @@
 [Mesh]
-  file = '../../mesh/elder.msh'
+  file = '../../mesh/elder_cl3e-2.msh'
 []
 
 [Variables]
@@ -272,6 +272,6 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 1
+    interval = 10
   [../]
 []
