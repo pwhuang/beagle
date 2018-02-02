@@ -1,6 +1,6 @@
 [Mesh]
-  file = '../mesh/elder.msh'
-  second_order = true
+  file = '../mesh/elder_cl3e-2_quad.msh'
+  #second_order = true
 []
 
 [Variables]
@@ -9,7 +9,7 @@
     family = LAGRANGE
   [../]
   [./temp]
-    order = SECOND
+    order = FIRST
     family = LAGRANGE
     initial_condition = 0
   [../]
@@ -184,7 +184,7 @@
   type = Transient
   #solve_type = 'JFNK'
   #num_steps = 1000
-  dt = 2e-5
+  #dt = 2e-5
   #dtmin = 0.001
   start_time = 0
   end_time = 1e-1 #5e-2
@@ -201,6 +201,16 @@
   [./TimeIntegrator]
     type = CrankNicolson
   [../]
+
+  [./TimeStepper]
+    type = CFLDT
+    postprocessor = CFL_time_step
+    dt = 5e-5
+    activate_time = 5e-4
+    max_Ra = 22.832
+    cfl = 0.5
+    factor = 0
+  [../]
 []
 
 [Postprocessors]
@@ -210,6 +220,13 @@
     boundary = 'top'
     diffusivity = 1.0
     outputs = 'csv console'
+  [../]
+
+  [./CFL_time_step]
+    type = LevelSetCFLCondition
+    velocity_x = velocity_x #This uses the magnitude of velocity and hmin to approximate CFL number
+    velocity_y = velocity_y
+    velocity_z = 0
   [../]
 
   [./alive_time]

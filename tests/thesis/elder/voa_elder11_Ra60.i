@@ -196,7 +196,7 @@
   #num_steps = 10000
   #dtmin = 0.001
   start_time = 0
-  end_time = 2e-1 #5e-2
+  end_time = 1.0 #5e-2
   l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true

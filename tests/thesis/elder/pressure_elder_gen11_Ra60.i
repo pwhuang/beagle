@@ -274,6 +274,7 @@
     type = CFLDT
     postprocessor = CFL_time_step
     dt = 2e-5
+    activate_time = 2e-4
     max_Ra = 7.746
     cfl = 0.5
     factor = 0
