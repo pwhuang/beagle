@@ -214,7 +214,7 @@
   #num_steps = 1000
   #dtmin = 0.001
   start_time = 0
-  end_time = 2e-1 #5e-2
+  end_time = 1.0 #5e-2
   l_max_its = 40
   nl_max_its = 20
 
@@ -301,6 +301,6 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 10
+    interval = 5
   [../]
 []

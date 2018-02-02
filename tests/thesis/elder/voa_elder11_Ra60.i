@@ -146,7 +146,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 22.832
+    function = 7.746
     min = 0
     max = 0
     seed = 363192
@@ -293,6 +293,6 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 10
+    interval = 5
   [../]
 []

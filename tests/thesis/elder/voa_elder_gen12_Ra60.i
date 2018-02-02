@@ -175,7 +175,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 0 #'layer1'
-    function = 22.832
+    function = 7.746
     min = 0
     max = 0
     seed = 363192
@@ -225,7 +225,7 @@
   #num_steps = 10000
   #dtmin = 0.001
   start_time = 0
-  end_time = 2e-1 #5e-2
+  end_time = 1.0 #5e-2
   l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true
@@ -322,6 +322,6 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 10
+    interval = 5
   [../]
 []
