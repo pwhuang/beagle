@@ -43,6 +43,7 @@ protected:
 
   /// Multiplier applied to the postprocessor value
   const Real & _cfl_num;
+  const Real & _activate_time;
 
   /// Factor added to the postprocessor value
   const Real & _factor;

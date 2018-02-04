@@ -13,6 +13,7 @@
 /****************************************************************/
 
 #include "CFLDT.h"
+#include "FEProblem.h"
 
 template <>
 InputParameters
@@ -25,6 +26,7 @@ validParams<CFLDT>()
                                 "Maximum sqrt(Ra)");
   params.addParam<Real>("dt", "Initial value of dt");
   params.addParam<Real>("cfl", 1, "Desired CFL value.");
+  params.addParam<Real>("activate_time", "Desired time to start CFLDT");
   params.addParam<Real>("factor", 0, "Add a factor to the supplied postprocessor value.");
   return params;
 }
@@ -38,6 +40,7 @@ CFLDT::CFLDT(const InputParameters & parameters)
     _initial_dt(_has_initial_dt ? getParam<Real>("dt") : 0.),
     //_Ra(getMaterialProperty<Real>("rayleigh_material")),
     _cfl_num(getParam<Real>("cfl")),
+    _activate_time(getParam<Real>("activate_time")),
     _factor(getParam<Real>("factor"))
 {
 }
@@ -54,5 +57,8 @@ CFLDT::computeInitialDT()
 Real
 CFLDT::computeDT()
 {
-  return _cfl_num / _max_Ra * _pps_value + _factor;
+  if (_time < _activate_time)
+    return _initial_dt;
+  else
+    return _cfl_num / _max_Ra * _pps_value + _factor;
 }
