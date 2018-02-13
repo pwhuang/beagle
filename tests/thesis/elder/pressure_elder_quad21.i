@@ -229,7 +229,7 @@
   #num_steps = 1000
   #dt = 2e-5
   start_time = 0
-  end_time = 1.0 #5e-2
+  end_time = 0.2 #5e-2
   l_max_its = 60
   nl_max_its = 30
   dtmin = 2e-10
@@ -248,7 +248,7 @@
     postprocessor = CFL_time_step
     dt = 2e-5
     activate_time = 2e-4
-    max_Ra = 7.746
+    max_Ra = 22.832
     cfl = 0.5
     factor = 0
   [../]
@@ -313,6 +313,7 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 5
+    interval = 10
+    execute_on = 'TIMESTEP_END FINAL'
   [../]
 []
