@@ -2,8 +2,8 @@
   type = GeneratedMesh
   dim = 2
 
-  nx = 128
-  ny = 32
+  nx = 512
+  ny = 128
 
   xmin = 0.0
   xmax = 4.0
@@ -12,7 +12,6 @@
   ymax = 1.0
 
   elem_type = QUAD4
-  uniform_refine = 3
 []
 
 [MeshModifiers]
