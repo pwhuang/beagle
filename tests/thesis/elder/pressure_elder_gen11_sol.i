@@ -11,8 +11,8 @@
   ymin = 0.0
   ymax = 1.0
 
-  elem_type = QUAD9
-  uniform_refine = 2
+  elem_type = QUAD4
+  uniform_refine = 3
 []
 
 [MeshModifiers]
@@ -39,7 +39,7 @@
 
 [Variables]
   [./pressure]
-    order = SECOND
+    order = FIRST
     family = LAGRANGE
   [../]
   [./temp]
@@ -272,7 +272,7 @@
   [./TimeStepper]
     type = CFLDT
     postprocessor = CFL_time_step
-    dt = 2e-5
+    dt = 1e-5
     activate_time = 2e-4
     max_Ra = 22.832
     cfl = 0.5
