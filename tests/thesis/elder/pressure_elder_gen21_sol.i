@@ -12,7 +12,7 @@
   ymax = 1.0
 
   elem_type = QUAD9
-  #uniform_refine = 1
+  uniform_refine = 2
 []
 
 [MeshModifiers]
@@ -41,7 +41,6 @@
   [./pressure]
     order = SECOND
     family = LAGRANGE
-    initial_condition = 0.0
   [../]
   [./temp]
     order = FIRST
@@ -78,7 +77,7 @@
 
 
 [Kernels]
-  active = 'mass diff conv euler supg_x supg_y'
+  active = 'mass diff conv euler'
   [./mass]
     type = PressureDiffusion_test
     variable = pressure
@@ -269,6 +268,16 @@
   [./TimeIntegrator]
     type = CrankNicolson
   [../]
+
+  [./TimeStepper]
+    type = CFLDT
+    postprocessor = CFL_time_step
+    dt = 2e-5
+    activate_time = 2e-4
+    max_Ra = 22.832
+    cfl = 0.5
+    factor = 0
+  [../]
 []
 
 [Postprocessors]
@@ -330,6 +339,7 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 1
+    interval = 10
+    execute_on = 'TIMESTEP_END FINAL'
   [../]
 []
