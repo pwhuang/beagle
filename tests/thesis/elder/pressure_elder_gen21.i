@@ -281,6 +281,7 @@
 []
 
 [Postprocessors]
+  active = 'Nusselt CFL_time_step'
   [./Nusselt]
     type = SideFluxAverage
     variable = temp

@@ -204,7 +204,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 'layer1'
-    function = 7
+    function = 6.5
     min = 0
     max = 0
     seed = 363192
@@ -213,12 +213,37 @@
 []
 
 [Preconditioning]
+  active = 'FSP'
   [./SMP]
     type = SMP
     full = true
     solve_type = 'NEWTON'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -pc_gamg_sym_graph'
     petsc_options_value = 'gamg hypre cp 301 true'
+  [../]
+  [./FSP]
+    type = FSP
+    full = true
+    solve_type = 'NEWTON'
+    topsplit = 'pt'
+    [./pt]
+      splitting = 'psi_1 psi_2 temp'
+    [../]
+    [./psi_1]
+      vars = 'psi_1'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gamg hypre cp 151'
+    [../]
+    [./psi_2]
+      vars = 'psi_2'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gamg hypre cp 151'
+    [../]
+    [./temp]
+      vars = 'temp'
+      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
+      petsc_options_value = 'gasm hypre cp 151'
+    [../]
   [../]
 []
 
@@ -229,7 +254,7 @@
   #dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 3.0
+  end_time = 4.0
   l_max_its = 40
   nl_max_its = 20
 
@@ -245,10 +270,12 @@
   [../]
 
   [./TimeStepper]
-    type = PostprocessorDT
+    type = CFLDT
     postprocessor = CFL_time_step
     dt = 1e-3
-    scale = 0.02
+    activate_time = 1e-2
+    max_Ra = 6.5
+    cfl = 0.5
     factor = 0
   [../]
 []
@@ -321,5 +348,6 @@
   [./out]
     type = Exodus
     interval = 200
+    execute_on = 'INITIAL TIMESTEP_END FINAL'
   [../]
 []

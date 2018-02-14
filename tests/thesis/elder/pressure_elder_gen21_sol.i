@@ -340,5 +340,6 @@
   [./out]
     type = Exodus
     interval = 10
+    execute_on = 'TIMESTEP_END FINAL'
   [../]
 []
