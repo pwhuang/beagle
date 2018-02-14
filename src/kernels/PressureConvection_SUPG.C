@@ -36,12 +36,14 @@ PressureConvection_SUPG::PressureConvection_SUPG(const InputParameters & paramet
 
 Real PressureConvection_SUPG::computeQpResidual()
 {
-  //Use the velocity of previous time step to balance the advection. Can this work???
   //RealVectorValue _advection_speed = RealVectorValue(_vel_x[_qp], _vel_y[_qp]);
   //RealVectorValue _advection_speed = RealVectorValue(-_grad_p[_qp](0), -_grad_p[_qp](1)+_Ra[_qp]*_u[_qp]);
+
+  //This is not a general form of SUPG stabilization. I only add T_t term when body_force==1.
   if (_body_force == 1)
     return -_grad_p[_qp](_component)*_grad_test[_i][_qp](_component)*tao()
-              *(_Ra[_qp]*(-_grad_p[_qp](_component)*_grad_u[_qp](_component)+_Ra[_qp]*_u[_qp]*_grad_u[_qp](_component))
+              *(_u_dot[_qp] + _Ra[_qp]*(-_grad_p[_qp](_component)*_grad_u[_qp](_component)
+                +_Ra[_qp]*_u[_qp]*_grad_u[_qp](_component))
                 -_second_u[_qp](_component,_component));
   else
     return -_grad_p[_qp](_component)*_grad_test[_i][_qp](_component)*tao()
@@ -61,7 +63,7 @@ Real PressureConvection_SUPG::computeQpJacobian()
   //RealVectorValue _advection_speed = RealVectorValue(-_grad_p[_qp](0), -_grad_p[_qp](1)+_Ra[_qp]*_u[_qp]);
   if (_body_force == 1)
     return -_grad_p[_qp](_component)*_grad_test[_i][_qp](_component)*tao()
-              *(_Ra[_qp]*(-_grad_p[_qp](_component)*_grad_phi[_j][_qp](_component)
+              *(_phi[_j][_qp] * _du_dot_du[_qp] + _Ra[_qp]*(-_grad_p[_qp](_component)*_grad_phi[_j][_qp](_component)
               +_Ra[_qp]*_phi[_j][_qp]*_grad_u[_qp](_component)
               +_Ra[_qp]*_u[_qp]*_grad_phi[_j][_qp](_component))
               -_second_phi[_j][_qp](_component,_component));
@@ -83,8 +85,20 @@ Real PressureConvection_SUPG::computeQpOffDiagJacobian(unsigned jvar)
   //RealVectorValue _advection_speed = RealVectorValue(_vel_x[_qp], _vel_y[_qp]);
   //RealVectorValue _advection_speed = RealVectorValue(-_grad_p[_qp](0), -_grad_p[_qp](1)+_Ra[_qp]*_u[_qp]);
   if (jvar == _grad_p_var_num)
-    return -2.0*_grad_p[_qp](_component)*_grad_test[_i][_qp](_component)*tao()
-              *(_Ra[_qp]*(-_grad_phi[_j][_qp](_component)*_grad_u[_qp](_component)));
+    //return -2.0*_grad_p[_qp](_component)*_grad_test[_i][_qp](_component)*tao()
+    //          *(_Ra[_qp]*(-_grad_phi[_j][_qp](_component)*_grad_u[_qp](_component)));
+    return -_grad_phi[_j][_qp](_component)*_grad_test[_i][_qp](_component)*tao()
+              *(_u_dot[_qp] + _Ra[_qp]*(-_grad_p[_qp](_component)*_grad_u[_qp](_component)
+                +_Ra[_qp]*_u[_qp]*_grad_u[_qp](_component))
+                -_second_u[_qp](_component,_component))
+
+              -_grad_p[_qp](_component)*_grad_test[_i][_qp](_component)*tao()
+              *( _Ra[_qp]*(-_grad_phi[_j][_qp](_component)*_grad_u[_qp](_component)))
+
+              -_grad_p[_qp](_component)*_grad_test[_i][_qp](_component)*tao_jacobian()
+              *(_u_dot[_qp] + _Ra[_qp]*(-_grad_p[_qp](_component)*_grad_u[_qp](_component)
+              +_Ra[_qp]*_u[_qp]*_grad_u[_qp](_component))
+              -_second_u[_qp](_component,_component));
   else
     return 0;
 
@@ -111,11 +125,24 @@ Real PressureConvection_SUPG::tao()
   */
   Real _advection;
   if (_body_force==1)
-    _advection = -_grad_p[_qp](_component) + _Ra[_qp]*_u[_qp];
+    _advection = -_Ra[_qp]*_grad_p[_qp](_component) + _Ra[_qp]*_Ra[_qp]*_u[_qp];
   else
-    _advection = -_grad_p[_qp](_component);
+    _advection = -_Ra[_qp]*_grad_p[_qp](_component);
 
-  return 1/(2/_dt + 2*_advection/_current_elem->hmax()
-            + 4/_current_elem->hmax()/_current_elem->hmax());
+  return 1.0/(2.0/_dt + 2.0*_advection/_current_elem->hmax()
+            + 4.0/_current_elem->hmax()/_current_elem->hmax());
+
+}
+
+Real PressureConvection_SUPG::tao_jacobian()
+{
+  Real _advection;
+  if (_body_force==1)
+    _advection = -_Ra[_qp]*_grad_phi[_j][_qp](_component) + _Ra[_qp]*_Ra[_qp]*_u[_qp];
+  else
+    _advection = -_Ra[_qp]*_grad_phi[_j][_qp](_component);
+
+  return 1.0/(2.0/_dt + 2.0*_advection/_current_elem->hmax()
+            + 4.0/_current_elem->hmax()/_current_elem->hmax());
 
 }

@@ -35,6 +35,7 @@ protected:
   virtual Real computeQpOffDiagJacobian(unsigned jvar) override;
 
   virtual Real tao();
+  virtual Real tao_jacobian();
 
 private:
   const VariableValue & _vel_x;
