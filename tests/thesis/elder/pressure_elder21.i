@@ -59,7 +59,7 @@
 
 
 [Kernels]
-  active = 'mass diff conv euler supg_y'
+  active = 'mass diff conv euler supg_x supg_y'
   [./mass]
     type = PressureDiffusion_test
     variable = pressure
