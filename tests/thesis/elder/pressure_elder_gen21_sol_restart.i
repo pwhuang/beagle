@@ -238,7 +238,7 @@
   #solve_type = 'PJFNK'
   #num_steps = 1000
   #dt = 2e-5
-  start_time = 0
+  start_time = 0.009983108461
   end_time = 1e-2 #5e-2
   l_max_its = 60
   nl_max_its = 30

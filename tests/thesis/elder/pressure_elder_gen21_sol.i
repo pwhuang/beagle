@@ -342,4 +342,8 @@
     interval = 10
     execute_on = 'TIMESTEP_END FINAL'
   [../]
+  [./final]
+    type = Exodus
+    execute_on = 'FINAL'
+  [../]
 []
