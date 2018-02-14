@@ -255,7 +255,7 @@
   #dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 4.0
+  end_time = 15.0
   l_max_its = 40
   nl_max_its = 20
 
@@ -350,5 +350,10 @@
     type = Exodus
     interval = 200
     execute_on = 'INITIAL TIMESTEP_END FINAL'
+  [../]
+
+  [./final]
+    type = Exodus
+    execute_on = 'FINAL'
   [../]
 []
