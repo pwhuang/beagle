@@ -1,5 +1,6 @@
 [Mesh]
-  file = '../../mesh/elder_cl2-5_quad.msh'
+file = '../../mesh/elder_cl2-7_quad.msh'
+  
 []
 
 [Variables]
@@ -8,7 +9,7 @@
     family = LAGRANGE
   [../]
   [./temp]
-    order = SECOND
+    order = FIRST
     family = LAGRANGE
     initial_condition = 0
   [../]
@@ -200,11 +201,12 @@
   [./TimeIntegrator]
     type = CrankNicolson
   [../]
+
   [./TimeStepper]
     type = CFLDT
     postprocessor = CFL_time_step
-    dt = 2e-5
-    activate_time = 4e-4
+    dt = 2e-4
+    activate_time = 2e-3
     max_Ra = 22.832
     cfl = 0.5
     factor = 0

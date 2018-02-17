@@ -1,5 +1,5 @@
 [Mesh]
-  file = '../../mesh/elder_cl3e-2_quad.msh'
+  
 []
 
 [Variables]
@@ -274,5 +274,10 @@
   [./out]
     type = Exodus
     interval = 10
+  [../]
+
+  [./final]
+    type = Exodus
+    execute_on = 'FINAL'
   [../]
 []
