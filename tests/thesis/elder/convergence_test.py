@@ -21,19 +21,18 @@ else:
     "file = '../../mesh/elder_cl2-7.msh'"
     ]
 
-file_to_write = file_name + '_conv.i'
-
-for string in string_to_write:
+for i, string in enumerate(string_to_write):
     f = open(file_name + '.i', "r")
     contents = f.readlines()
     f.close()
 
     contents.insert(1, string + '\n')
 
+    file_to_write = file_name + '_conv' + str(i) + '.i'
     f = open(file_to_write, "w")
     written_contents = "".join(contents)
     f.write(written_contents)
     f.close()
 
-    cmd = "mpirun -n 48 $BEAGLE_DIR/beagle-opt -i " + file_to_write
+    cmd = "srun -n 48 $BEAGLE_DIR/beagle-opt -i " + file_to_write
     returned_value = subprocess.call(cmd, shell=True)
