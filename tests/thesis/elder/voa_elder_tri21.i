@@ -97,6 +97,8 @@
     boundary = 'top bottom_half bottom_out'
     #boundary = 'top bottom'
     value = 0
+  [../]
+  
   [./top_temp]
     type = DirichletBC
     variable = temp
