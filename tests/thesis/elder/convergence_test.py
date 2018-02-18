@@ -1,8 +1,7 @@
-import numpy as np
 import subprocess
 import sys
 
-sys_arg = np.array(sys.argv) #nx, nz
+sys_arg = sys.argv #nx, nz
 
 file_name = sys_arg[1]
 mesh_type = sys_arg[2]

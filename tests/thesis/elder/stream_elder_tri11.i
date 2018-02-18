@@ -1,5 +1,5 @@
 [Mesh]
-  file = '../../mesh/elder_cl3e-2.msh'
+  
 []
 
 [Variables]
