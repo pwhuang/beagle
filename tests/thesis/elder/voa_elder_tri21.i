@@ -97,8 +97,6 @@
     boundary = 'top bottom_half bottom_out'
     #boundary = 'top bottom'
     value = 0
-  [../]
-
   [./top_temp]
     type = DirichletBC
     variable = temp
@@ -223,8 +221,8 @@
   [./TimeStepper]
     type = CFLDT
     postprocessor = CFL_time_step
-    dt = 2e-4
-    activate_time = 2e-3
+    dt = 1e-5
+    activate_time = 1e-4
     max_Ra = 22.832
     cfl = 0.5
     factor = 0
@@ -298,5 +296,10 @@
   [./out]
     type = Exodus
     interval = 10
+  [../]
+
+  [./final]
+    type = Exodus
+    execute_on = 'FINAL'
   [../]
 []

@@ -205,8 +205,8 @@
   [./TimeStepper]
     type = CFLDT
     postprocessor = CFL_time_step
-    dt = 2e-4
-    activate_time = 2e-3
+    dt = 1e-5
+    activate_time = 1e-4
     max_Ra = 22.832
     cfl = 0.5
     factor = 0
