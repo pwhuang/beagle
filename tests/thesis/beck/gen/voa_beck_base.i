@@ -253,7 +253,7 @@
   #dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 5.0
+  end_time = 15.0
   l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true
@@ -263,10 +263,12 @@
   nl_abs_tol = 1e-12
 
   [./TimeStepper]
-    type = PostprocessorDT
+    type = CFLDT
     postprocessor = CFL_time_step
     dt = 1e-3
-    scale = 0.02
+    activate_time = 1e-2
+    max_Ra = 6.5
+    cfl = 0.5
     factor = 0
   [../]
 
