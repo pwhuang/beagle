@@ -4,7 +4,7 @@ import subprocess
 import sys
 import time
 
-sys_arg = np.array(sys.argv) #total number of nodes, batch size
+sys_arg = np.array(sys.argv) #input_file, total number of nodes, batch size
 
 input_file = sys_arg[1]
 nodes = int(sys_arg[2])
@@ -13,7 +13,7 @@ batch_size = int(sys_arg[3])
 cl = 0.05
 
 
-for i in range(np.ceil(nodes/batch_size)):
+for i in range(np.ceil([nodes/batch_size])[0]):
     start_point = int(i*batch_size)
 
     if start_point+batch_size > nodes:
