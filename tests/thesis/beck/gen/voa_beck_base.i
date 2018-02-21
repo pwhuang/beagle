@@ -197,7 +197,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 0
-    function = 6.5 #Ra = 40.25
+    function = 6.5 #Ra = 42.25
     min = 0
     max = 0
     seed = 363192

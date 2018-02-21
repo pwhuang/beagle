@@ -22,13 +22,13 @@ for i in range(math.ceil(nodes/batch_size)):
 
     string_to_write = 'python generate_file.py ' + input_file + ' ' + str(start_point) + ' ' + str(batch_size)
 
-    f = open("~/job/beck_gen_base.j", "r")
+    f = open("/homea/jhpc52/jhpc5202/job/beck_gen_base.j", "r")
     contents = f.readlines()
     f.close()
 
     contents.insert(15, string_to_write)
 
-    file_to_write = "~/job/beck_gen.j"
+    file_to_write = "/homea/jhpc52/jhpc5202/job/beck_gen.j"
     f = open(file_to_write, "w")
     contents = "".join(contents)
     f.write(contents)
