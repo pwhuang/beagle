@@ -34,7 +34,7 @@ for i in range(math.ceil(nodes/batch_size)):
     f.write(contents)
     f.close()
 
-    time.sleep(1)
+    time.sleep(0.5)
 
     cmd = "sbatch ~/job/beck_gen.j"
     returned_value = subprocess.call(cmd, shell=True)
