@@ -1,4 +1,5 @@
 import numpy as np
+import math
 import pandas as pd
 import subprocess
 import sys
@@ -13,7 +14,7 @@ batch_size = int(sys_arg[3])
 cl = 0.05
 
 
-for i in range(np.ceil([nodes/batch_size])[0]):
+for i in range(math.ceil(nodes/batch_size)):
     start_point = int(i*batch_size)
 
     if start_point+batch_size > nodes:
