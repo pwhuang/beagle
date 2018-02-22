@@ -253,7 +253,7 @@
   #dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 2.5
+  end_time = 1.0
   l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true
@@ -350,7 +350,7 @@
   csv = true
   [./out]
     type = Exodus
-    #interval = 200
-    execute_on = 'FINAL'
+    interval = 10
+    execute_on = 'timestep_end FINAL'
   [../]
 []
