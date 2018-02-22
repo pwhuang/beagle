@@ -253,7 +253,7 @@
   #dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 2.5
+  end_time = 0.8
   l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true
@@ -265,8 +265,8 @@
   [./TimeStepper]
     type = CFLDT
     postprocessor = CFL_time_step
-    dt = 1e-5
-    activate_time = 2e-4
+    dt = 1e-4
+    activate_time = 2e-3
     max_Ra = 14
     cfl = 0.5
     factor = 0

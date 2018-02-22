@@ -253,7 +253,7 @@
   #dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 1.0
+  end_time = 0.5
   l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true
@@ -266,7 +266,7 @@
     type = CFLDT
     postprocessor = CFL_time_step
     dt = 1e-5
-    activate_time = 2e-4
+    activate_time = 1e-3
     max_Ra = 20
     cfl = 0.5
     factor = 0
