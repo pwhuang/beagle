@@ -41,36 +41,11 @@
   [../]
   [./CFL]
     order = CONSTANT
-    family = MONOMIAL
+    family = MONOMIALb.append(pd.read_csv('feb19/voa_beck_gen45_40_out.csv'))
   [../]
   [./entropy]
     order = CONSTANT
     family = MONOMIAL
-  [../]
-[]
-
-[Functions]
-  [./ic_func]
-    type = ParsedFunction
-    value = '1.0-y'
-  [../]
-[]
-
-[ICs]
-  active = 'mat_2'
-  [./mat_1]
-    type = FunctionIC
-    variable = temp
-    function = ic_func
-  [../]
-
-  [./mat_2]
-    type = FunctionRandomIC
-    variable = temp
-    function = ic_func
-    min = -1e-2
-    max = 1e-2
-    seed = 52468
   [../]
 []
 
@@ -248,7 +223,7 @@
 [Executioner]
   type = Transient
   start_time = 1.5
-  end_time = 3.0
+  end_time = 6.0
   l_max_its = 50
   nl_max_its = 30
   nl_rel_tol = 1e-10
