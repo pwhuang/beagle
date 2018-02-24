@@ -11,6 +11,7 @@ input_file = sys_arg[1]
 start = int(sys_arg[2])
 nodes = int(sys_arg[3])
 batch_size = int(sys_arg[4])
+submit_type = sys_arg[5]
 
 cl = 0.05
 
@@ -20,7 +21,13 @@ for i in range(math.ceil((nodes-start)/batch_size)):
     if start_point+batch_size > nodes:
         batch_size = int(nodes - start_point)
 
-    string_to_write = 'python generate_file.py ' + input_file + ' ' + str(start_point) + ' ' + str(batch_size)
+    if submit_type=='new':
+        string_to_write = 'python generate_file.py ' + input_file + ' ' + str(start_point) + ' ' + str(batch_size)
+    elif submit_type=='restart':
+        string_to_write = 'python restart.py ' + input_file + ' ' + str(start_point) + ' ' + str(batch_size)
+    else:
+        print('Please use "new" or "restart" for submission type!')
+        break
 
     f = open("/homea/jhpc52/jhpc5202/job/beck_gen_base.j", "r")
     contents = f.readlines()
