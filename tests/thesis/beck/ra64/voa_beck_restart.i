@@ -41,7 +41,7 @@
   [../]
   [./CFL]
     order = CONSTANT
-    family = MONOMIALb.append(pd.read_csv('feb19/voa_beck_gen45_40_out.csv'))
+    family = MONOMIAL
   [../]
   [./entropy]
     order = CONSTANT
