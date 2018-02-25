@@ -14,7 +14,7 @@ batch_size = int(sys_arg[4])
 
 cl = 0.05
 
-for i in range(math.ceil(nodes-start)/batch_size)):
+for i in range(math.ceil((nodes-start)/batch_size)):
     start_point = int(i*batch_size) + start
 
     if start_point+batch_size > nodes:
