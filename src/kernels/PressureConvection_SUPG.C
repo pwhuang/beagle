@@ -41,12 +41,12 @@ Real PressureConvection_SUPG::computeQpResidual()
 
   //This is not a general form of SUPG stabilization. I only add T_t term when body_force==1.
   if (_body_force == 1)
-    return -_grad_p[_qp](_component)*_grad_test[_i][_qp](_component)*tao()
+    return -0.5*_grad_p[_qp](_component)*_grad_test[_i][_qp](_component)*tao()
               *(_u_dot[_qp] + _Ra[_qp]*(-_grad_p[_qp](_component)*_grad_u[_qp](_component)
                 +_Ra[_qp]*_u[_qp]*_grad_u[_qp](_component))
                 -_second_u[_qp](_component,_component));
   else
-    return -_grad_p[_qp](_component)*_grad_test[_i][_qp](_component)*tao()
+    return -0.5*_grad_p[_qp](_component)*_grad_test[_i][_qp](_component)*tao()
               *(_Ra[_qp]*(-_grad_p[_qp](_component)*_grad_u[_qp](_component))
                 -_second_u[_qp](_component,_component));
 
@@ -62,13 +62,13 @@ Real PressureConvection_SUPG::computeQpJacobian()
   //RealVectorValue _advection_speed = RealVectorValue(_vel_x[_qp], _vel_y[_qp]);
   //RealVectorValue _advection_speed = RealVectorValue(-_grad_p[_qp](0), -_grad_p[_qp](1)+_Ra[_qp]*_u[_qp]);
   if (_body_force == 1)
-    return -_grad_p[_qp](_component)*_grad_test[_i][_qp](_component)*tao()
+    return -0.5*_grad_p[_qp](_component)*_grad_test[_i][_qp](_component)*tao()
               *(_phi[_j][_qp] * _du_dot_du[_qp] + _Ra[_qp]*(-_grad_p[_qp](_component)*_grad_phi[_j][_qp](_component)
               +_Ra[_qp]*_phi[_j][_qp]*_grad_u[_qp](_component)
               +_Ra[_qp]*_u[_qp]*_grad_phi[_j][_qp](_component))
               -_second_phi[_j][_qp](_component,_component));
   else
-    return -_grad_p[_qp](_component)*_grad_test[_i][_qp](_component)*tao()
+    return -0.5*_grad_p[_qp](_component)*_grad_test[_i][_qp](_component)*tao()
               *(_Ra[_qp]*(-_grad_p[_qp](_component)*_grad_phi[_j][_qp](_component))
               -_second_phi[_j][_qp](_component,_component));
   /*
@@ -87,15 +87,15 @@ Real PressureConvection_SUPG::computeQpOffDiagJacobian(unsigned jvar)
   if (jvar == _grad_p_var_num)
     //return -2.0*_grad_p[_qp](_component)*_grad_test[_i][_qp](_component)*tao()
     //          *(_Ra[_qp]*(-_grad_phi[_j][_qp](_component)*_grad_u[_qp](_component)));
-    return -_grad_phi[_j][_qp](_component)*_grad_test[_i][_qp](_component)*tao()
+    return -0.5*_grad_phi[_j][_qp](_component)*_grad_test[_i][_qp](_component)*tao()
               *(_u_dot[_qp] + _Ra[_qp]*(-_grad_p[_qp](_component)*_grad_u[_qp](_component)
                 +_Ra[_qp]*_u[_qp]*_grad_u[_qp](_component))
                 -_second_u[_qp](_component,_component))
 
-              -_grad_p[_qp](_component)*_grad_test[_i][_qp](_component)*tao()
+              -0.5*_grad_p[_qp](_component)*_grad_test[_i][_qp](_component)*tao()
               *( _Ra[_qp]*(-_grad_phi[_j][_qp](_component)*_grad_u[_qp](_component)))
 
-              -_grad_p[_qp](_component)*_grad_test[_i][_qp](_component)*tao_jacobian()
+              -0.5*_grad_p[_qp](_component)*_grad_test[_i][_qp](_component)*tao_jacobian()
               *(_u_dot[_qp] + _Ra[_qp]*(-_grad_p[_qp](_component)*_grad_u[_qp](_component)
               +_Ra[_qp]*_u[_qp]*_grad_u[_qp](_component))
               -_second_u[_qp](_component,_component));
