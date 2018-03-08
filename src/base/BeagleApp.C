@@ -49,6 +49,7 @@
 #include "CellPeclet.h"
 #include "CellCFL.h"
 #include "EntropyProduction.h"
+#include "EntropyProductionTherm.h"
 #include "AuxPerturb.h"
 
 //Materials
@@ -137,6 +138,7 @@ BeagleApp::registerObjects(Factory & factory)
     registerAux(CellPeclet);
     registerAux(CellCFL);
     registerAux(EntropyProduction);
+    registerAux(EntropyProductionTherm);
     registerAux(AuxPerturb);
     registerMaterial(PorousMaterial);
     registerMaterial(RayleighMaterial);

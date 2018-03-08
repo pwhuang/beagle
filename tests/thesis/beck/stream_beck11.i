@@ -45,6 +45,10 @@
     order = CONSTANT
     family = MONOMIAL
   [../]
+  [./entropy_therm]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
 []
 
 [Functions]
@@ -168,6 +172,12 @@
     cf = 4184
     d = 150
   [../]
+
+  [./entropy_therm]
+    type = EntropyProductionTherm
+    variable = entropy_therm
+    temp = temp
+  [../]
 []
 
 [BCs]
@@ -250,10 +260,7 @@
 
 [Executioner]
   type = Transient
-  #solve_type = 'JFNK'
-  #num_steps = 10000
-  #dt = 1e-5
-  #dtmin = 0.001
+
   start_time = 0
   end_time = 15.0
   l_max_its = 40
@@ -261,10 +268,6 @@
 
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-12
-
-  #trans_ss_check = false
-  #ss_check_tol = 1e-06
-  #ss_tmin = 100
 
   [./TimeIntegrator]
     type = CrankNicolson
@@ -334,6 +337,11 @@
   [./N_S]
     type = ElementAverageValue
     variable = entropy
+  [../]
+
+  [./N_S_therm]
+    type = ElementAverageValue
+    variable = entropy_therm
   [../]
 
   [./res]

@@ -45,6 +45,10 @@
     order = CONSTANT
     family = MONOMIAL
   [../]
+  [./entropy_therm]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
 []
 
 [Functions]
@@ -167,6 +171,12 @@
     alpha = 1.6163e-4
     cf = 4184
     d = 150
+  [../]
+
+  [./entropy_therm]
+    type = EntropyProductionTherm
+    variable = entropy_therm
+    temp = temp
   [../]
 []
 
@@ -334,6 +344,11 @@
   [./N_S]
     type = ElementAverageValue
     variable = entropy
+  [../]
+
+  [./N_S_therm]
+    type = ElementAverageValue
+    variable = entropy_therm
   [../]
 
   [./res]
