@@ -3,17 +3,17 @@
   dim = 3
 
   ny = 20
-  nx = 20
-  nz = 10
+  nx = 30
+  nz = 20
 
   ymin = 0.0
   ymax = 1.0
 
   xmin = 0.0
-  xmax = 1.0
+  xmax = 1.5
 
   zmin = 0.0
-  zmax = 0.5
+  zmax = 1.0
 
   elem_type = HEX27
 []
