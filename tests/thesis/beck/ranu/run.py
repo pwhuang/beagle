@@ -21,7 +21,7 @@ for i in range(math.ceil((nodes-start)/batch_size)):
     if start_point+batch_size > nodes:
         batch_size = int(nodes - start_point)
 
-    string_to_write = 'python generate_file.py ' + input_ifile + ' ' + input_file + ' ' + str(start_point) + ' ' + str(batch_size)
+    string_to_write = 'python generate_file.py ' + input_ifile + ' ' + input_csv + ' ' + str(start_point) + ' ' + str(batch_size)
 
     f = open("/homea/jhpc52/jhpc5202/job/beck_gen_base.j", "r")
     contents = f.readlines()
