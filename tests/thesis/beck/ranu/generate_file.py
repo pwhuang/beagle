@@ -32,5 +32,5 @@ for ra in ra_full:
     f.write(write_content)
     f.close()
 
-    #cmd = "srun -n 48 $BEAGLE_DIR/beagle-opt -i " + file_to_write
-    #returned_value = subprocess.call(cmd, shell=True)
+    cmd = "srun -n 48 $BEAGLE_DIR/beagle-opt -i " + file_to_write
+    returned_value = subprocess.call(cmd, shell=True)
