@@ -353,9 +353,13 @@
 [Outputs]
   execute_on = 'timestep_end'
   csv = true
+  [./final]
+    type = Exodus
+    execute_on = 'FINAL'
+  [../]
   [./out]
     type = Exodus
-    #interval = 200
-    execute_on = 'FINAL'
+    interval = 100
+    execute_on = 'timestep_end'
   [../]
 []
