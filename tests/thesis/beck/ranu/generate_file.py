@@ -17,7 +17,7 @@ for ra in ra_full:
     contents = f.readlines()
     f.close()
 
-    endtime = np.around(600/(ra*ra) - 1.0, 1)
+    endtime = np.around(700/(ra*ra) - 1.5, 1)
 
     write_content = []
     for row in contents:
