@@ -171,7 +171,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 0
-    function = 8 #Ra = 64
+    function = 10 #Ra = 100
     min = 0
     max = 0
     seed = 363192
@@ -222,8 +222,8 @@
 
 [Executioner]
   type = Transient
-  start_time = 9.0
-  end_time = 13.0
+  start_time = 6.0
+  end_time = 10.0
   l_max_its = 50
   nl_max_its = 30
   nl_rel_tol = 1e-10
@@ -234,7 +234,7 @@
     postprocessor = CFL_time_step
     dt = 1e-5
     activate_time = 1e-5
-    max_Ra = 8
+    max_Ra = 10
     cfl = 0.5
     factor = 0
   [../]
