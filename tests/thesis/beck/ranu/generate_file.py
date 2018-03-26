@@ -17,7 +17,7 @@ for ra in ra_full:
     contents = f.readlines()
     f.close()
 
-    endtime = np.around(700/(ra*ra) - 1.5 + 3.5, 1) #The + 3.5 is only for some nodes of long2 test
+    endtime = np.around(700/(ra*ra) - 1.5, 1) #The + 3.5 is only for some nodes of long2 test
 
     write_content = []
     for row in contents:
