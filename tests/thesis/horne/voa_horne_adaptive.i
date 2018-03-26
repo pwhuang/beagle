@@ -227,11 +227,11 @@
   type = Transient
   #solve_type = 'JFNK'
   #abort_on_solve_fail = true
-  num_steps = 20000
+  #num_steps = 20000
   #dt = 0.001
   #dtmin = 0.0001
   start_time = 0
-  #end_time = 20.0
+  end_time = 3.0
   l_max_its = 100
   nl_max_its = 50
   trans_ss_check = false
@@ -247,7 +247,7 @@
     dt = 1e-7
     activate_time = 1e-7
     max_Ra = 31.62
-    cfl = 0.5
+    cfl = 0.2
     factor = 0
   [../]
 
@@ -269,8 +269,8 @@
   [./Markers]
     [./errorfrac]
       type = ErrorToleranceMarker
-      refine = 5
-      coarsen = 2
+      refine = 8
+      coarsen = 3
       indicator = error
     [../]
   [../]
@@ -339,6 +339,6 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 10
+    interval = 20
   [../]
 []

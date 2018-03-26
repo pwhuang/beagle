@@ -211,11 +211,11 @@
 [Executioner]
   type = Transient
   #solve_type = 'PJFNK'
-  num_steps = 20000
+  #num_steps = 20000
   #dt = 0.002
   #dtmin = 0.001
   start_time = 0
-  #end_time = 10.0
+  end_time = 3.0
   l_max_its = 40
   nl_max_its = 20
 
@@ -232,7 +232,7 @@
     dt = 1e-5
     activate_time = 1e-5
     max_Ra = 31.62
-    cfl = 0.5
+    cfl = 0.2
     factor = 0
   [../]
 
@@ -254,8 +254,8 @@
   [./Markers]
     [./errorfrac]
       type = ErrorToleranceMarker
-      refine = 5
-      coarsen = 2
+      refine = 8
+      coarsen = 3
       indicator = error
     [../]
   [../]
@@ -319,6 +319,6 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 10
+    interval = 20
   [../]
 []
