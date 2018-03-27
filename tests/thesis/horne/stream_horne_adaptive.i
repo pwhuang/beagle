@@ -215,7 +215,7 @@
   #dt = 0.002
   #dtmin = 0.001
   start_time = 0
-  end_time = 3.0
+  end_time = 2.0
   l_max_its = 40
   nl_max_its = 20
 
@@ -254,8 +254,8 @@
   [./Markers]
     [./errorfrac]
       type = ErrorToleranceMarker
-      refine = 8
-      coarsen = 3
+      refine = 5
+      coarsen = 2
       indicator = error
     [../]
   [../]
