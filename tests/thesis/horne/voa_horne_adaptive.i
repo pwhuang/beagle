@@ -269,8 +269,8 @@
   [./Markers]
     [./errorfrac]
       type = ErrorToleranceMarker
-      refine = 8
-      coarsen = 3
+      refine = 2
+      coarsen = 0.7
       indicator = error
     [../]
   [../]
