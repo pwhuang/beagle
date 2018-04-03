@@ -231,12 +231,12 @@
     dt = 1e-7
     activate_time = 1e-7
     max_Ra = 31.62
-    cfl = 0.2
+    cfl = 0.5
     factor = 0
   [../]
 
   [./TimeIntegrator]
-    type = CrankNicolson
+    type = ExplicitEuler #CrankNicolson
   [../]
 []
 
