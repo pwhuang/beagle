@@ -215,7 +215,7 @@
   #dt = 0.001
   #dtmin = 0.0001
   start_time = 0
-  end_time = 0.5
+  end_time = 0.25
   l_max_its = 100
   nl_max_its = 50
   trans_ss_check = false
