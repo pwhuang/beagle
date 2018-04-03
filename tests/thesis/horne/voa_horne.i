@@ -1,6 +1,6 @@
 [Mesh]
   file = '../../mesh/horne.msh'
-  second_order = true
+  #second_order = true
 []
 
 [Variables]
@@ -231,7 +231,7 @@
     dt = 1e-7
     activate_time = 1e-7
     max_Ra = 31.62
-    cfl = 0.5
+    cfl = 0.2
     factor = 0
   [../]
 
