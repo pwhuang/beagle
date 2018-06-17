@@ -10,7 +10,7 @@ sys_arg = np.array(sys.argv) #cubes_to_compute
 cubes_to_compute = int(sys_arg[1])
 
 for seed in range(cubes_to_compute):
-    string_to_write = 'python generate_file.py ' + seed
+    string_to_write = 'python generate_file.py ' + str(seed)
 
     f = open("/homea/jhpc52/jhpc5202/job/beck_gen_base.j", "r")
     contents = f.readlines()
