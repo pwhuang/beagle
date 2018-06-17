@@ -78,7 +78,7 @@
     min = -1e-2
     max = 1e-2
     #WRITE_HERE!!!
-    seed = 0
+    
   [../]
 []
 
