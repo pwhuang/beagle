@@ -78,7 +78,7 @@
     min = -1e-2
     max = 1e-2
     #WRITE_HERE!!!
-    
+
   [../]
 []
 
@@ -274,7 +274,7 @@
     postprocessor = CFL_time_step
     dt = 1e-3
     activate_time = 1e-2
-    max_Ra = 6.5
+    max_Ra = 8
     cfl = 0.5
     factor = 0
   [../]

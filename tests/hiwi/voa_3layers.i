@@ -122,7 +122,7 @@
   [./no_flow_1]
     type =  DirichletBC
     variable = vel_x
-    boundary = 'left right top bottom front back'
+    boundary = 'top'
     #boundary = 'front back left right top bottom'
     value = 0
   [../]
@@ -130,7 +130,7 @@
   [./no_flow_2]
     type = DirichletBC
     variable = vel_y
-    boundary = 'top bottom left right front back'
+    boundary = 'top bottom'
     #boundary = 'front back left right top bottom'
     value = 0
   [../]
@@ -138,7 +138,7 @@
   [./no_flow_3]
     type = DirichletBC
     variable = vel_z
-    boundary = 'front back left right top bottom'
+    boundary = 'top'
     #boundary = 'front back left right top bottom'
     value = 0
   [../]
@@ -151,7 +151,7 @@
   [../]
 
   [./bottom_temp]
-    type = DirichletBC
+    type = NeumannBC
     variable = temp
     boundary = 'bottom'
     value = 1.0
@@ -198,7 +198,7 @@
   [./layer1]
     type = RayleighMaterial
     block = 'top_layer'
-    function = 0 #6.5
+    function = 4 #6.5
     min = 0
     max = 0
     seed = 363192
@@ -208,7 +208,7 @@
   [./layer2]
     type = RayleighMaterial
     block = 'mid_layer'
-    function = 10 #6.5
+    function = 16 #6.5
     min = 0
     max = 0
     seed = 363192
@@ -274,7 +274,7 @@
   #dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 50.0
+  end_time = 20.0
   l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true
@@ -288,7 +288,7 @@
     postprocessor = CFL_time_step
     dt = 1e-3
     activate_time = 1e-2
-    max_Ra = 10
+    max_Ra = 16
     cfl = 0.5
     factor = 0
   [../]
@@ -376,7 +376,7 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 1
+    interval = 50
     execute_on = 'INITIAL TIMESTEP_END FINAL'
   [../]
 
