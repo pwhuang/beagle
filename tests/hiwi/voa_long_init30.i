@@ -1,7 +1,22 @@
 [Mesh]
-  file = 'three_layers.msh'
-  #uniform_refine = 1
-  second_order = true
+  type = GeneratedMesh
+  dim = 3
+
+
+  ny = 20
+  ymin = 0.0
+  ymax = 1.0
+
+  zmin = 0.0
+  xmin = 0.0
+
+  xmax = 1.5
+  zmax = 1.0
+
+  nx = 30
+  nz = 20
+
+  elem_type = HEX27
 []
 
 [Variables]
@@ -39,16 +54,12 @@
     order = CONSTANT
     family = MONOMIAL
   [../]
-  [./entropy_therm]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
 []
 
 [Functions]
   [./ic_func]
     type = ParsedFunction
-    value = '1.0-y'
+    value = 'sin(3.14*z)*cos(2*3.14*x)'
   [../]
 []
 
@@ -66,7 +77,8 @@
     function = ic_func
     min = -1e-2
     max = 1e-2
-    seed = 52468
+    #WRITE_HERE!!!
+    seed = 363192
   [../]
 []
 
@@ -122,7 +134,7 @@
   [./no_flow_1]
     type =  DirichletBC
     variable = vel_x
-    boundary = 'top'
+    boundary = 'left right'
     #boundary = 'front back left right top bottom'
     value = 0
   [../]
@@ -138,7 +150,7 @@
   [./no_flow_3]
     type = DirichletBC
     variable = vel_z
-    boundary = 'top'
+    boundary = 'front back'
     #boundary = 'front back left right top bottom'
     value = 0
   [../]
@@ -151,7 +163,7 @@
   [../]
 
   [./bottom_temp]
-    type = NeumannBC
+    type = DirichletBC
     variable = temp
     boundary = 'bottom'
     value = 1.0
@@ -186,39 +198,13 @@
     cf = 4184
     d = 150
   [../]
-
-  [./entropy_therm]
-    type = EntropyProductionTherm
-    variable = entropy_therm
-    temp = temp
-  [../]
 []
 
 [Materials]
-  [./layer1]
+  [./ra_output]
     type = RayleighMaterial
-    block = 'top_layer'
-    function = 4 #6.5
-    min = 0
-    max = 0
-    seed = 363192
-    #outputs = exodus
-  [../]
-
-  [./layer2]
-    type = RayleighMaterial
-    block = 'mid_layer'
-    function = 10 #6.5
-    min = 0
-    max = 0
-    seed = 363192
-    #outputs = exodus
-  [../]
-
-  [./layer3]
-    type = RayleighMaterial
-    block = 'bot_layer'
-    function = 0 #6.5
+    block = 0
+    function = 8 #Ra = 64
     min = 0
     max = 0
     seed = 363192
@@ -270,11 +256,11 @@
 [Executioner]
   type = Transient
   #solve_type = PJFNK
-  #num_steps = 1
+  #num_steps = 10000
   #dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 20.0
+  end_time = 3.0
   l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true
@@ -288,7 +274,7 @@
     postprocessor = CFL_time_step
     dt = 1e-3
     activate_time = 1e-2
-    max_Ra = 10
+    max_Ra = 8
     cfl = 0.5
     factor = 0
   [../]
@@ -359,11 +345,6 @@
     variable = entropy
   [../]
 
-  [./N_S_therm]
-    type = ElementAverageValue
-    variable = entropy_therm
-  [../]
-
   [./res]
     type = Residual
     execute_on = timestep_end
@@ -374,14 +355,14 @@
 [Outputs]
   execute_on = 'timestep_end'
   csv = true
+  [./init]
+    type = Exodus
+    #interval = 200
+    execute_on = 'INITIAL'
+  [../]
   [./out]
     type = Exodus
-    interval = 50
-    execute_on = 'INITIAL TIMESTEP_END FINAL'
-  [../]
-
-  [./final]
-    type = Exodus
+    #interval = 200
     execute_on = 'FINAL'
   [../]
 []
