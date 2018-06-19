@@ -355,12 +355,12 @@
 [Outputs]
   execute_on = 'timestep_end'
   csv = true
-  [./init]
-    type = Exodus
-    #interval = 200
-    execute_on = 'INITIAL'
-  [../]
   [./out]
+    type = Exodus
+    interval = 100
+    execute_on = 'INITIAL timestep_end'
+  [../]
+  [./final]
     type = Exodus
     #interval = 200
     execute_on = 'FINAL'
