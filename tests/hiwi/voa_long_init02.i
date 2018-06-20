@@ -59,7 +59,7 @@
 [Functions]
   [./ic_func]
     type = ParsedFunction
-    value = '(sin(3.14*z)*cos(2*3.14*x)+2.0)*0.2'
+    value = '(sin(3.14*z)*cos(2*3.14*y)+2.0)*0.2'
   [../]
 []
 

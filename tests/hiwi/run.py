@@ -5,11 +5,12 @@ import subprocess
 import sys
 import time
 
-sys_arg = np.array(sys.argv) #cubes_to_compute
+sys_arg = np.array(sys.argv) #start_seed, end_seed
 
-cubes_to_compute = int(sys_arg[1])
+start_seed = int(sys_arg[1])
+end_seed = int(sys_arg[2])
 
-for seed in range(cubes_to_compute):
+for seed in range(start_seed, end_seed):
     string_to_write = 'python generate_file.py ' + str(seed)
 
     f = open("/homea/jhpc52/jhpc5202/job/beck_gen_base.j", "r")
