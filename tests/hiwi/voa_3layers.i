@@ -208,7 +208,7 @@
   [./layer2]
     type = RayleighMaterial
     block = 'mid_layer'
-    function = 10 #6.5
+    function = 15 #6.5
     min = 0
     max = 0
     seed = 363192
@@ -274,7 +274,7 @@
   #dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 20.0
+  end_time = 30.0
   l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true
@@ -288,7 +288,7 @@
     postprocessor = CFL_time_step
     dt = 1e-3
     activate_time = 1e-2
-    max_Ra = 10
+    max_Ra = 15
     cfl = 0.5
     factor = 0
   [../]
