@@ -59,7 +59,7 @@
 [Functions]
   [./ic_func]
     type = ParsedFunction
-    value = '(sin(3.14*(0.2*y+0.4))*cos(2*3.14*x)+2.0)*0.3'
+    value = 'sin(3.14*y)*cos(2*3.14*x)*0.2 + 1.0 - y'
   [../]
 []
 
@@ -260,7 +260,7 @@
   #dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 3.0
+  end_time = 2.0
   l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true
