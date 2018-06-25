@@ -59,7 +59,7 @@
 [Functions]
   [./ic_func]
     type = ParsedFunction
-    value = '(sin(3.14*y)*cos(3.14*x/1.5)+2.0)*0.2'
+    value = '(sin(3.14*(0.2*y+0.4))*cos(3.14*x/1.5)+2.0)*0.3'
   [../]
 []
 
@@ -75,8 +75,8 @@
     type = FunctionRandomIC
     variable = temp
     function = ic_func
-    min = -1e-2
-    max = 1e-2
+    min = 0
+    max = 0
     #WRITE_HERE!!!
     seed = 363192
   [../]

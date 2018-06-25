@@ -75,10 +75,10 @@
     type = FunctionRandomIC
     variable = temp
     function = ic_func
-    min = -1e-2
-    max = 1e-2
+    min = 0 #-1e-2
+    max = 1e-1 #1e-2
     #WRITE_HERE!!!
-    
+
   [../]
 []
 
