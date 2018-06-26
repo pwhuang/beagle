@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import subprocess
 import sys
+from itertools import product
 
 sys_arg = np.array(sys.argv)
 
