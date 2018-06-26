@@ -2,7 +2,6 @@
   type = GeneratedMesh
   dim = 3
 
-
   ny = 20
   ymin = 0.0
   ymax = 1.0
@@ -59,7 +58,8 @@
 [Functions]
   [./ic_func]
     type = ParsedFunction
-    value = 'sin(3.14*y)*cos(2*3.14*x)*0.15 + 1.0 - y'
+    #value = '1.0-y'
+
   [../]
 []
 
@@ -75,10 +75,9 @@
     type = FunctionRandomIC
     variable = temp
     function = ic_func
-    min = 0
-    max = 0
-    #WRITE_HERE!!!
-    seed = 363192
+    min = 0 #-1e-2
+    max = 0 #1e-2
+    seed = 0
   [../]
 []
 
@@ -204,7 +203,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 0
-    function = 8 #Ra = 64
+    function = 7 #Ra = 64
     min = 0
     max = 0
     seed = 363192
@@ -260,7 +259,7 @@
   #dt = 1e-5
   #dtmin = 0.001
   start_time = 0
-  end_time = 2.0
+  end_time = 3.0
   l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true
@@ -356,11 +355,6 @@
   execute_on = 'timestep_end'
   csv = true
   [./out]
-    type = Exodus
-    interval = 100
-    execute_on = 'INITIAL timestep_end'
-  [../]
-  [./final]
     type = Exodus
     #interval = 200
     execute_on = 'FINAL'
