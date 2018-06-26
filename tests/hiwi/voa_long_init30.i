@@ -59,16 +59,29 @@
 [Functions]
   [./ic_func]
     type = ParsedFunction
-    value = 'sin(3.14*y)*cos(2*3.14*x)*0.15 + 1.0 - y'
+    value = 'sin(3.14*y)*cos(2*3.14*x)*(0.16) + 1.0 - y'
+    #value = 'sin(3.14*y)*cos(2*3.14*x)*0.15'
+  [../]
+
+  [./ic_func_v]
+    type = ParsedFunction
+    value = 'sin(3.14*y)*cos(2*3.14*x)'
+    #value = 'sin(3.14*y)*cos(2*3.14*x)*0.15'
   [../]
 []
 
 [ICs]
-  active = 'mat_2'
+  active = 'mat_1 mat_v'
   [./mat_1]
     type = FunctionIC
     variable = temp
     function = ic_func
+  [../]
+
+  [./mat_v]
+    type = FunctionIC
+    variable = vel_y
+    function = ic_func_v
   [../]
 
   [./mat_2]
