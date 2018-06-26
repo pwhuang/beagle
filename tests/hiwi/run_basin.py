@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import subprocess
 import sys
+import time
 from itertools import product
 
 sys_arg = np.array(sys.argv)
@@ -22,16 +23,17 @@ for c, i in enumerate(product(a1, a2, a3, a4)):
     string_to_write = "value = '" + str(i[0]) + '*sin(3.14*y)*cos(3.14*z) + '
     string_to_write += str(i[1]) + '*sin(3.14*y)*cos(3.14*x/1.5)*cos(3.14*z) + '
     string_to_write += str(i[2]) + '*sin(3.14*y)*cos(2*3.14*x/1.5) + '
-    string_to_write += str(i[3]) + '*sin(3.14*y)*cos(3.14*x/1.5)'
+    string_to_write += str(i[3]) + '*sin(3.14*y)*cos(3.14*x/1.5) + '
+    string_to_write += '1.0 - y'
     string_to_write += "'\n"
 
-    f = open("~/projects/beagle/tests/hiwi/voa_basin.i", "r")
+    f = open("/homea/jhpc52/jhpc5202/projects/beagle/tests/hiwi/voa_basin.i", "r")
     contents = f.readlines()
     f.close()
 
     contents.insert(62, string_to_write)
 
-    file_to_write = "~/projects/beagle/tests/hiwi/voa_basin_" + label[c] + '.i'
+    file_to_write = "/homea/jhpc52/jhpc5202/projects/beagle/tests/hiwi/voa_basin_" + label[c] + '.i'
     f = open(file_to_write, "w")
     contents = "".join(contents)
     f.write(contents)
@@ -43,7 +45,7 @@ for c, i in enumerate(product(a1, a2, a3, a4)):
     f.close()
 
     contents.insert(14, 'cd ~/projects/beagle/tests/hiwi\n')
-    contents.insert(15, 'srun -n 48 $BEAGLE_DIR/beagle-opt -i' + file_to_write)
+    contents.insert(15, 'srun -n 48 $BEAGLE_DIR/beagle-opt -i ' + file_to_write)
 
     file_to_write = "/homea/jhpc52/jhpc5202/job/beck_gen.j"
     f = open(file_to_write, "w")
