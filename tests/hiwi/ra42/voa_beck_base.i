@@ -2,18 +2,13 @@
   type = GeneratedMesh
   dim = 3
 
+
   ny = 20
   ymin = 0.0
   ymax = 1.0
 
   zmin = 0.0
   xmin = 0.0
-
-  xmax = 1.5
-  zmax = 1.0
-
-  nx = 30
-  nz = 20
 
   elem_type = HEX27
 []
@@ -58,35 +53,34 @@
 [Functions]
   [./ic_func_T]
     type = ParsedFunction
-    #value = '1.0-y'
 
   [../]
 
   [./ic_func_u]
     type = ParsedFunction
-    #value = '1.0-y'
 
   [../]
 
   [./ic_func_v]
     type = ParsedFunction
-    #value = '1.0-y'
 
   [../]
 
   [./ic_func_w]
     type = ParsedFunction
-    #value = '1.0-y'
 
   [../]
 []
 
 [ICs]
-  active = 'mat_1 mat_u mat_v mat_w'
-  [./mat_1]
-    type = FunctionIC
+  active = 'mat_t mat_u mat_v mat_w'
+  [./mat_t]
+    type = FunctionRandomIC
     variable = temp
-    function = ic_func
+    function = ic_func_T
+    seed = 155
+    min = 0
+    max = 0
   [../]
 
   [./mat_u]
@@ -105,15 +99,6 @@
     type = FunctionIC
     variable = vel_z
     function = ic_func_w
-  [../]
-
-  [./mat_2]
-    type = FunctionRandomIC
-    variable = temp
-    function = ic_func_T
-    min = 0 #-1e-2
-    max = 0 #1e-2
-    seed = 0
   [../]
 []
 
@@ -158,11 +143,11 @@
     velocity_z = vel_z
   [../]
 
-  [./euler]
-    type = ExampleTimeDerivative
-    variable = temp
-    time_coefficient = 1.0
-  [../]
+  #[./euler]
+  #  type = ExampleTimeDerivative
+  #  variable = temp
+  #  time_coefficient = 1.0
+  #[../]
 []
 
 [BCs]
@@ -239,7 +224,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 0
-    function = 7 #Ra = 64
+    function = 6.5 #Ra = 42.25
     min = 0
     max = 0
     seed = 363192
@@ -291,32 +276,19 @@
 [Executioner]
   type = Transient
   #solve_type = PJFNK
-  #num_steps = 10000
+  num_steps = 1
   #dt = 1e-5
   #dtmin = 0.001
-  start_time = 0
-  end_time = 5.0
-  l_max_its = 50
-  nl_max_its = 30
+  abort_on_solve_fail = true
+  #start_time = 0
+  #end_time = 15.0
+  l_max_its = 100
+  nl_max_its = 50
   #trans_ss_check = true
   #ss_check_tol = 1e-06
   #ss_tmin = 30
-  nl_rel_tol = 1e-10
-  nl_abs_tol = 1e-12
-
-  [./TimeStepper]
-    type = CFLDT
-    postprocessor = CFL_time_step
-    dt = 1e-3
-    activate_time = 1e-2
-    max_Ra = 7
-    cfl = 0.5
-    factor = 0
-  [../]
-
-  [./TimeIntegrator]
-    type = CrankNicolson
-  [../]
+  #nl_rel_tol = 1e-10
+  nl_abs_tol = 1e-13
 []
 
 [Postprocessors]

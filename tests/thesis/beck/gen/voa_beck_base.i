@@ -249,9 +249,10 @@
 [Executioner]
   type = Transient
   #solve_type = PJFNK
-  #num_steps = 10000
+  #num_steps = 1
   #dt = 1e-5
   #dtmin = 0.001
+  #abort_on_solve_fail = true
   start_time = 0
   end_time = 15.0
   l_max_its = 50

@@ -2,18 +2,16 @@
   type = GeneratedMesh
   dim = 3
 
+  nx = 20
   ny = 20
+  nz = 10
   ymin = 0.0
   ymax = 1.0
 
   zmin = 0.0
   xmin = 0.0
-
-  xmax = 1.5
-  zmax = 1.0
-
-  nx = 30
-  nz = 20
+  xmax = 1.0
+  zmax = 0.5
 
   elem_type = HEX27
 []
@@ -56,64 +54,27 @@
 []
 
 [Functions]
-  [./ic_func_T]
+  [./ic_func]
     type = ParsedFunction
-    #value = '1.0-y'
-
-  [../]
-
-  [./ic_func_u]
-    type = ParsedFunction
-    #value = '1.0-y'
-
-  [../]
-
-  [./ic_func_v]
-    type = ParsedFunction
-    #value = '1.0-y'
-
-  [../]
-
-  [./ic_func_w]
-    type = ParsedFunction
-    #value = '1.0-y'
-
+    value = '1.0-y'
   [../]
 []
 
 [ICs]
-  active = 'mat_1 mat_u mat_v mat_w'
+  active = 'mat_1'
   [./mat_1]
     type = FunctionIC
     variable = temp
     function = ic_func
   [../]
 
-  [./mat_u]
-    type = FunctionIC
-    variable = vel_x
-    function = ic_func_u
-  [../]
-
-  [./mat_v]
-    type = FunctionIC
-    variable = vel_y
-    function = ic_func_v
-  [../]
-
-  [./mat_w]
-    type = FunctionIC
-    variable = vel_z
-    function = ic_func_w
-  [../]
-
   [./mat_2]
     type = FunctionRandomIC
     variable = temp
-    function = ic_func_T
-    min = 0 #-1e-2
-    max = 0 #1e-2
-    seed = 0
+    function = ic_func
+    min = -1e-2
+    max = 1e-2
+    seed = 52468
   [../]
 []
 
@@ -158,11 +119,11 @@
     velocity_z = vel_z
   [../]
 
-  [./euler]
-    type = ExampleTimeDerivative
-    variable = temp
-    time_coefficient = 1.0
-  [../]
+  #[./euler]
+  #  type = ExampleTimeDerivative
+  #  variable = temp
+  #  time_coefficient = 1.0
+  #[../]
 []
 
 [BCs]
@@ -239,7 +200,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 0
-    function = 7 #Ra = 64
+    function = 6.5 #Ra = 42.25
     min = 0
     max = 0
     seed = 363192
@@ -291,11 +252,12 @@
 [Executioner]
   type = Transient
   #solve_type = PJFNK
-  #num_steps = 10000
+  num_steps = 1
   #dt = 1e-5
   #dtmin = 0.001
-  start_time = 0
-  end_time = 5.0
+  abort_on_solve_fail = true
+  #start_time = 0
+  #end_time = 15.0
   l_max_its = 50
   nl_max_its = 30
   #trans_ss_check = true
@@ -309,7 +271,7 @@
     postprocessor = CFL_time_step
     dt = 1e-3
     activate_time = 1e-2
-    max_Ra = 7
+    max_Ra = 6.5
     cfl = 0.5
     factor = 0
   [../]
@@ -393,6 +355,6 @@
   [./out]
     type = Exodus
     #interval = 200
-    execute_on = 'INITIAL FINAL'
+    execute_on = 'FINAL'
   [../]
 []

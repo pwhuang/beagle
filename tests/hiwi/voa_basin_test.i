@@ -2,7 +2,7 @@
   type = GeneratedMesh
   dim = 3
 
-  ny = 20
+  ny = 10
   ymin = 0.0
   ymax = 1.0
 
@@ -12,8 +12,8 @@
   xmax = 1.5
   zmax = 1.0
 
-  nx = 30
-  nz = 20
+  nx = 15
+  nz = 10
 
   elem_type = HEX27
 []
@@ -58,26 +58,22 @@
 [Functions]
   [./ic_func_T]
     type = ParsedFunction
-    #value = '1.0-y'
-
+    value = '0.125*sin(3.14*y)*cos(3.14*z) + 0.125*sin(3.14*y)*cos(2*3.14*x/1.5) + 1.0 - y'
   [../]
 
   [./ic_func_u]
     type = ParsedFunction
-    #value = '1.0-y'
-
+    value = '-0.42*sin(2*3.14*x/1.5)*cos(3.14*y)'
   [../]
 
   [./ic_func_v]
     type = ParsedFunction
-    #value = '1.0-y'
-
+    value = '0.4375*cos(3.14*z)*sin(3.14*y) + 0.56*cos(2*3.14*x/1.5)*sin(3.14*y)'
   [../]
 
   [./ic_func_w]
     type = ParsedFunction
-    #value = '1.0-y'
-
+    value = '-0.4375*sin(3.14*z)*cos(3.14*y)'
   [../]
 []
 
@@ -86,7 +82,7 @@
   [./mat_1]
     type = FunctionIC
     variable = temp
-    function = ic_func
+    function = ic_func_T
   [../]
 
   [./mat_u]
@@ -158,11 +154,11 @@
     velocity_z = vel_z
   [../]
 
-  [./euler]
-    type = ExampleTimeDerivative
-    variable = temp
-    time_coefficient = 1.0
-  [../]
+  #[./euler]
+  #  type = ExampleTimeDerivative
+  #  variable = temp
+  #  time_coefficient = 1.0
+  #[../]
 []
 
 [BCs]
@@ -291,18 +287,19 @@
 [Executioner]
   type = Transient
   #solve_type = PJFNK
-  #num_steps = 10000
+  num_steps = 1
+  abort_on_solve_fail = true
   #dt = 1e-5
-  #dtmin = 0.001
+  #dtmin = 1e-5
   start_time = 0
-  end_time = 5.0
-  l_max_its = 50
+  #end_time = 5.0
+  l_max_its =  50
   nl_max_its = 30
   #trans_ss_check = true
   #ss_check_tol = 1e-06
   #ss_tmin = 30
-  nl_rel_tol = 1e-10
-  nl_abs_tol = 1e-12
+  #nl_rel_tol = 1e-10
+  nl_abs_tol = 1e-14
 
   [./TimeStepper]
     type = CFLDT
@@ -393,6 +390,6 @@
   [./out]
     type = Exodus
     #interval = 200
-    execute_on = 'INITIAL FINAL'
+    execute_on = 'INITIAL TIMESTEP_END FINAL'
   [../]
 []
