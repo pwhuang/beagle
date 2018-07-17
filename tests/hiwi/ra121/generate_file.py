@@ -64,7 +64,7 @@ for node in nodes:
     h1 = x*cl
     h2 = z*cl
 
-    pair_list = Beck_cell_predict(h1, h2, 3, Ra)
+    pair_list = Beck_cell_predict(h1, h2, 8, Ra)
 
     for pair in pair_list:
         m = pair[0]
