@@ -38,7 +38,6 @@ input_data = pd.read_csv(sys_arg[1])
 start_point = int(sys_arg[2])
 cubes_to_compute = int(sys_arg[3])
 Ra = float(sys_arg[4])
-output_csv_name = sys_arg[5]
 
 nx_s = np.array(input_data['h1'], dtype=int)
 nz_s = np.array(input_data['h2'], dtype=int)
