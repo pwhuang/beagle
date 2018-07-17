@@ -365,6 +365,6 @@
   [./out]
     type = Exodus
     #interval = 200
-    execute_on = 'INITIAL FINAL'
+    execute_on = 'FINAL'
   [../]
 []
