@@ -287,7 +287,7 @@
   #trans_ss_check = true
   #ss_check_tol = 1e-06
   #ss_tmin = 30
-  #nl_rel_tol = 1e-10
+  nl_rel_tol = 1e-10
   nl_abs_tol = 1e-13
 []
 
