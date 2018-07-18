@@ -48,7 +48,7 @@ nz = nz_s[start_point:start_point+cubes_to_compute]
 nodes = np.array([nx, nz]).T
 
 cl = 0.05
-a0 = 0.5 #The coefficient of temperature initial condition
+a0 = 1.5 #The coefficient of temperature initial condition
 
 file_names = []
 
