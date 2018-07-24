@@ -72,10 +72,10 @@ for node in nodes:
 
         denom = 1.0/(m**2/h1**2+n**2/h2**2+1)
 
-        T_init = 'value =' + "'" + str(a0) + '*sin(3.14*y)*cos(' + str(m) + '*3.14*x/' + str(h1) + ')*cos(' + str(n) + '*3.14*z/' + str(h2) + ') + 1.0-y' + "'" + '\n'
-        u_init = 'value =' + "'" + str(-a0*Ra**0.5*m/h1*denom) + '*cos(3.14*y)*sin(' + str(m) + '*3.14*x/' + str(h1) + ')*cos(' + str(n) + '*3.14*z/' + str(h2) + ')' + "'" + '\n'
-        v_init = 'value =' + "'" + str( a0*Ra**0.5*(m**2/h1**2-n**2/h2**2)*denom) + '*sin(3.14*y)*cos(' + str(m) + '*3.14*x/' + str(h1) + ')*cos(' + str(n) + '*3.14*z/' + str(h2) + ')' + "'" + '\n'
-        w_init = 'value =' + "'" + str(-a0*Ra**0.5*n/h2*denom) + '*cos(3.14*y)*cos(' + str(m) + '*3.14*x/' + str(h1) + ')*sin(' + str(n) + '*3.14*z/' + str(h2) + ')' + "'" + '\n'
+        T_init = 'value =' + "'" + str(a0) + '*sin(pi*y)*cos(' + str(m) + '*pi*x/' + str(h1) + ')*cos(' + str(n) + '*pi*z/' + str(h2) + ') + 1.0-y' + "'" + '\n'
+        u_init = 'value =' + "'" + str(-a0*Ra**0.5*m/h1*denom) + '*cos(pi*y)*sin(' + str(m) + '*pi*x/' + str(h1) + ')*cos(' + str(n) + '*pi*z/' + str(h2) + ')' + "'" + '\n'
+        v_init = 'value =' + "'" + str( a0*Ra**0.5*(m**2/h1**2-n**2/h2**2)*denom) + '*sin(pi*y)*cos(' + str(m) + '*pi*x/' + str(h1) + ')*cos(' + str(n) + '*pi*z/' + str(h2) + ')' + "'" + '\n'
+        w_init = 'value =' + "'" + str(-a0*Ra**0.5*n/h2*denom) + '*cos(pi*y)*cos(' + str(m) + '*pi*x/' + str(h1) + ')*sin(' + str(n) + '*pi*z/' + str(h2) + ')' + "'" + '\n'
 
         f = open("voa_beck_base.i", "r")
         contents = f.readlines()

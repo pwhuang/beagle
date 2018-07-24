@@ -282,8 +282,8 @@
   abort_on_solve_fail = true
   #start_time = 0
   #end_time = 15.0
-  l_max_its = 100
-  nl_max_its = 50
+  l_max_its = 200
+  nl_max_its = 80
   #trans_ss_check = true
   #ss_check_tol = 1e-06
   #ss_tmin = 30
