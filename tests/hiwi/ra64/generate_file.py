@@ -147,14 +147,14 @@ def solve_amplitude(m_val, n_val, h1_val, h2_val, Ra_sq):
 
     candidate = []
     for i in np.linspace(0.1,2,19):
-        #try:
-        sol_vec = scp.root(F, i*input_vec, method='broyden1', tol=1e-14)
-        #except:
-        #    print('Exception occured!')
-        #    continue
+        try:
+            sol_vec = scp.root(F, i*input_vec, method='broyden1', tol=1e-14)
+        except:
+            print('Exception occured!')
+            continue
         if(EP.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val, T_n: sol_vec.x[-1]}) < 9.0/256.0*Ra_sq*Ra_sq):
             candidate.append(sol_vec.x)
-        print(sol_vec.x)
+        #print(sol_vec.x)
 
     if len(candidate) == 0:
         return [0,0,0,0]
