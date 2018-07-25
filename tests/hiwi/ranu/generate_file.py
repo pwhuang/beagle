@@ -2,9 +2,8 @@ import numpy as np
 import pandas as pd
 import subprocess
 import sys
-from itertools import product
 import sympy as sp
-import scipy.optimize as scp
+from itertools import product
 
 def Beck_cell_predict(h_1, h_2, max_cell, Ra):
     pairs = []
@@ -45,10 +44,6 @@ EP = sp.integrate(sp.integrate(sp.integrate(sp.diff(T_f,x)**2 + sp.diff(T_f,y)**
 
 def amplitude_predict(m_val, n_val, h1_val, h2_val, Ra, T0):
     entropy_bound = 9.0/256*Ra
-    #b = np.sqrt(m_val**2/h1_val**2 + n_val**2/h2_val**2)
-    #Rac = np.pi**2*(b+1.0/b)**2
-    #entropy_bound = 7.0/256*Ra*((Ra-Rac)/(Ra-4*np.pi**2))**0.15
-    #entropy_bound = 1.0/256*Ra*5**((Ra-Rac)/(Ra-4*np.pi**2))
     if entropy_bound < 1.0:
         return [0,0,0,0]
     #Find an amplitude of temperature that is the closest to the amplitude bound
@@ -62,66 +57,52 @@ def amplitude_predict(m_val, n_val, h1_val, h2_val, Ra, T0):
 
     return [u0,v0,w0,T0]
 
-sys_arg = np.array(sys.argv) #input_csv, start_point, number of boxes to compute, Ra, output_csv
+sys_arg = np.array(sys.argv) #input_ifile, input_csv, start_point, number to compute, h1_val, h2_val
 
-input_data = pd.read_csv(sys_arg[1])
-start_point = int(sys_arg[2])
-cubes_to_compute = int(sys_arg[3])
-Ra = float(sys_arg[4])
+input_ifile = sys_arg[1]
+input_data = pd.read_csv(sys_arg[2])
+start_point = int(sys_arg[3])
+cubes_to_compute = int(sys_arg[4])
+h1_val = float(sys_arg[5])
+h2_val = float(sys_arg[6])
 
-nx_s = np.array(input_data['h1'], dtype=int)
-nz_s = np.array(input_data['h2'], dtype=int)
+ra_full = input_data['Ra'][start_point:start_point + cubes_to_compute]
 
-nx = nx_s[start_point:start_point+cubes_to_compute]
-nz = nz_s[start_point:start_point+cubes_to_compute]
+for ra in ra_full:
+    f = open(input_ifile + '.i', "r")
+    contents = f.readlines()
+    f.close()
 
-nodes = np.array([nx, nz]).T
+    write_content = []
+    for row in contents:
+        row = row.replace('#CHANGE_HERE!', str(ra))
+        write_content.append(row)
 
-cl = 0.05
-a0 = 1.5 #The coefficient of temperature initial condition
-
-file_names = []
-
-for node in nodes:
-    xmax = str(node[0]*cl)
-    zmax = str(node[1]*cl)
-
-    string_to_write = 'xmax = ' + xmax + '\n' + 'zmax = ' + zmax + '\n' + 'nx = ' + str(node[0]) + '\n' + 'nz = ' + str(node[1]) + '\n'
-
-    h1_val = node[0]*cl
-    h2_val = node[1]*cl
-
-    pair_list = Beck_cell_predict(h1_val, h2_val, 4, Ra)
+    #ANOTHER LOOP HERE FOR THE POSSIBLE CELLS
+    pair_list = Beck_cell_predict(h1_val, h2_val, 5, ra**2)
 
     for pair in pair_list:
         m_val = pair[0]
         n_val = pair[1]
 
-        amp = amplitude_predict(m_val, n_val, h1_val, h2_val, 42.25, 2.0)
+        amp = amplitude_predict(m_val, n_val, h1_val, h2_val, ra**2, 4.0)
 
         T_init = 'value =' + "'" + str(amp[3]) + '*sin(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ') + 1.0-y' + "'" + '\n'
         u_init = 'value =' + "'" + str(amp[0]) + '*cos(pi*y)*sin(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ')' + "'" + '\n'
         v_init = 'value =' + "'" + str(amp[1]) + '*sin(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ')' + "'" + '\n'
         w_init = 'value =' + "'" + str(amp[2]) + '*cos(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*sin(' + str(n_val) + '*pi*z/' + str(h2_val) + ')' + "'" + '\n'
 
-        f = open("voa_beck_base.i", "r")
-        contents = f.readlines()
-        f.close()
+        write_content.insert(61, T_init)
+        write_content.insert(66, u_init)
+        write_content.insert(71, v_init)
+        write_content.insert(76, w_init)
 
-        contents.insert(4, string_to_write)
-        contents.insert(56, T_init)
-        contents.insert(62, u_init)
-        contents.insert(68, v_init)
-        contents.insert(74, w_init)
-
-        file_to_write = "voa_beck_gen" + str(node[0]) + '_' + str(node[1]) + '_' + str(m_val) + str(n_val) + '.i'
+        file_to_write = input_ifile + '_ra_' + str(ra) + '_' + str(m_val) + str(n_val) + '.i'
         f = open(file_to_write, "w")
-        contents = "".join(contents)
-        f.write(contents)
-        f.close()
-        file_names.append(file_to_write)
-        print('File write complete!    ' + file_to_write)
 
-        #pd.DataFrame(data=file_names, columns = ['file_name']).to_csv(output_csv_name, index=False)
+        output_content = "".join(write_content)
+        f.write(output_content)
+        f.close()
+
         cmd = "srun -n 48 $BEAGLE_DIR/beagle-opt -i " + file_to_write
         returned_value = subprocess.call(cmd, shell=True)
