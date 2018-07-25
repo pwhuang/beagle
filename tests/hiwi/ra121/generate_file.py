@@ -38,137 +38,29 @@ y = sp.Symbol('y', real=True)
 z = sp.Symbol('z', real=True)
 h1,h2 = sp.symbols('h1 h2', real=True, nonzero=True)
 m,n = sp.symbols('m n', real=True)
-u_n, v_n, w_n = sp.symbols('u_n v_n w_n', real=True)
-R = sp.symbols('R', real=True)
-
-T = sp.sin(sp.pi*y)*sp.cos(m*sp.pi*x/h1)*sp.cos(n*sp.pi*z/h2)
-u = sp.sin(m*sp.pi*x/h1)*sp.cos(n*sp.pi*z/h2)*sp.cos(sp.pi*y)
-v = sp.cos(m*sp.pi*x/h1)*sp.cos(n*sp.pi*z/h2)*sp.sin(sp.pi*y)
-w = sp.cos(m*sp.pi*x/h1)*sp.sin(n*sp.pi*z/h2)*sp.cos(sp.pi*y)
-
-lp1 = sp.integrate(sp.integrate(sp.integrate(sp.diff(u,x)**2 + sp.diff(u,y)**2 + sp.diff(u,z)**2, (x,0,h1)), (y,0,1)), (z,0,h2))
-lp1 = sp.simplify(lp1)
-
-uT_couple = sp.integrate(sp.integrate(sp.integrate(sp.diff(T, x)*sp.diff(u, y), (x,0,h1)), (y,0,1)), (z,0,h2))
-uT_couple = sp.simplify(uT_couple)
-
-lp2 = sp.integrate(sp.integrate(sp.integrate(sp.diff(v,x)**2 + sp.diff(v,y)**2 + sp.diff(v,z)**2, (x,0,h1)), (y,0,1)), (z,0,h2))
-lp2 = sp.simplify(lp2)
-
-vT_couple = -sp.integrate(sp.integrate(sp.integrate(sp.diff(v,x)*sp.diff(T,x) + sp.diff(v,z)*sp.diff(T,z), (x,0,h1)), (y,0,1)), (z,0,h2))
-vT_couple = sp.simplify(vT_couple)
-
-lp3 = sp.integrate(sp.integrate(sp.integrate(sp.diff(w,x)**2 + sp.diff(w,y)**2 + sp.diff(w,z)**2, (x,0,h1)), (y,0,1)), (z,0,h2))
-lp3 = sp.simplify(lp3)
-
-wT_couple = sp.integrate(sp.integrate(sp.integrate(sp.diff(w,y)*sp.diff(T,z), (x,0,h1)), (y,0,1)), (z,0,h2))
-wT_couple = sp.simplify(wT_couple)
-
-lp4 = sp.integrate(sp.integrate(sp.integrate((sp.diff(T,x)**2 + sp.diff(T,y)**2 + sp.diff(T,z)**2 + (sp.diff(u,x)*sp.diff(T,x) + sp.diff(u,y)*sp.diff(T,y) + sp.diff(u,z)*sp.diff(T,z))), (x,0,h1)), (y,0,1)),(z,0,h2))
-lp4 = sp.simplify(lp4)
-
-Tv_couple = sp.integrate(sp.integrate(sp.integrate((T+u)*v, (x,0,h1)), (y,0,1)), (z,0,h2))
-Tv_couple = sp.simplify(Tv_couple)
-
-NL = sp.integrate(sp.integrate(sp.integrate((u_n*u*sp.diff(v,x) + v_n*v*sp.diff(v,y) + w_n*w*sp.diff(v,z))*(T+u), (x,0,h1)), (y,0,1)), (z,0,h2))
-NL = sp.simplify(NL)
-
-Trans = sp.integrate(sp.integrate(sp.integrate((u+T)*T, (x,0,h1)),(y,0,1)),(z,0,h2))
-Trans = sp.simplify(Trans)
-
 T_n = sp.Symbol('T_n', real = True)
 T_f = T_n*sp.sin(sp.pi*y)*sp.cos(m*sp.pi*x/h1)*sp.cos(n*sp.pi*z/h2) + 1-y
+
 EP = sp.integrate(sp.integrate(sp.integrate(sp.diff(T_f,x)**2 + sp.diff(T_f,y)**2 + sp.diff(T_f,z)**2, (x,0,h1)), (y,0,1)), (z,0,h2))/(h1*h2)
 
-def construct_A_mat(x_vec, dt, h1_val, h2_val, m_val, n_val, Ra_sqrt):
-    if n_val==0:
-        A_mat = np.zeros([3,3])
-        b_vec = np.array([0,0,0])
-
-        A_mat[0,0] = lp1.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-        A_mat[0,2] = Ra_sqrt*uT_couple.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-
-        A_mat[1,1] = lp2.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-        A_mat[1,2] = Ra_sqrt*vT_couple.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-
-        A_mat[2,2] = lp4.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-        A_mat[2,2]+= Ra_sqrt*NL.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val, u_n: x_vec[0], v_n: x_vec[1], w_n: x_vec[2]})
-        A_mat[2,2]+= 1.0/dt*Trans.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-
-        A_mat[2,1] = -Ra_sqrt*Tv_couple.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-
-    elif m_val==0:
-        A_mat = np.zeros([3,3])
-        b_vec = np.array([0,0,0])
-
-        A_mat[0,0] = lp2.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-        A_mat[0,2] = Ra_sqrt*vT_couple.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-
-        A_mat[1,1] = lp3.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-        A_mat[1,2] = Ra_sqrt*wT_couple.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-
-        A_mat[2,2] = lp4.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-        A_mat[2,2]+= Ra_sqrt*NL.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val, u_n: x_vec[0], v_n: x_vec[1], w_n: x_vec[2]})
-        A_mat[2,2]+= 1.0/dt*Trans.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-
-        A_mat[2,0] = -Ra_sqrt*Tv_couple.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-    else:
-        A_mat = np.zeros([4,4])
-        b_vec = np.array([0,0,0,0])
-
-        A_mat[0,0] = lp1.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-        A_mat[0,3] = Ra_sqrt*uT_couple.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-
-        A_mat[1,1] = lp2.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-        A_mat[1,3] = Ra_sqrt*vT_couple.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-
-        A_mat[2,2] = lp3.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-        A_mat[2,3] = Ra_sqrt*wT_couple.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-
-        A_mat[3,3] = lp4.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-        A_mat[3,3]+= Ra_sqrt*NL.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val, u_n: x_vec[0], v_n: x_vec[1], w_n: x_vec[2]})
-        A_mat[3,3]+= 1.0/dt*Trans.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-
-        A_mat[3,1] = -Ra_sqrt*Tv_couple.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})
-
-    #b_vec[-1] = -x_vec[-1]*Ra_sqrt*NL.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val, u_n: x_vec[0], v_n: x_vec[1], w_n: x_vec[2]})
-    b_vec[-1] = 1.0/dt*Trans.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val})*x_vec[-1]
-    return A_mat, b_vec
-
-def solve_amplitude(m_val, n_val, h1_val, h2_val, Ra_sq):
-    def F(x):
-        A_mat, b_vec = construct_A_mat(x, 1e-4, h1_val, h2_val, m_val, n_val, Ra_sq)
-        return np.dot(A_mat, x) - b_vec
-
-    if m_val==0 or n_val==0:
-        input_vec = np.array([0,0,1.0])
-    else:
-        input_vec = np.array([0,0,0,1.0])
-
-    candidate = []
-    for i in np.linspace(0.1,2,19):
-        try:
-            sol_vec = scp.root(F, i*input_vec, method='broyden1', tol=1e-14)
-        except:
-            print('Exception occured!')
-            continue
-        if(EP.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val, T_n: sol_vec.x[-1]}) < 9.0/256.0*Ra_sq*Ra_sq):
-            candidate.append(sol_vec.x)
-        #print(sol_vec.x)
-
-    if len(candidate) == 0:
+def amplitude_predict(m_val, n_val, h1_val, h2_val, Ra, T0):
+    entropy_bound = 9.0/256*Ra
+    #b = np.sqrt(m_val**2/h1_val**2 + n_val**2/h2_val**2)
+    #Rac = np.pi**2*(b+1.0/b)**2
+    #entropy_bound = 7.0/256*Ra*((Ra-Rac)/(Ra-4*np.pi**2))**0.15
+    #entropy_bound = 1.0/256*Ra*5**((Ra-Rac)/(Ra-4*np.pi**2))
+    if entropy_bound < 1.0:
         return [0,0,0,0]
+    #Find an amplitude of temperature that is the closest to the amplitude bound
+    while(EP.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val, T_n: T0}) > entropy_bound):
+        T0 -= 0.1
 
-    candidate = np.array(candidate)
-    #amplitudes to return
-    amp = candidate[np.argmax(np.abs(candidate[:,-1]))]
+    denom = 1.0/(m_val**2/h1_val**2+n_val**2/h2_val**2+1)
+    u0 = -T0*Ra**0.5*m_val/h1_val*denom
+    v0 = T0*Ra**0.5*(m_val**2/h1_val**2+n_val**2/h2_val**2)*denom
+    w0 = -T0*Ra**0.5*n_val/h2_val*denom
 
-    if m_val==0:
-        amp = np.array([0.0, amp[0], amp[1], amp[2]])
-    elif n_val==0:
-        amp = np.array([amp[0], amp[1], 0.0, amp[2]])
-
-    return amp
+    return [u0,v0,w0,T0]
 
 sys_arg = np.array(sys.argv) #input_csv, start_point, number of boxes to compute, Ra, output_csv
 
@@ -205,7 +97,7 @@ for node in nodes:
         m_val = pair[0]
         n_val = pair[1]
 
-        amp = solve_amplitude(m_val, n_val, h1_val, h2_val, Ra**0.5)
+        amp = amplitude_predict(m_val, n_val, h1_val, h2_val, 121, 3.0)
 
         T_init = 'value =' + "'" + str(amp[3]) + '*sin(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ') + 1.0-y' + "'" + '\n'
         u_init = 'value =' + "'" + str(amp[0]) + '*cos(pi*y)*sin(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ')' + "'" + '\n'
