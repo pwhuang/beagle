@@ -59,22 +59,22 @@
 [Functions]
   [./ic_func_T]
     type = ParsedFunction
-
+    #INSERT_T_INIT
   [../]
 
   [./ic_func_u]
     type = ParsedFunction
-
+    #INSERT_U_INIT
   [../]
 
   [./ic_func_v]
     type = ParsedFunction
-
+    #INSERT_V_INIT
   [../]
 
   [./ic_func_w]
     type = ParsedFunction
-
+    #INSERT_W_INIT
   [../]
 []
 

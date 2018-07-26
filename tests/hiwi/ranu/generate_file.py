@@ -73,15 +73,11 @@ for ra in ra_full:
     contents = f.readlines()
     f.close()
 
-    write_content = []
-    for row in contents:
-        row = row.replace('#CHANGE_HERE!', str(ra))
-        write_content.append(row)
-
     #ANOTHER LOOP HERE FOR THE POSSIBLE CELLS
-    pair_list = Beck_cell_predict(h1_val, h2_val, 5, ra**2)
+    pair_list = Beck_cell_predict(h1_val, h2_val, 4, ra**2)
 
     for pair in pair_list:
+        write_content = []
         m_val = pair[0]
         n_val = pair[1]
 
@@ -92,11 +88,14 @@ for ra in ra_full:
         v_init = 'value =' + "'" + str(amp[1]) + '*sin(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ')' + "'" + '\n'
         w_init = 'value =' + "'" + str(amp[2]) + '*cos(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*sin(' + str(n_val) + '*pi*z/' + str(h2_val) + ')' + "'" + '\n'
 
-        write_content.insert(61, T_init)
-        write_content.insert(66, u_init)
-        write_content.insert(71, v_init)
-        write_content.insert(76, w_init)
-
+        for row in contents:
+            row = row.replace('#CHANGE_HERE!', str(ra))
+            row = row.replace('#INSERT_T_INIT', T_init)
+            row = row.replace('#INSERT_U_INIT', u_init)
+            row = row.replace('#INSERT_V_INIT', v_init)
+            row = row.replace('#INSERT_W_INIT', w_init)
+            write_content.append(row)
+        
         file_to_write = input_ifile + '_ra_' + str(ra) + '_' + str(m_val) + str(n_val) + '.i'
         f = open(file_to_write, "w")
 
