@@ -92,5 +92,5 @@ for a in amplitude.T:
     f.close()
     print('File write complete!    ' + file_to_write)
 
-    cmd = "srun -n 48 $BEAGLE_DIR/beagle-opt -i " + file_to_write
-    returned_value = subprocess.call(cmd, shell=True)
+    #cmd = "srun -n 48 $BEAGLE_DIR/beagle-opt -i " + file_to_write
+    #returned_value = subprocess.call(cmd, shell=True)
