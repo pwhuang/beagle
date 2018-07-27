@@ -20,15 +20,20 @@ for i in range(math.ceil((nodes-start)/batch_size)):
     if start_point+batch_size > nodes:
         batch_size = int(nodes - start_point)
 
-    #string_to_write = 'python generate_file_long.py' + input_file + ' ' + str(start_point) + ' ' + str(batch_size) + ' 42.25'
-    string_to_write = 'mpirun -n 48 $BEAGLE_DIR/beagle_opt -i voa_florio_long_' + str(start_point) + '.i'
-
     f = open("/homea/jhpc52/jhpc5202/job/beck_gen_base.j", "r")
     contents = f.readlines()
     f.close()
 
+    #string_to_write = 'python generate_file_long.py' + input_file + ' ' + str(start_point) + ' ' + str(batch_size) + ' 42.25'
+
     contents.insert(14, 'cd ~/projects/beagle/tests/hiwi/florio\n')
-    contents.insert(15, string_to_write)
+
+    counter = 15
+    for j in range(batch_size):
+        string_to_write = 'mpirun -n 48 $BEAGLE_DIR/beagle_opt -i voa_florio_long_' + str(start_point) + '.i'
+        contents.insert(counter, string_to_write)
+        counter+=1
+        start_point+=1
 
     file_to_write = "/homea/jhpc52/jhpc5202/job/beck_gen.j"
     f = open(file_to_write, "w")

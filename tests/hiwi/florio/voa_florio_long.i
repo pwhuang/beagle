@@ -144,11 +144,11 @@
     velocity_z = vel_z
   [../]
 
-  [./euler]
-    type = ExampleTimeDerivative
-    variable = temp
-    time_coefficient = 1.0
-  [../]
+  #[./euler]
+  #  type = ExampleTimeDerivative
+  #  variable = temp
+  #  time_coefficient = 1.0
+  #[../]
 []
 
 [BCs]
@@ -275,7 +275,7 @@
 []
 
 [Executioner]
-  type = Transient
+  type = Steady #Transient
   #solve_type = PJFNK
   num_steps = 100
   #dt = 1e-5
