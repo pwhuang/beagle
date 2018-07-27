@@ -34,19 +34,19 @@ for a1 in A1:
     denom = 1.0/(m[0]**2/h1**2+n[0]**2/h2**2+1)
     T_init = 'value =' + "'" + str(a0[a0_i]) + '*sin(3.14*y)*cos(' + str(m[0]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[0]) + '*3.14*z/' + str(h2) + ') + 1.0-y + '
     u_init = 'value =' + "'" + str(-a0[a0_i]*Ra**0.5*m[0]/h1*denom) + '*cos(3.14*y)*sin(' + str(m[0]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[0]) + '*3.14*z/' + str(h2) + ') + '
-    v_init = 'value =' + "'" + str( a0[a0_i]*Ra**0.5*(m[0]**2/h1**2-n[0]**2/h2**2)*denom) + '*sin(3.14*y)*cos(' + str(m[0]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[0]) + '*3.14*z/' + str(h2) + ') + '
+    v_init = 'value =' + "'" + str( a0[a0_i]*Ra**0.5*(m[0]**2/h1**2+n[0]**2/h2**2)*denom) + '*sin(3.14*y)*cos(' + str(m[0]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[0]) + '*3.14*z/' + str(h2) + ') + '
     w_init = 'value =' + "'" + str(-a0[a0_i]*Ra**0.5*n[0]/h2*denom) + '*cos(3.14*y)*cos(' + str(m[0]) + '*3.14*x/' + str(h1) + ')*sin(' + str(n[0]) + '*3.14*z/' + str(h2) + ') + '
 
     denom = 1.0/(m[1]**2/h1**2+n[1]**2/h2**2+1)
     T_init += str(a1) + '*sin(3.14*y)*cos(' + str(m[1]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[1]) + '*3.14*z/' + str(h2) + ') + '
     u_init += str(-a1*Ra**0.5*m[1]/h1*denom) + '*cos(3.14*y)*sin(' + str(m[1]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[1]) + '*3.14*z/' + str(h2) + ') + '
-    v_init += str( a1*Ra**0.5*(m[1]**2/h1**2-n[1]**2/h2**2)*denom) + '*sin(3.14*y)*cos(' + str(m[1]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[1]) + '*3.14*z/' + str(h2) + ') + '
+    v_init += str( a1*Ra**0.5*(m[1]**2/h1**2+n[1]**2/h2**2)*denom) + '*sin(3.14*y)*cos(' + str(m[1]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[1]) + '*3.14*z/' + str(h2) + ') + '
     w_init += str(-a1*Ra**0.5*n[1]/h2*denom) + '*cos(3.14*y)*cos(' + str(m[1]) + '*3.14*x/' + str(h1) + ')*sin(' + str(n[1]) + '*3.14*z/' + str(h2) + ') + '
     for a2 in A2:
         denom = 1.0/(m[2]**2/h1**2+n[2]**2/h2**2+1)
         T_init_out = T_init + str(a2) + '*sin(3.14*y)*cos(' + str(m[2]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[2]) + '*3.14*z/' + str(h2) + ')' + "'" + '\n'
         u_init_out = u_init + str(-a2*Ra**0.5*m[2]/h1*denom) + '*cos(3.14*y)*sin(' + str(m[2]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[2]) + '*3.14*z/' + str(h2) + ')' + "'" + '\n'
-        v_init_out = v_init + str( a2*Ra**0.5*(m[2]**2/h1**2-n[2]**2/h2**2)*denom) + '*sin(3.14*y)*cos(' + str(m[2]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[2]) + '*3.14*z/' + str(h2) + ')' + "'" + '\n'
+        v_init_out = v_init + str( a2*Ra**0.5*(m[2]**2/h1**2+n[2]**2/h2**2)*denom) + '*sin(3.14*y)*cos(' + str(m[2]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[2]) + '*3.14*z/' + str(h2) + ')' + "'" + '\n'
         w_init_out = w_init + str(-a2*Ra**0.5*n[2]/h2*denom) + '*cos(3.14*y)*cos(' + str(m[2]) + '*3.14*x/' + str(h1) + ')*sin(' + str(n[2]) + '*3.14*z/' + str(h2) + ')' + "'" + '\n'
 
         f = open("voa_florio_ex1.i", "r")

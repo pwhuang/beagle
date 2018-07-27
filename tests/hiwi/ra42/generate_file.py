@@ -53,7 +53,7 @@ def amplitude_predict(m_val, n_val, h1_val, h2_val, Ra, T0):
         return [0,0,0,0]
     #Find an amplitude of temperature that is the closest to the amplitude bound
     while(EP.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val, T_n: T0}) > entropy_bound):
-        T0 -= 0.1
+        T0 -= 0.02
 
     denom = 1.0/(m_val**2/h1_val**2+n_val**2/h2_val**2+1)
     u0 = -T0*Ra**0.5*m_val/h1_val*denom
@@ -97,7 +97,7 @@ for node in nodes:
         m_val = pair[0]
         n_val = pair[1]
 
-        amp = amplitude_predict(m_val, n_val, h1_val, h2_val, 42.25, 2.0)
+        amp = amplitude_predict(m_val, n_val, h1_val, h2_val, Ra, 2.0)
 
         T_init = 'value =' + "'" + str(amp[3]) + '*sin(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ') + 1.0-y' + "'" + '\n'
         u_init = 'value =' + "'" + str(amp[0]) + '*cos(pi*y)*sin(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ')' + "'" + '\n'

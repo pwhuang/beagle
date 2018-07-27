@@ -20,13 +20,13 @@ for i in range(math.ceil((nodes-start)/batch_size)):
     if start_point+batch_size > nodes:
         batch_size = int(nodes - start_point)
 
-    string_to_write = 'python generate_file.py ' + input_file + ' ' + str(start_point) + ' ' + str(batch_size)
+    string_to_write = 'python generate_file.py ' + input_file + ' ' + str(start_point) + ' ' + str(batch_size) + ' 42.25'
 
     f = open("/homea/jhpc52/jhpc5202/job/beck_gen_base.j", "r")
     contents = f.readlines()
     f.close()
 
-    contents.insert(14, 'cd ~/projects/beagle/tests/thesis/beck/gen\n')
+    contents.insert(14, 'cd ~/projects/beagle/tests/hiwi/ra42\n')
     contents.insert(15, string_to_write)
 
     file_to_write = "/homea/jhpc52/jhpc5202/job/beck_gen.j"

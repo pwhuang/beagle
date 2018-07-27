@@ -97,7 +97,7 @@ for node in nodes:
         m_val = pair[0]
         n_val = pair[1]
 
-        amp = amplitude_predict(m_val, n_val, h1_val, h2_val, 64, 2.0)
+        amp = amplitude_predict(m_val, n_val, h1_val, h2_val, Ra, 2.0)
 
         T_init = 'value =' + "'" + str(amp[3]) + '*sin(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ') + 1.0-y' + "'" + '\n'
         u_init = 'value =' + "'" + str(amp[0]) + '*cos(pi*y)*sin(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ')' + "'" + '\n'
