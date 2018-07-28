@@ -293,6 +293,7 @@
   #ss_tmin = 30
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-13
+  abort_on_solve_fail = true
 []
 
 [Postprocessors]
