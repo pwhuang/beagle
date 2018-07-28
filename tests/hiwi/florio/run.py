@@ -30,7 +30,7 @@ for i in range(math.ceil((nodes-start)/batch_size)):
 
     counter = 15
     for j in range(batch_size):
-        string_to_write = 'mpirun -n 48 $BEAGLE_DIR/beagle-opt -i voa_florio_long_' + str(start_point) + '.i\n'
+        string_to_write = 'srun -n 48 $BEAGLE_DIR/beagle-opt -i voa_florio_long_' + str(start_point) + '.i\n'
         contents.insert(counter, string_to_write)
         counter+=1
         start_point+=1

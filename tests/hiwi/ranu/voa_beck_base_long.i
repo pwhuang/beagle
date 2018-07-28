@@ -279,7 +279,7 @@
 []
 
 [Executioner]
-  type = Transient
+  type = Steady #Transient
   #solve_type = PJFNK
   num_steps = 1
   #dt = 1e-5
