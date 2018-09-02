@@ -75,6 +75,8 @@ for ra in ra_full:
 
     #ANOTHER LOOP HERE FOR THE POSSIBLE CELLS
     pair_list = Beck_cell_predict(h1_val, h2_val, 4, ra**2)
+    #ONLY PICK THE FIRST 4 POSSIBLE PAIRS
+    pair_list = pair_list[:4]
 
     for pair in pair_list:
         write_content = []
@@ -95,7 +97,7 @@ for ra in ra_full:
             row = row.replace('#INSERT_V_INIT', v_init)
             row = row.replace('#INSERT_W_INIT', w_init)
             write_content.append(row)
-        
+
         file_to_write = input_ifile + '_ra_' + str(ra) + '_' + str(m_val) + str(n_val) + '.i'
         f = open(file_to_write, "w")
 
