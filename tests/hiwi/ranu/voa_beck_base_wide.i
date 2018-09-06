@@ -279,7 +279,7 @@
 []
 
 [Executioner]
-  type = Transient
+  type = Steady
   #solve_type = PJFNK
   num_steps = 1
   #dt = 1e-5
@@ -369,6 +369,6 @@
   csv = true
   [./out]
     type = Exodus
-    execute_on = 'FINAL'
+    execute_on = 'timestep_end FINAL'
   [../]
 []

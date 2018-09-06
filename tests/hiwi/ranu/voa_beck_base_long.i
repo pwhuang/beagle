@@ -369,6 +369,6 @@
   csv = true
   [./out]
     type = Exodus
-    execute_on = 'FINAL'
+    execute_on = 'timestep_end FINAL'
   [../]
 []
