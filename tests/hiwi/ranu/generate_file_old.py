@@ -74,8 +74,10 @@ for ra in ra_full:
     f.close()
 
     #ANOTHER LOOP HERE FOR THE POSSIBLE CELLS
-    pair_list = [[2, 1]] #Beck_cell_predict(h1_val, h2_val, 4, ra**2)
-
+    pair_list = Beck_cell_predict(h1_val, h2_val, 4, ra**2)
+    #ONLY PICK THE FIRST 4 POSSIBLE PAIRS
+    pair_list = pair_list[:4]
+    
     for pair in pair_list:
         write_content = []
         m_val = pair[0]
