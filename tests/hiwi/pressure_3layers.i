@@ -1,35 +1,56 @@
 [Mesh]
   file = 'three_layers.msh'
-  #uniform_refine = 1
-  second_order = true
+[]
+
+[MeshModifiers]
+  active = ''
+  [./corner_node]
+    type = AddExtraNodeset
+    new_boundary = 'pinned_node'
+    #nodes = '0'
+    coord = '0.0 1.0'
+  [../]
+
+  [./corner_node2]
+    type = AddExtraNodeset
+    new_boundary = 'pinned_node2'
+    #nodes = '0'
+    coord = '4.0 1.0'
+  [../]
 []
 
 [Variables]
+  [./pressure]
+    order = FIRST
+    family = LAGRANGE
+  [../]
   [./temp]
-    order = SECOND
-    family = LAGRANGE
-  [../]
-
-  [./vel_x]
     order = FIRST
     family = LAGRANGE
-  [../]
-
-  [./vel_y]
-    order = FIRST
-    family = LAGRANGE
-  [../]
-
-  [./vel_z]
-    order = FIRST
-    family = LAGRANGE
+    initial_condition = 0.0
   [../]
 []
 
 [AuxVariables]
+  [./velocity_x]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+
+  [./velocity_y]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+
+  [./velocity_z]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+
   [./Peclet]
     order = CONSTANT
     family = MONOMIAL
+    initial_condition = 0
   [../]
   [./CFL]
     order = CONSTANT
@@ -39,62 +60,16 @@
     order = CONSTANT
     family = MONOMIAL
   [../]
-  [./entropy_therm]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
 []
 
-[Functions]
-  [./ic_func]
-    type = ParsedFunction
-    value = '1.0-y'
-  [../]
-[]
-
-[ICs]
-  active = 'mat_2'
-  [./mat_1]
-    type = FunctionIC
-    variable = temp
-    function = ic_func
-  [../]
-
-  [./mat_2]
-    type = FunctionRandomIC
-    variable = temp
-    function = ic_func
-    min = -1e-2
-    max = 1e-2
-    seed = 52468
-  [../]
-[]
 
 [Kernels]
-  [./momentum_x]
-    type = VelocityDiffusion_half
-    variable = vel_x
+  active = 'mass diff conv euler'
+  [./mass]
+    type = PressureDiffusion_test
+    variable = pressure
     temperature = temp
-    component_1 = 1
-    component_2 = 0
-    sign = 1
-    scale = 1.0
-  [../]
-
-  [./momentum_y]
-    type = VelocityDiffusionZ
-    variable = vel_y
-    temperature = temp
-  [../]
-
-  [./momentum_z]
-    type = VelocityDiffusion_half
-    variable = vel_z
-    temperature = temp
-    component_1 = 1
-    component_2 = 2
-    sign = 1
-    scale = 1.0
+    component = 1
   [../]
 
   [./diff]
@@ -104,11 +79,10 @@
   [../]
 
   [./conv]
-    type = ExampleConvection
+    type = PressureConvection
     variable = temp
-    velocity_x = vel_x
-    velocity_y = vel_y
-    velocity_z = vel_z
+    pressure = pressure
+    component = 1
   [../]
 
   [./euler]
@@ -118,29 +92,68 @@
   [../]
 []
 
+[AuxKernels]
+  [./velocity_x_aux]
+    type = DarcyVelocity
+    variable = velocity_x
+    pressure = pressure
+    temperature = 0
+    component = 0
+  [../]
+
+  [./velocity_y_aux]
+    type = DarcyVelocity
+    variable = velocity_y
+    pressure = pressure
+    temperature = temp
+    component = 1
+  [../]
+
+  [./velocity_z_aux]
+    type = DarcyVelocity
+    variable = velocity_z
+    pressure = pressure
+    temperature = 0
+    component = 0
+  [../]
+
+  [./cell_peclet]
+    type = CellPeclet
+    variable = Peclet
+    velocity_x = velocity_x
+    velocity_y = velocity_y
+    velocity_z = velocity_z
+  [../]
+
+  [./cell_CFL]
+    type = CellCFL
+    variable = CFL
+    velocity_x = velocity_x
+    velocity_y = velocity_y
+    velocity_z = velocity_z
+  [../]
+
+  [./entropy]
+    type = EntropyProduction
+    variable = entropy
+    temp = temp
+    velocity_x = velocity_x
+    velocity_y = velocity_y
+    velocity_z = velocity_z
+    T_bar = 16
+    deltaT = 8
+    alpha = 1.6163e-4
+    cf = 4184
+    d = 150
+  [../]
+[]
+
 [BCs]
-  [./no_flow_1]
-    type =  DirichletBC
-    variable = vel_x
-    boundary = 'top'
-    #boundary = 'front back left right top bottom'
-    value = 0
-  [../]
-
-  [./no_flow_2]
+  [./no_flux_bc]
     type = DirichletBC
-    variable = vel_y
+    variable = pressure
     boundary = 'top'
-    #boundary = 'front back left right top bottom'
-    value = 0
-  [../]
-
-  [./no_flow_3]
-    type = DirichletBC
-    variable = vel_z
-    boundary = 'top'
-    #boundary = 'front back left right top bottom'
-    value = 0
+    value = 0.0
   [../]
 
   [./top_temp]
@@ -155,42 +168,6 @@
     variable = temp
     boundary = 'bottom'
     value = 1.0
-  [../]
-[]
-
-[AuxKernels]
-  [./cell_peclet]
-    type = CellPeclet
-    variable = Peclet
-    velocity_x = vel_x
-    velocity_y = vel_y
-    velocity_z = vel_z
-  [../]
-  [./cell_CFL]
-    type = CellCFL
-    variable = CFL
-    velocity_x = vel_x
-    velocity_y = vel_y
-    velocity_z = vel_z
-  [../]
-  [./entropy]
-    type = EntropyProduction
-    variable = entropy
-    temp = temp
-    velocity_x = vel_x
-    velocity_y = vel_y
-    velocity_z = vel_z
-    T_bar = 16
-    deltaT = 8
-    alpha = 1.6163e-4
-    cf = 4184
-    d = 150
-  [../]
-
-  [./entropy_therm]
-    type = EntropyProductionTherm
-    variable = entropy_therm
-    temp = temp
   [../]
 []
 
@@ -233,7 +210,7 @@
     full = true
     solve_type = 'NEWTON'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -pc_gamg_sym_graph'
-    petsc_options_value = 'gamg hypre cp 351 true'
+    petsc_options_value = 'gasm hypre cp 301 true'
   [../]
 
   [./FSP]
@@ -242,20 +219,10 @@
     solve_type = 'NEWTON'
     topsplit = 'pt'
     [./pt]
-      splitting = 'vel_x vel_y vel_z temp'
+      splitting = 'pressure temp'
     [../]
-    [./vel_x]
-      vars = 'vel_x'
-      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-      petsc_options_value = 'gamg hypre cp 151'
-    [../]
-    [./vel_y]
-      vars = 'vel_y'
-      petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-      petsc_options_value = 'gamg hypre cp 151'
-    [../]
-    [./vel_z]
-      vars = 'vel_z'
+    [./pressure]
+      vars = 'pressure'
       petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
       petsc_options_value = 'gamg hypre cp 151'
     [../]
@@ -269,32 +236,32 @@
 
 [Executioner]
   type = Transient
-  #solve_type = PJFNK
-  #num_steps = 1
-  #dt = 1e-5
-  #dtmin = 0.001
+  #solve_type = 'PJFNK'
+  #num_steps = 1000
+  #dt = 2e-5
   start_time = 0
-  end_time = 30.0
-  l_max_its = 50
+  end_time = 0.2 #5e-2
+  l_max_its = 60
   nl_max_its = 30
+  dtmin = 2e-10
   #trans_ss_check = true
   #ss_check_tol = 1e-06
-  #ss_tmin = 30
+
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-12
+
+  [./TimeIntegrator]
+    type = CrankNicolson
+  [../]
 
   [./TimeStepper]
     type = CFLDT
     postprocessor = CFL_time_step
-    dt = 1e-3
-    activate_time = 1e-2
+    dt = 2e-5
+    activate_time = 4e-4
     max_Ra = 15
     cfl = 0.5
     factor = 0
-  [../]
-
-  [./TimeIntegrator]
-    type = CrankNicolson
   [../]
 []
 
@@ -304,7 +271,6 @@
     variable = temp
     boundary = 'top'
     diffusivity = 1.0
-    outputs = 'csv console'
   [../]
 
   [./alive_time]
@@ -315,9 +281,8 @@
 
   [./CFL_time_step]
     type = LevelSetCFLCondition
-    velocity_x = vel_x
-    velocity_y = vel_y
-    velocity_z = vel_z
+    velocity_x = velocity_x
+    velocity_y = velocity_y
   [../]
 
   [./L2_temp]
@@ -326,21 +291,9 @@
     outputs = 'csv'
   [../]
 
-  [./L2_vel_x]
+  [./L2_pres]
     type = ElementL2Norm
-    variable = vel_x
-    outputs = 'csv'
-  [../]
-
-  [./L2_vel_y]
-    type = ElementL2Norm
-    variable = vel_y
-    outputs = 'csv'
-  [../]
-
-  [./L2_vel_z]
-    type = ElementL2Norm
-    variable = vel_z
+    variable = pressure
     outputs = 'csv'
   [../]
 
@@ -359,11 +312,6 @@
     variable = entropy
   [../]
 
-  [./N_S_therm]
-    type = ElementAverageValue
-    variable = entropy_therm
-  [../]
-
   [./res]
     type = Residual
     execute_on = timestep_end
@@ -376,12 +324,7 @@
   csv = true
   [./out]
     type = Exodus
-    interval = 50
-    execute_on = 'INITIAL TIMESTEP_END FINAL'
-  [../]
-
-  [./final]
-    type = Exodus
-    execute_on = 'FINAL'
+    interval = 10
+    execute_on = 'TIMESTEP_END FINAL'
   [../]
 []
