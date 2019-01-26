@@ -63,6 +63,9 @@
 //Indicators
 #include "PecletIndicator.h"
 
+//Postprocessors
+#include "FunctionAmplitudePostprocessor.h"
+
 template<>
 InputParameters validParams<BeagleApp>()
 {
@@ -145,6 +148,7 @@ BeagleApp::registerObjects(Factory & factory)
     registerMaterial(RayleighMaterialFunc);
     registerTimeStepper(CFLDT);
     registerIndicator(PecletIndicator);
+    registerPostprocessor(FunctionAmplitudePostprocessor);
 }
 
 // External entry point for dynamic syntax association

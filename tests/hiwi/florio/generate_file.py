@@ -4,10 +4,11 @@ import subprocess
 import sys
 from itertools import product
 
-sys_arg = np.array(sys.argv) #a0, Ra
+sys_arg = np.array(sys.argv) #a0, Ra, file_to_read
 
 a0_i = int(sys_arg[1])
 Ra = float(sys_arg[2])
+file_to_read = sys_arg[3]
 
 pairs = np.array([[0,1], [2,0], [1,0]])
 m = pairs.T[0]

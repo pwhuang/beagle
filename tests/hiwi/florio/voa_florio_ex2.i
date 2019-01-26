@@ -2,17 +2,17 @@
   type = GeneratedMesh
   dim = 3
 
-  ny = 20
+  ny = 10
   ymin = 0.0
   ymax = 1.0
 
-  nz = 14
+  nz = 12
   zmin = 0.0
-  zmax = 0.707
+  zmax = 1.189
 
-  nx = 28
+  nx = 12
   xmin = 0.0
-  xmax = 1.414
+  xmax = 1.189
 
   elem_type = HEX27
 []
@@ -57,22 +57,27 @@
 [Functions]
   [./ic_func_T]
     type = ParsedFunction
-
+    value = '0.125*sin(pi*y)*cos(3.14*z) + 0.125*sin(3.14*y)*cos(2*3.14*x/1.5) + 1.0 - y'
   [../]
 
   [./ic_func_u]
     type = ParsedFunction
-
+    value = '-0.42*sin(2*3.14*x/1.5)*cos(3.14*y)'
   [../]
 
   [./ic_func_v]
     type = ParsedFunction
-
+    value = '0.4375*cos(3.14*z)*sin(3.14*y) + 0.56*cos(2*3.14*x/1.5)*sin(3.14*y)'
   [../]
 
   [./ic_func_w]
     type = ParsedFunction
+    value = '-0.4375*sin(3.14*z)*cos(3.14*y)'
+  [../]
 
+  [./amp_func1]
+    type = ParsedFunction
+    value = 'sin(pi*y)*cos(pi*z)*4/pow(2,0.5)'
   [../]
 []
 
@@ -371,6 +376,12 @@
     type = Residual
     execute_on = timestep_end
     residual_type = FINAL
+  [../]
+
+  [./amplitude]
+    type = FunctionAmplitudePostprocessor
+    variable = temp
+    function = amp_func1
   [../]
 []
 
