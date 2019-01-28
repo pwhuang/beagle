@@ -1,56 +1,36 @@
 import numpy as np
-import pandas as pd
 import subprocess
 import sys
 from itertools import product
 
-sys_arg = np.array(sys.argv) #a0, Ra, file_to_read
+sys_arg = np.array(sys.argv) #file_to_read
 
-a0_i = int(sys_arg[1])
-Ra = float(sys_arg[2])
-file_to_read = sys_arg[3]
+file_to_read = sys_arg[1]
 
-pairs = np.array([[0,1], [2,0], [1,0]])
-m = pairs.T[0]
-n = pairs.T[1]
+Ra = 6.5
 
-h1 = 1.414
-h2 = 0.707
+theta = np.linspace(0,np.pi/2,17)
+theta_round = np.array(np.around(theta, decimals=2), dtype=str)
 
-a0 = np.linspace(0,0.12,7)
-A1 = np.linspace(0,0.12,7)
-A2 = np.linspace(0,0.12,7)
+h1 = 1.189
+h2 = 1.189
 
-x = '0123456'
-label = []
+denom01 = 1.0/(1/h2**2 + 1)
+denom11 = 1.0/(1/h1**2 + 1/h2**2 + 1)
 
-for i in product(x,x):
-    label.append(str(a0_i)+i[0]+i[1])
+for t_count, t in enumerate(theta):
+    for NS_str in ['4e-2', '8e-2', '12e-2', '16e-2']:
+        NS = float(NS_str)
+        a = np.sqrt(4*2**0.5*NS/(np.pi**2*(2**0.5 + 1)))
+        b = np.sqrt(8*2**0.5*NS/(np.pi**2*(2**0.5 + 2)))
+        A01 = a*np.cos(t)
+        A11 = b*np.sin(t)
+        T_init_out = "value = '" + str(A01) + '*sin(pi*y)*cos(pi*z/' + str(h2) + ') + ' + str(A11) + '*sin(pi*y)*cos(pi*x/' + str(h1) + ')*cos(pi*z/' + str(h2) + ')' + '+ 1-y ' + "'" + '\n'
+        u_init_out = "value = '" + str(-A11*Ra/h1*denom11) + '*cos(pi*y)*sin(pi*x/' + str(h1) + ')*cos(pi*z/' + str(h2) + ')' + "'" + '\n'
+        v_init_out = "value = '" + str(A01*Ra*1.0/h2**2*denom01) + '*sin(pi*y)*cos(pi*z/' + str(h2) + ') + ' + str(A11*Ra*(1.0/h1**2 + 1.0/h2**2)*denom11) + '*sin(pi*y)*cos(pi*x/' + str(h1) + ')*cos(pi*z/' + str(h2) + ')' + "'" + '\n'
+        w_init_out = "value = '" + str(-A01*Ra*1.0/h2*denom01) + '*cos(pi*y)*sin(pi*z/' + str(h2) + ') + ' + str(-A11*Ra*1.0/h2**2*denom11) + '*cos(pi*y)*cos(pi*x/' + str(h1) + ')*sin(pi*z/' + str(h2) + ')' + "'" + '\n'
 
-counter = 0
-
-#for c, i in enumerate(product(a0, a1, a2)):
-for a1 in A1:
-    #Reinitialize
-    denom = 1.0/(m[0]**2/h1**2+n[0]**2/h2**2+1)
-    T_init = 'value =' + "'" + str(a0[a0_i]) + '*sin(3.14*y)*cos(' + str(m[0]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[0]) + '*3.14*z/' + str(h2) + ') + 1.0-y + '
-    u_init = 'value =' + "'" + str(-a0[a0_i]*Ra**0.5*m[0]/h1*denom) + '*cos(3.14*y)*sin(' + str(m[0]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[0]) + '*3.14*z/' + str(h2) + ') + '
-    v_init = 'value =' + "'" + str( a0[a0_i]*Ra**0.5*(m[0]**2/h1**2+n[0]**2/h2**2)*denom) + '*sin(3.14*y)*cos(' + str(m[0]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[0]) + '*3.14*z/' + str(h2) + ') + '
-    w_init = 'value =' + "'" + str(-a0[a0_i]*Ra**0.5*n[0]/h2*denom) + '*cos(3.14*y)*cos(' + str(m[0]) + '*3.14*x/' + str(h1) + ')*sin(' + str(n[0]) + '*3.14*z/' + str(h2) + ') + '
-
-    denom = 1.0/(m[1]**2/h1**2+n[1]**2/h2**2+1)
-    T_init += str(a1) + '*sin(3.14*y)*cos(' + str(m[1]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[1]) + '*3.14*z/' + str(h2) + ') + '
-    u_init += str(-a1*Ra**0.5*m[1]/h1*denom) + '*cos(3.14*y)*sin(' + str(m[1]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[1]) + '*3.14*z/' + str(h2) + ') + '
-    v_init += str( a1*Ra**0.5*(m[1]**2/h1**2+n[1]**2/h2**2)*denom) + '*sin(3.14*y)*cos(' + str(m[1]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[1]) + '*3.14*z/' + str(h2) + ') + '
-    w_init += str(-a1*Ra**0.5*n[1]/h2*denom) + '*cos(3.14*y)*cos(' + str(m[1]) + '*3.14*x/' + str(h1) + ')*sin(' + str(n[1]) + '*3.14*z/' + str(h2) + ') + '
-    for a2 in A2:
-        denom = 1.0/(m[2]**2/h1**2+n[2]**2/h2**2+1)
-        T_init_out = T_init + str(a2) + '*sin(3.14*y)*cos(' + str(m[2]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[2]) + '*3.14*z/' + str(h2) + ')' + "'" + '\n'
-        u_init_out = u_init + str(-a2*Ra**0.5*m[2]/h1*denom) + '*cos(3.14*y)*sin(' + str(m[2]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[2]) + '*3.14*z/' + str(h2) + ')' + "'" + '\n'
-        v_init_out = v_init + str( a2*Ra**0.5*(m[2]**2/h1**2+n[2]**2/h2**2)*denom) + '*sin(3.14*y)*cos(' + str(m[2]) + '*3.14*x/' + str(h1) + ')*cos(' + str(n[2]) + '*3.14*z/' + str(h2) + ')' + "'" + '\n'
-        w_init_out = w_init + str(-a2*Ra**0.5*n[2]/h2*denom) + '*cos(3.14*y)*cos(' + str(m[2]) + '*3.14*x/' + str(h1) + ')*sin(' + str(n[2]) + '*3.14*z/' + str(h2) + ')' + "'" + '\n'
-
-        f = open("voa_florio_ex1.i", "r")
+        f = open(file_to_read + '.i', "r")
         contents = f.readlines()
         f.close()
 
@@ -59,13 +39,13 @@ for a1 in A1:
         contents.insert(72, v_init_out)
         contents.insert(78, w_init_out)
 
-        file_to_write = "voa_florio_ex1_" + label[counter] + '.i'
-        counter += 1
+        file_to_write = file_to_read + '_NS_' + NS_str + '_theta_' + str(np.around(t, decimals=2)) + '.i'
+
         f = open(file_to_write, "w")
         contents = "".join(contents)
         f.write(contents)
         f.close()
         print('File write complete!    ' + file_to_write)
 
-        cmd = "srun -n 48 $BEAGLE_DIR/beagle-opt -i " + file_to_write
+        cmd = "mpirun -n 6 $BEAGLE_DIR/beagle-opt -i " + file_to_write
         returned_value = subprocess.call(cmd, shell=True)

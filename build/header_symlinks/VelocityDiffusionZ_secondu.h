@@ -1,1 +1,1 @@
-/home/huang/projects/beagle/include/kernels/VelocityDiffusionZ_secondu.h
+/home/powei/projects/beagle/include/kernels/VelocityDiffusionZ_secondu.h

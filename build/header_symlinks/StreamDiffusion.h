@@ -1,1 +1,1 @@
-/home/huang/projects/beagle/include/kernels/StreamDiffusion.h
+/home/powei/projects/beagle/include/kernels/StreamDiffusion.h

@@ -57,27 +57,37 @@
 [Functions]
   [./ic_func_T]
     type = ParsedFunction
-    value = '0.125*sin(pi*y)*cos(3.14*z) + 0.125*sin(3.14*y)*cos(2*3.14*x/1.5) + 1.0 - y'
+
   [../]
 
   [./ic_func_u]
     type = ParsedFunction
-    value = '-0.42*sin(2*3.14*x/1.5)*cos(3.14*y)'
+
   [../]
 
   [./ic_func_v]
     type = ParsedFunction
-    value = '0.4375*cos(3.14*z)*sin(3.14*y) + 0.56*cos(2*3.14*x/1.5)*sin(3.14*y)'
+
   [../]
 
   [./ic_func_w]
     type = ParsedFunction
-    value = '-0.4375*sin(3.14*z)*cos(3.14*y)'
+
   [../]
 
-  [./amp_func1]
+  [./amp_func01]
     type = ParsedFunction
-    value = 'sin(pi*y)*cos(pi*z)*4/pow(2,0.5)'
+    value = 'sin(pi*y)*cos(pi*z/1.189)*4/pow(1.189,2)'
+  [../]
+
+  [./amp_func10]
+    type = ParsedFunction
+    value = 'sin(pi*y)*cos(pi*x/1.189)*4/pow(1.189,2)'
+  [../]
+
+  [./amp_func11]
+    type = ParsedFunction
+    value = 'sin(pi*y)*cos(pi*x/1.189)*cos(pi*z/1.189)*8/pow(1.189,2)'
   [../]
 []
 
@@ -149,11 +159,11 @@
     velocity_z = vel_z
   [../]
 
-  #[./euler]
-  #  type = ExampleTimeDerivative
-  #  variable = temp
-  #  time_coefficient = 1.0
-  #[../]
+  [./euler]
+    type = ExampleTimeDerivative
+    variable = temp
+    time_coefficient = 1.0
+  [../]
 []
 
 [BCs]
@@ -230,7 +240,7 @@
   [./ra_output]
     type = RayleighMaterial
     block = 0
-    function = 6.8 #Ra = 46.24
+    function = 6.5 #Ra = 42.25
     min = 0
     max = 0
     seed = 363192
@@ -245,7 +255,7 @@
     full = true
     solve_type = 'NEWTON'
     petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart -pc_gamg_sym_graph'
-    petsc_options_value = 'gamg hypre cp 351 true'
+    petsc_options_value = 'gamg none cp 151 true'
   [../]
 
   [./FSP]
@@ -259,34 +269,34 @@
     [./vel_x]
       vars = 'vel_x'
       petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-      petsc_options_value = 'gamg hypre cp 151'
+      petsc_options_value = 'gamg ilu cp 151'
     [../]
     [./vel_y]
       vars = 'vel_y'
       petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-      petsc_options_value = 'gamg hypre cp 151'
+      petsc_options_value = 'gamg ilu cp 151'
     [../]
     [./vel_z]
       vars = 'vel_z'
       petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-      petsc_options_value = 'gamg hypre cp 151'
+      petsc_options_value = 'gamg ilu cp 151'
     [../]
     [./temp]
       vars = 'temp'
       petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_type -ksp_gmres_restart'
-      petsc_options_value = 'gasm hypre cp 151'
+      petsc_options_value = 'gasm ilu cp 151'
     [../]
   [../]
 []
 
 [Executioner]
-  type = Steady
-  #solve_type = PJFNK
-  num_steps = 1
+  type = Transient
+  #solve_type =LINEAR
+  num_steps = 2000
   #dt = 1e-5
   #dtmin = 0.001
-  abort_on_solve_fail = true
-  #start_time = 0
+  #abort_on_solve_fail = true
+  start_time = 0
   #end_time = 15.0
   l_max_its = 200
   nl_max_its = 100
@@ -295,13 +305,15 @@
   #ss_tmin = 30
   #nl_rel_tol = 1e-10
   nl_abs_tol = 1e-13
+  l_tol = 1e-10
+
 
   [./TimeStepper]
     type = CFLDT
     postprocessor = CFL_time_step
-    dt = 1e-3
+    dt = 1e-2
     activate_time = 1e-2
-    max_Ra = 7
+    max_Ra = 6.5
     cfl = 0.5
     factor = 0
   [../]
@@ -318,6 +330,7 @@
     boundary = 'top'
     diffusivity = 1.0
     outputs = 'csv console'
+    execute_on = 'INITIAL TIMESTEP_END'
   [../]
 
   [./alive_time]
@@ -370,6 +383,7 @@
   [./N_S]
     type = ElementAverageValue
     variable = entropy
+    execute_on = 'INITIAL TIMESTEP_END'
   [../]
 
   [./res]
@@ -378,10 +392,56 @@
     residual_type = FINAL
   [../]
 
-  [./amplitude]
+  [./amp01]
     type = FunctionAmplitudePostprocessor
     variable = temp
-    function = amp_func1
+    function = amp_func01
+    execute_on = 'INITIAL TIMESTEP_END'
+  [../]
+
+  [./amp10]
+    type = FunctionAmplitudePostprocessor
+    variable = temp
+    function = amp_func10
+    execute_on = 'INITIAL TIMESTEP_END'
+  [../]
+
+  [./amp11]
+    type = FunctionAmplitudePostprocessor
+    variable = temp
+    function = amp_func11
+    execute_on = 'INITIAL TIMESTEP_END'
+  [../]
+
+  [./amp01_dt]
+    type = ChangeOverTimePostprocessor
+    postprocessor = amp01
+    change_with_respect_to_initial = false
+    take_absolute_value = true
+    execute_on = 'INITIAL TIMESTEP_END'
+  [../]
+
+  [./amp11_dt]
+    type = ChangeOverTimePostprocessor
+    postprocessor = amp11
+    change_with_respect_to_initial = false
+    take_absolute_value = true
+    execute_on = 'INITIAL TIMESTEP_END'
+  [../]
+
+  [./N_S_dt]
+    type = ChangeOverTimePostprocessor
+    postprocessor = N_S
+    change_with_respect_to_initial = false
+    take_absolute_value = true
+    execute_on = 'INITIAL TIMESTEP_END'
+  [../]
+[]
+
+[UserObjects]
+  [./kill]
+    type = Terminator
+    expression = '(amp01_dt < 1e-5) & (amp11_dt < 1e-5) & (N_S_dt < 1e-5)'
   [../]
 []
 
