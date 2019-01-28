@@ -19,7 +19,7 @@ denom01 = 1.0/(1/h2**2 + 1)
 denom11 = 1.0/(1/h1**2 + 1/h2**2 + 1)
 
 for t_count, t in enumerate(theta):
-    for NS_str in ['4e-2', '8e-2', '12e-2', '16e-2']:
+    for NS_str in ['2e-2', '4e-2', '8e-2', '12e-2', '16e-2']:
         NS = float(NS_str)
         a = np.sqrt(4*2**0.5*NS/(np.pi**2*(2**0.5 + 1)))
         b = np.sqrt(8*2**0.5*NS/(np.pi**2*(2**0.5 + 2)))
