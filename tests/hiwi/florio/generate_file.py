@@ -34,10 +34,10 @@ for t_count, t in enumerate(theta):
         contents = f.readlines()
         f.close()
 
-        contents.insert(60, T_init_out)
-        contents.insert(66, u_init_out)
-        contents.insert(72, v_init_out)
-        contents.insert(78, w_init_out)
+        contents.insert(68, T_init_out)
+        contents.insert(74, u_init_out)
+        contents.insert(80, v_init_out)
+        contents.insert(86, w_init_out)
 
         file_to_write = file_to_read + '_NS_' + NS_str + '_theta_' + str(np.around(t, decimals=2)) + '.i'
 
@@ -47,5 +47,5 @@ for t_count, t in enumerate(theta):
         f.close()
         print('File write complete!    ' + file_to_write)
 
-        cmd = "mpirun -n 6 $BEAGLE_DIR/beagle-opt -i " + file_to_write
+        cmd = "mpirun -n 4 $BEAGLE_DIR/beagle-opt -i " + file_to_write
         returned_value = subprocess.call(cmd, shell=True)

@@ -52,6 +52,14 @@
     order = CONSTANT
     family = MONOMIAL
   [../]
+  [./y]
+    order = SECOND
+    family = LAGRANGE
+  [../]
+  [./convected_temp]
+    order = SECOND
+    family = LAGRANGE
+  [../]
 []
 
 [Functions]
@@ -73,6 +81,11 @@
   [./ic_func_w]
     type = ParsedFunction
 
+  [../]
+
+  [./y_func]
+    type = ParsedFunction
+    value = 'y'
   [../]
 
   [./amp_func01]
@@ -234,6 +247,17 @@
     cf = 4184
     d = 150
   [../]
+  [./y_aux]
+    type = FunctionAux
+    variable = y
+    function = y_func
+  [../]
+  [./convected_temp_kernel]
+    type = ParsedAux
+    variable = convected_temp
+    args = 'temp y'
+    function = 'temp - 1 + y'
+  [../]
 []
 
 [Materials]
@@ -394,21 +418,21 @@
 
   [./amp01]
     type = FunctionAmplitudePostprocessor
-    variable = temp
+    variable = convected_temp
     function = amp_func01
     execute_on = 'INITIAL TIMESTEP_END'
   [../]
 
   [./amp10]
     type = FunctionAmplitudePostprocessor
-    variable = temp
+    variable = convected_temp
     function = amp_func10
     execute_on = 'INITIAL TIMESTEP_END'
   [../]
 
   [./amp11]
     type = FunctionAmplitudePostprocessor
-    variable = temp
+    variable = convected_temp
     function = amp_func11
     execute_on = 'INITIAL TIMESTEP_END'
   [../]
@@ -451,6 +475,6 @@
   [./out]
     type = Exodus
     #interval = 200
-    execute_on = 'INITIAL FINAL'
+    execute_on = 'INITIAL FINAL timestep_end'
   [../]
 []
