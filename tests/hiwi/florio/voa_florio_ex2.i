@@ -357,6 +357,24 @@
     execute_on = 'INITIAL TIMESTEP_END'
   [../]
 
+  [./Nu_x]
+    type = SideFluxAverage
+    variable = temp
+    boundary = 'left'
+    diffusivity = 1.0
+    outputs = 'csv console'
+    execute_on = 'INITIAL TIMESTEP_END'
+  [../]
+
+  [./Nu_z]
+    type = SideFluxAverage
+    variable = temp
+    boundary = 'front'
+    diffusivity = 1.0
+    outputs = 'csv console'
+    execute_on = 'INITIAL TIMESTEP_END'
+  [../]
+
   [./alive_time]
     type = PerformanceData
     event = ALIVE
@@ -377,21 +395,21 @@
   [../]
 
   [./L2_vel_x]
-    type = ElementL2Norm
+    type = ElementIntegralVariablePostprocessor
     variable = vel_x
-    outputs = 'csv'
+    outputs = 'console csv'
   [../]
 
   [./L2_vel_y]
-    type = ElementL2Norm
+    type = ElementIntegralVariablePostprocessor
     variable = vel_y
-    outputs = 'csv'
+    outputs = 'console csv'
   [../]
 
   [./L2_vel_z]
-    type = ElementL2Norm
+    type = ElementIntegralVariablePostprocessor
     variable = vel_z
-    outputs = 'csv'
+    outputs = 'console csv'
   [../]
 
   [./max_Peclet]
@@ -475,6 +493,6 @@
   [./out]
     type = Exodus
     #interval = 200
-    execute_on = 'INITIAL FINAL timestep_end'
+    execute_on = 'INITIAL FINAL'
   [../]
 []
