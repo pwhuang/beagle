@@ -2,9 +2,9 @@
   type = GeneratedMesh
   dim = 3
 
-  ny = 20
-  nx = 30
-  nz = 20
+  ny = 10
+  nx = 15
+  nz = 10
 
   ymin = 0.0
   ymax = 1.0
@@ -53,6 +53,10 @@
     order = CONSTANT
     family = MONOMIAL
   [../]
+  [./convected_temp]
+    order = SECOND
+    family = LAGRANGE
+  [../]
 []
 
 
@@ -76,17 +80,24 @@
     type = ParsedFunction
     #INSERT_W_INIT
   [../]
+
+  [./y_func]
+    type = ParsedFunction
+    value = 'y'
+  [../]
+
+  [./amp_func01]
+    type = ParsedFunction
+    value = 'sin(pi*y)*cos(pi*z/1.189)*4/pow(1.189,2)'
+  [../]
 []
 
 [ICs]
   active = 'mat_t mat_u mat_v mat_w'
   [./mat_t]
-    type = FunctionRandomIC
+    type = FunctionIC
     variable = temp
     function = ic_func_T
-    seed = 155
-    min = 0
-    max = 0
   [../]
 
   [./mat_u]
@@ -148,11 +159,11 @@
     velocity_z = vel_z
   [../]
 
-  #[./euler]
-  #  type = ExampleTimeDerivative
-  #  variable = temp
-  #  time_coefficient = 1.0
-  #[../]
+  [./euler]
+    type = ExampleTimeDerivative
+    variable = temp
+    time_coefficient = 1.0
+  [../]
 []
 
 [BCs]
@@ -223,6 +234,17 @@
     cf = 4184
     d = 150
   [../]
+  [./y_aux]
+    type = FunctionAux
+    variable = y
+    function = y_func
+  [../]
+  [./convected_temp_kernel]
+    type = ParsedAux
+    variable = convected_temp
+    args = 'temp y'
+    function = 'temp - 1 + y'
+  [../]
 []
 
 [Materials]
@@ -279,9 +301,9 @@
 []
 
 [Executioner]
-  type = Steady #Transient
+  type = Transient
   #solve_type = PJFNK
-  num_steps = 1
+  num_steps = 2000
   #dt = 1e-5
   #dtmin = 0.001
   #start_time = 0
@@ -293,7 +315,21 @@
   #ss_tmin = 30
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-13
-  abort_on_solve_fail = true
+  abort_on_solve_fail = false
+
+  [./TimeStepper]
+    type = CFLDT
+    postprocessor = CFL_time_step
+    dt = 1e-2
+    activate_time = 1e-2
+    max_Ra = 6.5
+    cfl = 0.5
+    factor = 0
+  [../]
+
+  [./TimeIntegrator]
+    type = CrankNicolson
+  [../]
 []
 
 [Postprocessors]
@@ -361,6 +397,28 @@
     type = Residual
     execute_on = timestep_end
     residual_type = FINAL
+  [../]
+
+  [./amp01]
+    type = FunctionAmplitudePostprocessor
+    variable = convected_temp
+    function = amp_func01
+    execute_on = 'INITIAL TIMESTEP_END'
+  [../]
+
+  [./amp01_dt]
+    type = ChangeOverTimePostprocessor
+    postprocessor = amp01
+    change_with_respect_to_initial = false
+    take_absolute_value = true
+    execute_on = 'INITIAL TIMESTEP_END'
+  [../]
+[]
+
+[UserObjects]
+  [./kill]
+    type = Terminator
+    expression = '(amp01_dt < 1e-5)' # & (amp11_dt < 1e-5) & (N_S_dt < 1e-5)'
   [../]
 []
 

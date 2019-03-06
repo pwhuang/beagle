@@ -144,3 +144,5 @@ include/base/*Revision.h
 out.xyz
 
 *.msh
+
+build/*
