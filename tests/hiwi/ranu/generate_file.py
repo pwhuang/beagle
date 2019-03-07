@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 import subprocess
 import sys
 import sympy as sp
@@ -36,72 +35,82 @@ x = sp.Symbol('x', real=True)
 y = sp.Symbol('y', real=True)
 z = sp.Symbol('z', real=True)
 h1,h2 = sp.symbols('h1 h2', real=True, nonzero=True)
-m,n = sp.symbols('m n', real=True)
-T_n = sp.Symbol('T_n', real = True)
-T_f = T_n*sp.sin(sp.pi*y)*sp.cos(m*sp.pi*x/h1)*sp.cos(n*sp.pi*z/h2) + 1-y
+m = sp.symbols('m', real=True)
+n = sp.symbols('n', real=True)
+A = sp.symbols('A', real=True)
 
-EP = sp.integrate(sp.integrate(sp.integrate(sp.diff(T_f,x)**2 + sp.diff(T_f,y)**2 + sp.diff(T_f,z)**2, (x,0,h1)), (y,0,1)), (z,0,h2))/(h1*h2)
+T = A*sp.sin(sp.pi*y)*sp.cos(m*sp.pi*x/h1)*sp.cos(n*sp.pi*z/h2)
 
-def amplitude_predict(m_val, n_val, h1_val, h2_val, Ra, T0):
-    entropy_bound = 9.0/256*Ra
-    if entropy_bound < 1.0:
-        return [0,0,0,0]
-    #Find an amplitude of temperature that is the closest to the amplitude bound
-    while(EP.evalf(subs = {h1: h1_val, h2: h2_val, m: m_val, n: n_val, T_n: T0}) > entropy_bound):
-        T0 -= 0.1
+Tx = sp.diff(T,x)
+Ty = sp.diff(T,y)
+Tz = sp.diff(T,z)
 
-    denom = 1.0/(m_val**2/h1_val**2+n_val**2/h2_val**2+1)
-    u0 = -T0*Ra**0.5*m_val/h1_val*denom
-    v0 = T0*Ra**0.5*(m_val**2/h1_val**2+n_val**2/h2_val**2)*denom
-    w0 = -T0*Ra**0.5*n_val/h2_val*denom
+EP = sp.integrate(Tx**2 + Ty**2 + Tz**2 + 1, (x, 0, h1), (y, 0, 1), (z, 0, h2))/(h1*h2)
 
-    return [u0,v0,w0,T0]
+def amplitude_predict(EP, m_val, n_val, h1_val, h2_val, ra):
+    A_val = 0.5
+    entropy_production = EP.subs([(m,m_val), (n,n_val), (h1,h1_val), (h2,h2_val), (A, A_val)]).evalf()
 
-sys_arg = np.array(sys.argv) #input_ifile, input_csv, start_point, number to compute, h1_val, h2_val
+    while (entropy_production > 9.0/256*ra):
+        A_val = A_val - 0.1
+        entropy_production = EP.subs([(m,m_val), (n,n_val), (h1,h1_val), (h2,h2_val), (A, A_val)]).evalf()
+
+    return A_val
+
+sys_arg = np.array(sys.argv) #input_ifile, h1_val, h2_val
 
 input_ifile = sys_arg[1]
-input_data = pd.read_csv(sys_arg[2])
-start_point = int(sys_arg[3])
-cubes_to_compute = int(sys_arg[4])
-h1_val = float(sys_arg[5])
-h2_val = float(sys_arg[6])
+h1_val = float(sys_arg[2])
+h2_val = float(sys_arg[3])
 
-ra_full = input_data['Ra'][start_point:start_point + cubes_to_compute]
+ra_full = np.array(np.round(np.arange(6.4,14.1,0.1), 1), dtype=str)
 
-for ra in ra_full:
+for ra_str in ra_full:
     f = open(input_ifile + '.i', "r")
     contents = f.readlines()
     f.close()
 
+    ra = float(ra_str)
     #ANOTHER LOOP HERE FOR THE POSSIBLE CELLS
-    pair_list = [[2, 1]] #Beck_cell_predict(h1_val, h2_val, 4, ra**2)
+    pair_list = Beck_cell_predict(h1_val, h2_val, 4, ra**2)[:5] #Only pick 5 of them from the first one
 
     for pair in pair_list:
         write_content = []
         m_val = pair[0]
         n_val = pair[1]
 
-        amp = amplitude_predict(m_val, n_val, h1_val, h2_val, ra**2, 4.0)
+        #The maximum amplitude should be 0.5 for a particular mode
+        A = amplitude_predict(EP, m_val, n_val, h1_val, h2_val, ra**2)
+        denom = 1.0/(m_val**2/h1_val**2 + n_val**2/h2_val**2 + 1)
 
-        T_init = 'value =' + "'" + str(amp[3]) + '*sin(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ') + 1.0-y' + "'" + '\n'
-        u_init = 'value =' + "'" + str(amp[0]) + '*cos(pi*y)*sin(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ')' + "'" + '\n'
-        v_init = 'value =' + "'" + str(amp[1]) + '*sin(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ')' + "'" + '\n'
-        w_init = 'value =' + "'" + str(amp[2]) + '*cos(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*sin(' + str(n_val) + '*pi*z/' + str(h2_val) + ')' + "'" + '\n'
+        T_init = 'value =' + "'" + str(A) + '*sin(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ') + 1.0-y' + "'" + '\n'
+        u_init = 'value =' + "'-" + str(A*m_val*ra/h1_val*denom) + '*cos(pi*y)*sin(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ')' + "'" + '\n'
+        v_init = 'value =' + "'" + str(A*ra*(m_val**2/h1_val**2 + n_val**2/h2_val**2)*denom) + '*sin(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ')' + "'" + '\n'
+        w_init = 'value =' + "'-" + str(A*n_val*ra/h2_val*denom) + '*cos(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*sin(' + str(n_val) + '*pi*z/' + str(h2_val) + ')' + "'" + '\n'
+
+        if m_val == 0:
+            amp_func = "'" + 'sin(pi*y)*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ')*4/' + str(h1_val*h2_val) + "'"
+        if n_val == 0:
+            amp_func = "'" + 'sin(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*4/' + str(h1_val*h2_val) + "'"
+
+        amp_func = "'" + 'sin(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ')*8/' + str(h1_val*h2_val) + "'"
+
 
         for row in contents:
-            row = row.replace('#CHANGE_HERE!', str(ra))
+            row = row.replace('#CHANGE_HERE!', str(ra), 2)
             row = row.replace('#INSERT_T_INIT', T_init)
             row = row.replace('#INSERT_U_INIT', u_init)
             row = row.replace('#INSERT_V_INIT', v_init)
             row = row.replace('#INSERT_W_INIT', w_init)
+            row = row.replace('#INSERT_AMPLITUDE_FUNCTION', amp_func)
             write_content.append(row)
 
-        file_to_write = input_ifile + '_ra_' + str(ra) + '_' + str(m_val) + str(n_val) + '.i'
+        file_to_write = input_ifile + '_ra_' + ra_str + '_' + str(m_val) + str(n_val) + '.i'
         f = open(file_to_write, "w")
 
         output_content = "".join(write_content)
         f.write(output_content)
         f.close()
 
-        cmd = "srun -n 48 $BEAGLE_DIR/beagle-opt -i " + file_to_write
+        cmd = "mpirun -n 4 $BEAGLE_DIR/beagle-opt -i " + file_to_write
         returned_value = subprocess.call(cmd, shell=True)

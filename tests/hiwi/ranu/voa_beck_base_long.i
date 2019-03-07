@@ -53,6 +53,10 @@
     order = CONSTANT
     family = MONOMIAL
   [../]
+  [./y]
+    order = SECOND
+    family = LAGRANGE
+  [../]
   [./convected_temp]
     order = SECOND
     family = LAGRANGE
@@ -88,7 +92,7 @@
 
   [./amp_func01]
     type = ParsedFunction
-    value = 'sin(pi*y)*cos(pi*z/1.189)*4/pow(1.189,2)'
+    value = #INSERT_AMPLITUDE_FUNCTION
   [../]
 []
 
@@ -322,7 +326,7 @@
     postprocessor = CFL_time_step
     dt = 1e-2
     activate_time = 1e-2
-    max_Ra = 6.5
+    max_Ra = #CHANGE_HERE!
     cfl = 0.5
     factor = 0
   [../]
