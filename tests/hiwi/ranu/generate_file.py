@@ -49,11 +49,12 @@ EP = sp.integrate(Tx**2 + Ty**2 + Tz**2 + 1, (x, 0, h1), (y, 0, 1), (z, 0, h2))/
 
 def amplitude_predict(EP, m_val, n_val, h1_val, h2_val, ra):
     A_val = 0.5
-    entropy_production = EP.subs([(m,m_val), (n,n_val), (h1,h1_val), (h2,h2_val), (A, A_val)]).evalf()
+    entropy_production = float(EP.subs([(m,m_val), (n,n_val), (h1,h1_val), (h2,h2_val), (A, A_val)]).evalf())
 
     while (entropy_production > 9.0/256*ra):
-        A_val = A_val - 0.1
-        entropy_production = EP.subs([(m,m_val), (n,n_val), (h1,h1_val), (h2,h2_val), (A, A_val)]).evalf()
+        A_val = A_val - 0.02
+        entropy_production = float(EP.subs([(m,m_val), (n,n_val), (h1,h1_val), (h2,h2_val), (A, A_val)]).evalf())
+        print(entropy_production)
 
     return A_val
 
@@ -72,7 +73,7 @@ for ra_str in ra_full:
 
     ra = float(ra_str)
     #ANOTHER LOOP HERE FOR THE POSSIBLE CELLS
-    pair_list = Beck_cell_predict(h1_val, h2_val, 4, ra**2)[:5] #Only pick 5 of them from the first one
+    pair_list = Beck_cell_predict(h1_val, h2_val, 4, ra**2)[:3] #Only pick 3 of them from the first one
 
     for pair in pair_list:
         write_content = []
@@ -88,13 +89,14 @@ for ra_str in ra_full:
         v_init = 'value =' + "'" + str(A*ra*(m_val**2/h1_val**2 + n_val**2/h2_val**2)*denom) + '*sin(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ')' + "'" + '\n'
         w_init = 'value =' + "'-" + str(A*n_val*ra/h2_val*denom) + '*cos(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*sin(' + str(n_val) + '*pi*z/' + str(h2_val) + ')' + "'" + '\n'
 
+        '''
         if m_val == 0:
             amp_func = "'" + 'sin(pi*y)*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ')*4/' + str(h1_val*h2_val) + "'"
-        if n_val == 0:
+        elif n_val == 0:
             amp_func = "'" + 'sin(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*4/' + str(h1_val*h2_val) + "'"
-
-        amp_func = "'" + 'sin(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ')*8/' + str(h1_val*h2_val) + "'"
-
+        else:
+            amp_func = "'" + 'sin(pi*y)*cos(' + str(m_val) + '*pi*x/' + str(h1_val) + ')*cos(' + str(n_val) + '*pi*z/' + str(h2_val) + ')*8/' + str(h1_val*h2_val) + "'"
+        '''
 
         for row in contents:
             row = row.replace('#CHANGE_HERE!', str(ra), 2)
@@ -102,7 +104,7 @@ for ra_str in ra_full:
             row = row.replace('#INSERT_U_INIT', u_init)
             row = row.replace('#INSERT_V_INIT', v_init)
             row = row.replace('#INSERT_W_INIT', w_init)
-            row = row.replace('#INSERT_AMPLITUDE_FUNCTION', amp_func)
+            #row = row.replace('#INSERT_AMPLITUDE_FUNCTION', amp_func)
             write_content.append(row)
 
         file_to_write = input_ifile + '_ra_' + ra_str + '_' + str(m_val) + str(n_val) + '.i'

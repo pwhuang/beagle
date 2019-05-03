@@ -92,7 +92,22 @@
 
   [./amp_func01]
     type = ParsedFunction
-    value = #INSERT_AMPLITUDE_FUNCTION
+    value = 'sin(pi*y)*cos(pi*z)*4/(1.5*1.0)'
+  [../]
+
+  [./amp_func20]
+    type = ParsedFunction
+    value = 'sin(pi*y)*cos(2*pi*x)*4/(1.5*1.0)'
+  [../]
+
+  [./amp_func11]
+    type = ParsedFunction
+    value = 'sin(pi*y)*cos(pi*x)*cos(pi*z)*8/(1.5*1.0)'
+  [../]
+
+  [./amp_func10]
+    type = ParsedFunction
+    value = 'sin(pi*y)*cos(pi*x)*4/(1.5*1.0)'
   [../]
 []
 
@@ -324,8 +339,8 @@
   [./TimeStepper]
     type = CFLDT
     postprocessor = CFL_time_step
-    dt = 1e-2
-    activate_time = 1e-2
+    dt = 1e-5
+    activate_time = 1e-5
     max_Ra = #CHANGE_HERE!
     cfl = 0.5
     factor = 0
@@ -417,12 +432,57 @@
     take_absolute_value = true
     execute_on = 'INITIAL TIMESTEP_END'
   [../]
+
+  [./amp20]
+    type = FunctionAmplitudePostprocessor
+    variable = convected_temp
+    function = amp_func20
+    execute_on = 'INITIAL TIMESTEP_END'
+  [../]
+
+  [./amp20_dt]
+    type = ChangeOverTimePostprocessor
+    postprocessor = amp20
+    change_with_respect_to_initial = false
+    take_absolute_value = true
+    execute_on = 'INITIAL TIMESTEP_END'
+  [../]
+
+  [./amp11]
+    type = FunctionAmplitudePostprocessor
+    variable = convected_temp
+    function = amp_func11
+    execute_on = 'INITIAL TIMESTEP_END'
+  [../]
+
+  [./amp11_dt]
+    type = ChangeOverTimePostprocessor
+    postprocessor = amp11
+    change_with_respect_to_initial = false
+    take_absolute_value = true
+    execute_on = 'INITIAL TIMESTEP_END'
+  [../]
+
+  [./amp10]
+    type = FunctionAmplitudePostprocessor
+    variable = convected_temp
+    function = amp_func10
+    execute_on = 'INITIAL TIMESTEP_END'
+  [../]
+
+  [./amp10_dt]
+    type = ChangeOverTimePostprocessor
+    postprocessor = amp10
+    change_with_respect_to_initial = false
+    take_absolute_value = true
+    execute_on = 'INITIAL TIMESTEP_END'
+  [../]
 []
 
 [UserObjects]
   [./kill]
     type = Terminator
-    expression = '(amp01_dt < 1e-5)' # & (amp11_dt < 1e-5) & (N_S_dt < 1e-5)'
+    expression = '(amp01_dt < 1e-5) & (amp20_dt < 1e-5) & (amp11_dt < 1e-5) & (amp10_dt < 1e-5) & (N_S_dt < 1e-5)'
   [../]
 []
 
