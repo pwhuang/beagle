@@ -97,17 +97,17 @@
 
   [./amp_func20]
     type = ParsedFunction
-    value = 'sin(pi*y)*cos(2*pi*x)*4/(1.5*1.0)'
+    value = 'sin(pi*y)*cos(2*pi*x/1.5)*4/(1.5*1.0)'
   [../]
 
   [./amp_func11]
     type = ParsedFunction
-    value = 'sin(pi*y)*cos(pi*x)*cos(pi*z)*8/(1.5*1.0)'
+    value = 'sin(pi*y)*cos(pi*x/1.5)*cos(pi*z)*8/(1.5*1.0)'
   [../]
 
   [./amp_func10]
     type = ParsedFunction
-    value = 'sin(pi*y)*cos(pi*x)*4/(1.5*1.0)'
+    value = 'sin(pi*y)*cos(pi*x/1.5)*4/(1.5*1.0)'
   [../]
 []
 
@@ -412,6 +412,14 @@
     variable = entropy
   [../]
 
+  [./N_S_dt]
+    type = ChangeOverTimePostprocessor
+    postprocessor = N_S
+    change_with_respect_to_initial = false
+    take_absolute_value = true
+    execute_on = 'INITIAL TIMESTEP_END'
+  [../]
+
   [./res]
     type = Residual
     execute_on = timestep_end
@@ -491,6 +499,6 @@
   csv = true
   [./out]
     type = Exodus
-    execute_on = 'timestep_end FINAL'
+    execute_on = 'INITIAL FINAL'
   [../]
 []

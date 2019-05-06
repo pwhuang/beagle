@@ -36,7 +36,7 @@
 #include "VelocityDiffusion_half.h"
 #include "VelocityDiffusionZ.h"
 #include "VelocityDiffusionZ_secondu.h"
-#include "PressureConvection_SUPG.h"
+//#include "PressureConvection_SUPG.h"
 #include "StreamEigenKernel.h"
 #include "StreamTempEigenKernel.h"
 
@@ -127,7 +127,7 @@ BeagleApp::registerObjects(Factory & factory)
     registerKernel(VelocityDiffusion_secondu);
     registerKernel(VelocityDiffusionZ);
     registerKernel(VelocityDiffusionZ_secondu);
-    registerKernel(PressureConvection_SUPG);
+    //registerKernel(PressureConvection_SUPG);
     registerKernel(StreamEigenKernel);
     registerKernel(StreamTempEigenKernel);
     registerInitialCondition(FunctionRandomIC);
